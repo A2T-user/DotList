@@ -1,0 +1,16 @@
+<resources>
+    <style name="Base.Theme.PlaylistMakerWhite" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/yp_blue</item>
+        <item name="colorPrimaryDark">@color/yp_blue</item>                 <!-- Строка состояния -->>
+        <item name="colorOnPrimary">@color/yp_light_gray</item>             <!-- Фон строки поиска -->
+        <item name="colorOnSecondary">@color/yp_text_gray</item>            <!-- Текст подсказки -->
+        <item name="android:colorBackground">@color/yp_white</item>         <!-- Фон -->
+        <item name="colorAccent">@color/yp_black</item>                     <!-- Текст -->
+        <item name="colorSmallText">@color/yp_text_gray</item>
+        <item name="colorBackground">@color/yp_white</item>
+        <item name="colorBackgroundGrey">@color/grey_day</item>
+        <item name="colorSwitchTint">@color/yp_light_gray</item>
+        <item name="colorFlag">@color/yp_light_gray</item>
+    </style>
+</resources>

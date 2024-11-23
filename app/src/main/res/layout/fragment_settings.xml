@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/settingsFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".settings.ui.fragment.SettingsFragment">
+
+    <!-- Panel Header -->
+    <TextView
+        android:text="@string/settings"
+        style="@style/TitleStyle"/>
+
+
+    <!-- Темная тема -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:text="@string/dark_theme"
+            style="@style/SettingsTextStyle" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/themeSwitcher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:theme="@style/MySwitch"/>
+
+    </LinearLayout>
+
+    <!-- Поделиться приложением -->
+    <TextView
+        android:id="@+id/tvSend"
+        app:drawableEndCompat="@drawable/ic_send"
+        android:text="@string/set_send"
+        style="@style/TextViewAndCompoundImage" />
+
+    <!-- Написать в поддержку -->
+    <TextView
+        android:id="@+id/tvSupport"
+        app:drawableEndCompat="@drawable/ic_support"
+        android:text="@string/support"
+        style="@style/TextViewAndCompoundImage" />
+
+    <!-- Пользовательское соглашение -->
+    <TextView
+        android:id="@+id/tvUserAgreement"
+        app:drawableEndCompat="@drawable/ic_arrow_forward"
+        android:text="@string/user_agreement"
+        style="@style/TextViewAndCompoundImage" />
+
+</LinearLayout>
