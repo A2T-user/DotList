@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/fon_item_background"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:baselineAligned="false">
+
+    <!-- Левая кнопка - удаление -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="20"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_btn_del"
+            style="@style/BackgroundBtnStyle"
+            android:layout_marginEnd="6dp"
+            android:src="@drawable/ic_del_white"
+            tools:ignore="contentDescription" />
+
+    </LinearLayout>
+
+    <!-- Наполнитель -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="50"
+        android:focusable="true"/>
+
+    <!-- Правые кнопки - редактирование, напоминание, папка -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="30"
+        android:paddingEnd="6dp"
+        android:baselineAligned="false"
+        android:focusable="true"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_btn_edit"
+            style="@style/BackgroundBtnStyle"
+            android:src="@drawable/ic_edit"
+            tools:ignore="contentDescription"/>
+
+        <ImageView
+            android:id="@+id/iv_btn_bell"
+            style="@style/BackgroundBtnStyle"
+            android:src="@drawable/ic_bell_plus"
+            tools:ignore="contentDescription"/>
+
+        <ImageView
+            android:id="@+id/iv_btn_dir"
+            style="@style/BackgroundBtnStyle"
+            android:src="@drawable/ic_dir_on"
+            tools:ignore="contentDescription"/>
+
+    </LinearLayout>
+
+</LinearLayout>

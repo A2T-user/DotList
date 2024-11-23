@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/llSmallToolbar"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shadow"
+    android:orientation="horizontal"
+    android:paddingStart="2dp"
+    android:paddingEnd="6dp"
+    android:paddingBottom="8dp">
+
+    <LinearLayout
+        android:id="@+id/ll_root_dir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/floatinf_bar"
+        android:orientation="horizontal"
+        android:animateLayoutChanges="true"
+        android:paddingHorizontal="6dp"
+        android:paddingBottom="2dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground">
+
+        <!-- Иконка корневой папки -->
+
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:background="@drawable/ic_full_dir"
+                android:text="@string/root_dir"
+                android:textColor="@color/red_icon"
+                android:textSize="14sp"
+                android:layout_marginEnd="4dp"
+                android:textStyle="bold"/>
+
+
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="6dp"
+            android:layout_marginStart="1dp"
+            android:background="?attr/colorYellowIcon" />
+
+        <!-- Кол-во строк -->
+        <TextView
+            style="@style/SmallBarText"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="4dp"
+            android:paddingBottom="2dp"
+            android:textColor="?attr/colorYellowIcon"
+            android:text="@string/ic_strings" />
+
+        <TextView
+            android:id="@+id/tvSumLine"
+            style="@style/SmallBarText"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="2dp" />
+
+        <!-- Кол-во папок -->
+        <TextView
+            android:id="@+id/tvSumDir"
+            style="@style/SmallBarText"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="2dp"
+            android:drawablePadding="3dp"
+            android:gravity="center_vertical"
+            app:drawableStartCompat="@drawable/ic_count_dir" />
+
+        <!-- Кол-во всего -->
+        <TextView
+            style="@style/SmallBarText"
+            android:layout_gravity="center_vertical"
+            android:textColor="?attr/colorYellowIcon"
+            android:text="@string/symb_sum" />
+
+        <TextView
+            android:id="@+id/tvSumSum"
+            style="@style/SmallBarText"
+
+            android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
+</LinearLayout>

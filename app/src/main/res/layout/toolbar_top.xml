@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ВЕРХНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="?attr/colorBar">
+
+    <!-- Кнопка МЕНЮ -->
+    <ImageView
+        android:id="@+id/btnMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/menu_desc"
+        android:clickable="true"
+        android:focusable="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_burger"
+        android:paddingHorizontal="10dp" />
+
+    <TextView
+        android:id="@+id/pathDir"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_round"
+        android:longClickable="true"
+        android:focusable="true"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:paddingStart="8dp"
+        android:drawablePadding="4dp"
+        app:drawableStartCompat="@drawable/ic_full_dir"/>
+
+    <!-- Кнопка ГЛАЗ -->
+    <ImageView
+        android:id="@+id/imageEye"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="10dp"
+        android:src="@drawable/ic_eye_closed"
+        android:clickable="true"
+        android:focusable="true"
+        tools:ignore="contentDescription"/>
+
+</LinearLayout>

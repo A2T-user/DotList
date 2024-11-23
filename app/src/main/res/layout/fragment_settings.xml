@@ -6,53 +6,268 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".settings.ui.fragment.SettingsFragment">
+    tools:context=".settings.ui.SettingsFragment">
 
-    <!-- Panel Header -->
-    <TextView
-        android:text="@string/settings"
-        style="@style/TitleStyle"/>
-
-
-    <!-- Темная тема -->
+    <!-- Панель инструментов -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:paddingVertical="4dp"
+        android:paddingHorizontal="12dp"
+        android:background="?attr/colorBar">
 
         <TextView
-            android:text="@string/dark_theme"
-            style="@style/SettingsTextStyle" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/themeSwitcher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="6dp"
-            android:theme="@style/MySwitch"/>
+            android:text="@string/settings"
+            android:textSize="20sp"
+            app:drawableStartCompat="@drawable/ic_set"
+            android:drawablePadding="6dp"
+            android:textColor="@color/yellow_dir"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
-    <!-- Поделиться приложением -->
-    <TextView
-        android:id="@+id/tvSend"
-        app:drawableEndCompat="@drawable/ic_send"
-        android:text="@string/set_send"
-        style="@style/TextViewAndCompoundImage" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="?attr/colorYellowIcon"/>
 
-    <!-- Написать в поддержку -->
+    <!-- Установка темы -->
     <TextView
-        android:id="@+id/tvSupport"
-        app:drawableEndCompat="@drawable/ic_support"
-        android:text="@string/support"
-        style="@style/TextViewAndCompoundImage" />
+        android:text="@string/theme"
+        app:drawableStartCompat="@drawable/ic_palitra"
+        android:drawablePadding="6dp"
+        android:layout_marginTop="10dp"
+        style="@style/СhapterStyle" />
 
-    <!-- Пользовательское соглашение -->
+    <!-- Светлая тема -->
+    <LinearLayout
+        android:id="@+id/lightTeme"
+        tools:ignore="UseCompoundDrawables"
+        style="@style/LLSettingThemeStyle">
+
+        <ImageView
+            android:id="@+id/ivLightTeme"
+            android:contentDescription="@string/light_theme"
+            style="@style/IVSettingThemeStyle"/>
+
+        <TextView
+            android:text="@string/light_theme"
+            style="@style/TVSettingStyle"/>
+    </LinearLayout>
+    <!-- Темная тема -->
+    <LinearLayout
+        android:id="@+id/darkTeme"
+        tools:ignore="UseCompoundDrawables"
+        style="@style/LLSettingThemeStyle">
+
+        <ImageView
+            android:id="@+id/ivDarkTeme"
+            android:contentDescription="@string/dark_theme"
+            style="@style/IVSettingThemeStyle"/>
+
+        <TextView
+            android:text="@string/dark_theme"
+            style="@style/TVSettingStyle"/>
+    </LinearLayout>
+
+    <!-- Системная тема -->
+    <LinearLayout
+        android:id="@+id/systemTeme"
+        tools:ignore="UseCompoundDrawables"
+        android:contentDescription="@string/system_theme"
+        style="@style/LLSettingThemeStyle">
+
+        <ImageView
+            android:id="@+id/ivSystemTeme"
+            android:contentDescription="@string/system_theme"
+            style="@style/IVSettingThemeStyle" />
+
+        <TextView
+            android:text="@string/system_theme"
+            style="@style/TVSettingStyle" />
+    </LinearLayout>
+
+    <View style="@style/BlueDivider" />
+
+    <!-- Период восстановления -->
+    <LinearLayout
+        android:baselineAligned="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:text="@string/restore_period"
+                app:drawableStartCompat="@drawable/ic_restore_period"
+                style="@style/СhapterStyle"/>
+
+            <TextView
+                style="@style/SettTextStyle"
+                android:text="@string/restore_period_text"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_marginEnd="20dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_plus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                tools:ignore="contentDescription"
+                android:src="@drawable/ic_plus"/>
+
+            <TextView
+                android:id="@+id/tv_restore_period"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorMainText"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:paddingHorizontal="10dp"
+                android:background="@drawable/rect_blue"/>
+
+            <ImageView
+                android:id="@+id/iv_minus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                tools:ignore="contentDescription"
+                android:src="@drawable/ic_minus"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View style="@style/BlueDivider" />
+
+    <!--  Редактирование в пустой папке -->
     <TextView
-        android:id="@+id/tvUserAgreement"
-        app:drawableEndCompat="@drawable/ic_arrow_forward"
-        android:text="@string/user_agreement"
-        style="@style/TextViewAndCompoundImage" />
+        android:text="@string/edit"
+        app:drawableStartCompat="@drawable/ic_edit_blue"
+        style="@style/СhapterStyle"/>
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/SettTextStyle"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/edit_empty_dir"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_edit_empty_dir"
+            style="@style/SwitchStyle" />
+
+    </LinearLayout>
+
+    <View style="@style/BlueDivider" />
+
+    <!--  Отметка о выполнении -->
+    <TextView
+        android:text="@string/sort_title"
+        app:drawableStartCompat="@drawable/ic_check"
+        style="@style/СhapterStyle"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/SettTextStyle"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:padding="4dp"
+            android:text="@string/sort_text" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_sorting_checks"
+            style="@style/SwitchStyle" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/SettTextStyle"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:padding="4dp"
+            android:text="@string/strike_text"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_crossing_checks"
+            style="@style/SwitchStyle" />
+
+    </LinearLayout>
+
+    <View style="@style/BlueDivider" />
+
+    <!--  Напоминания -->
+    <TextView
+        android:text="@string/notifications"
+        app:drawableStartCompat="@drawable/ic_notifi_blue"
+        style="@style/СhapterStyle"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/SettTextStyle"
+            android:layout_width="0dp"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:text="@string/show_notification"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_notification_on"
+            style="@style/SwitchStyle" />
+
+    </LinearLayout>
+
+    <View style="@style/BlueDivider" />
+
+    <!--  Пояснительные сообщения -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/SettTextStyle"
+            android:layout_width="0dp"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:text="@string/show_hint_toast"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_show_hint_toast"
+            style="@style/SwitchStyle" />
+
+    </LinearLayout>
+
+    </LinearLayout>

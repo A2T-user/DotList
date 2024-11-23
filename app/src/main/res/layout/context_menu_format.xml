@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_context_menu_format"
+    android:layout_width="wrap_content"
+    android:layout_height="56dp"
+    android:orientation="horizontal"
+    android:background="@drawable/shadow"
+    android:paddingHorizontal="4dp"
+    android:paddingBottom="6dp"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/floatinf_bar"
+        android:paddingHorizontal="6dp"
+        android:focusableInTouchMode="true">
+
+        <!-- Кнопки цвета -->
+        <LinearLayout
+            android:id="@+id/btnTextColor_1"
+            style="@style/LLContextMenu">
+
+            <TextView
+                android:text="@string/btn_format_color_text"
+                style="@style/TVContextMenu"
+                android:contentDescription="@string/hint_btn_format_color"
+                android:textColor="@color/text_color_1"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnTextColor_2"
+            style="@style/LLContextMenu">
+
+            <TextView
+                android:text="@string/btn_format_color_text"
+                style="@style/TVContextMenu"
+                android:contentDescription="@string/hint_btn_format_color"
+                android:textColor="@color/text_color_2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnTextColor_3"
+            style="@style/LLContextMenu">
+
+            <TextView
+                android:text="@string/btn_format_color_text"
+                style="@style/TVContextMenu"
+                android:contentDescription="@string/hint_btn_format_color"
+                android:textColor="@color/text_color_3"/>
+
+        </LinearLayout>
+
+
+        <View style="@style/DeviderMenuFormatStyle" />
+
+        <!-- Кнопки стиля -->
+        <LinearLayout
+            android:id="@+id/btnTextStyle_B"
+            style="@style/LLContextMenu">
+
+            <TextView
+                android:text="@string/btn_format_style_text_b"
+                style="@style/TVContextMenu"
+                android:contentDescription="@string/hint_btn_format_style_b"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnTextStyle_I"
+            style="@style/LLContextMenu">
+
+            <TextView
+                android:text="@string/btn_format_style_text_i"
+                style="@style/TVContextMenu"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:contentDescription="@string/hint_btn_format_style_i"
+                android:textStyle="italic"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnTextStyle_BI"
+            style="@style/LLContextMenu">
+
+            <TextView
+                android:text="@string/btn_format_style_text_bi"
+                style="@style/TVContextMenu"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:contentDescription="@string/hint_btn_format_style_bi"
+                android:textStyle="bold|italic"/>
+
+        </LinearLayout>
+
+        <View style="@style/DeviderMenuFormatStyle" />
+
+        <!-- Кнопка подчеркивания -->
+        <LinearLayout
+            android:id="@+id/btnTextStyle_U"
+            style="@style/LLContextMenu">
+
+            <TextView
+                android:text="@string/btn_format_style_text_u"
+                style="@style/TVContextMenu"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:contentDescription="@string/hint_btn_format_style_u"/>
+
+        </LinearLayout>
+
+        <View style="@style/DeviderMenuFormatStyle" />
+
+        <!-- Кнопка отката -->
+        <LinearLayout
+            android:id="@+id/btnTextRegular"
+
+            android:background="@drawable/click_selector"
+            style="@style/LLContextMenu">
+
+            <TextView
+                android:text="@string/btn_format_color_text"
+                style="@style/TVContextMenu"
+                android:contentDescription="@string/btn_back_text"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

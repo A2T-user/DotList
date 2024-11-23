@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_context_menu_move"
+    android:layout_width="wrap_content"
+    android:layout_height="56dp"
+    android:orientation="horizontal"
+    android:background="@drawable/shadow"
+    android:paddingHorizontal="4dp"
+    android:paddingBottom="6dp"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/floatinf_bar"
+        android:padding="6dp"
+        android:focusableInTouchMode="true">
+
+        <TextView
+            android:id="@+id/btnCut"
+            android:text="@string/cut"
+            style="@style/TVMenuMoveStyle"
+            android:layout_marginEnd="6dp"
+            app:drawableStartCompat="@drawable/ic_cut" />
+
+        <TextView
+            android:id="@+id/btnCopy"
+            android:text="@string/copy"
+            style="@style/TVMenuMoveStyle"
+            android:layout_marginEnd="6dp"
+            app:drawableStartCompat="@drawable/ic_copy" />
+
+        <TextView
+            android:id="@+id/btnBack"
+            android:text="@string/back"
+            style="@style/TVMenuMoveStyle"
+            app:drawableStartCompat="@drawable/ic_back" />
+
+
+    </LinearLayout>
+</LinearLayout>
