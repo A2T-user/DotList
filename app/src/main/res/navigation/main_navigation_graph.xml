@@ -6,7 +6,7 @@
     app:startDestination="@id/mainFragment">
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.a2t.dotlist.main.ui.MainFragment"
+        android:name="com.a2t.myapplication.main.ui.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/settingsFragment2"
-        android:name="com.a2t.dotlist.settings.ui.SettingsFragment"
+        android:name="com.a2t.myapplication.settings.ui.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
 </navigation>

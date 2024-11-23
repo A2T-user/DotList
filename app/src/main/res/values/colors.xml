@@ -7,14 +7,14 @@
     <color name="red_icon">#c80000</color>
     <color name="shadowColor">#14000000</color>                 <!-- Цвет тени -->
     <color name="alphaBlue">#50039BE5</color>
-    <color name="yellow_dir">#deab03</color>
+    <color name="yellow_dir">#fdd76e</color>
     <color name="blue_icon">#00B1FF</color>
     <color name="color_hint">#7eb5c5</color>
     <color name="edit_text_accent">#80ffffff</color>
 
     <!-- Светлая тема -->
     <color name="light_background">#e4f2fd</color>   <!-- a4cded -->
-    <color name="light_color_bar">#9933ff</color>          <!-- 697989 -->
+    <color name="light_color_bar">#3a689a</color>          <!-- 697989, 3a689a -->
     <color name="light_color_bar_accent">#2c5575</color>       <!-- Цвет выделения объектов на панели инструментов -->
 
     <!-- Темная тема -->
@@ -24,6 +24,6 @@
 
     <!-- Форматирование строк -->
     <color name="text_color_1">@color/red_icon</color>
-    <color name="text_color_2">@color/yellow_dir</color>
+    <color name="text_color_2">#deab03</color>
     <color name="text_color_3">#00be00</color>
 </resources>

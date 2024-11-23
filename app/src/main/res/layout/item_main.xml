@@ -75,7 +75,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Основное поле -->
-        <com.a2t.dotlist.main.ui.ActionEditText
+        <com.a2t.myapplication.main.ui.ActionEditText
             android:id="@+id/aet_record"
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -86,7 +86,7 @@
             style="@style/ActionEditText"/>
 
         <!-- Поле примечание -->
-        <com.a2t.dotlist.main.ui.ActionEditText
+        <com.a2t.myapplication.main.ui.ActionEditText
             android:id="@+id/aet_note"
             android:layout_width="wrap_content"
             android:maxWidth="60sp"
