@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/icon_size_mode"
+    android:height="@dimen/icon_size_mode"
+    android:viewportWidth="57"
+    android:viewportHeight="161.64844">
+    <group android:scaleX="2.2"
+        android:scaleY="6"
+        android:translateX="-3.5"
+        android:translateY="39">
+        <path
+            android:fillColor="?attr/colorYellowIcon"
+            android:strokeWidth="1"
+            android:strokeColor="?attr/colorBar"
+            android:pathData="M10,4H4c-1.1,0 -1.99,0.9 -1.99,2L2,18c0,1.1 0.9,2 2,2h16c1.1,0 2,-0.9 2,-2V8c0,-1.1 -0.9,-2 -2,-2h-8l-2,-2z"/>
+    </group>
+    <group android:scaleX="0.4"
+        android:scaleY="0.5"
+        android:translateX="11.5"
+        android:translateY="145">
+        <path android:pathData="M53.15625,-0L43.453125,-0L39.59375,-24.46875L17.71875,-24.46875L13.859375,-0L4.4375,-0L4.4375,-0.28125L24.046875,-110.328125L33.6875,-110.328125L53.15625,-0ZM38.328125,-33.125L28.6875,-92.75L18.984375,-33.125L38.328125,-33.125Z"
+            android:strokeWidth="5"
+            android:strokeColor="@color/red_icon"
+            android:fillColor="@color/red_icon"/>
+    </group>
+</vector>

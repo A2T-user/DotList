@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="@dimen/icon_size_mode"
+    android:width="@dimen/icon_size_mode"
+    android:viewportHeight="522"
+    android:viewportWidth="522">
+    <group android:scaleX="17"
+        android:scaleY="17"
+        android:rotation="-90"
+        android:translateX="56"
+        android:translateY="355">
+        <path android:fillColor="@color/blue_icon"
+            android:strokeWidth="1"
+            android:strokeColor="@color/white"
+            android:pathData="M12,8V4l8,8 -8,8v-4H4V8z"/>
+    </group>
+</vector>

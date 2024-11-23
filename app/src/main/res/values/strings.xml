@@ -1,65 +1,72 @@
 <resources>
-    <string name="app_name">Playlist maker</string>
-    <string name="btn_search">Поиск</string>
-    <string name="btn_media">Медиатека</string>
-    <string name="settings">Настройки</string>
-    <string name="dark_theme">Темная тема</string>
-    <string name="set_send">Поделиться приложением</string>
-    <string name="support">Написать в поддержку</string>
-    <string name="user_agreement">Пользовательское соглашение</string>
-    <string name="mail">Выберите почтовый сервис:</string>
-    <string name="practicum_android">https://practicum.yandex.ru/profile/android-developer/</string>
-    <string name="e_mail">luidor-arb@yandex.ru</string>
-    <string name="message_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
-    <string name="message_thank_you">Спасибо разработчикам и разработчицам за крутое приложение!</string>
-    <string name="practicum_offer">https://yandex.ru/legal/practicum_offer/</string>
-    <string name="dot">\u2022</string>
-    <string name="nothing_found">Ничего не найдено</string>
-    <string name="communication_problems">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
-    <string name="update">Обновить</string>
-    <string name="search_history_title">Вы искали</string>
-    <string name="search_history_clear_button">Очистить историю</string>
-    <string name="country">Страна</string>
-    <string name="genre">Жанр</string>
-    <string name="year">Год</string>
-    <string name="album">Альбом</string>
-    <string name="duration">Длительность</string>
-    <string name="start_time">00:00</string>
-    <string name="empty_favorites">Ваша медиатека пуста</string>
-    <string name="empty_playlist">Вы не создали\nни одного плейлиста</string>
-    <string name="new_playlist">Новый плейлист</string>
-    <string name="tab_favorites">Избранные треки</string>
-    <string name="tab_playlist">Плейлисты</string>
-    <string name="connection_error">Проверьте подключение к интернету</string>
-    <string name="server_error">Ошибка сервера</string>
-    <string name="something_went_wrong">Что-то пошло не так</string>
-    <string name="hint_name">Название*</string>
-    <string name="hint_description">Описание</string>
-    <string name="create_button">Создать</string>
-    <string name="playlist_added_success0">Плейлист </string>
-    <string name="playlist_added_success1"> создан</string>
-    <string name="add_to_laylist">Добавить в плейлист</string>
-    <string name="added_to_playlist">Добавлено в плейлист </string>
-    <string name="already_added">Трек уже добавлен в плейлист  </string>
-    <string name="finish_creating_playlist">Завершить создание плейлиста?</string>
-    <string name="data_will_be_lost">Все несохраненные данные будут потеряны</string>
-    <string name="сancel">Отмена</string>
-    <string name="finish">Завершить</string>
-    <string name="delete_track">Удалить трек</string>
-    <string name="are_you_sure">Вы уверены, что хотите удалить трек из плейлиста?</string>
+    <string name="app_name">\u2022list</string>
+    <!-- ГЛАВНАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
+    <string name="menu_desc">Главное меню приложения</string>
+    <string name="no_seep_mode_on">Включен режим БЕЗ СНА</string>
+    <string name="no_seep_mode_off">Режим БЕЗ СНА выключен</string>
+
+    <!-- МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
+    <string name="root_dir">R:</string>
+    <string name="ic_strings">\u2CB7</string>
+    <string name="symb_sum">\u01A9</string>
+
+    <!-- КОНТЕКСТНОЕ МЕНЮ ФОРМАТ -->
+    <!-- Кнопки форматирования текста -->
+    <string name="btn_format_color_text">T</string>
+    <string name="btn_format_style_text_b">B</string>
+    <string name="btn_format_style_text_i">I</string>
+    <string name="btn_format_style_text_bi">BI</string>
+    <string name="btn_format_style_text_u"><u>U</u></string>
+
+    <string name="hint_btn_format_color">Цвет шрифта</string>
+    <string name="hint_btn_format_style_b">Жирный</string>
+    <string name="hint_btn_format_style_i">Наклон</string>
+    <string name="hint_btn_format_style_bi">Жирный+Наклон</string>
+    <string name="hint_btn_format_style_u">Подчеркнутый</string>
+    <string name="btn_back_text">Возвращает стандартные параметры шрифта</string>
+
+    <!-- КОНТЕКСТНОЕ МЕНЮ ПЕРЕМЕЩЕНИЕ -->
+    <string name="cut">Вырезать</string>
+    <string name="copy">Копировать</string>
+    <string name="back">Отмена</string>
+
+    <!-- БОКОВАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
+    <string name="side_bar_open">Свернуть</string>
+    <string name="side_bar_send">Переслать список</string>
+    <string name="side_bar_convert_text">Конвертировать текст\n в список</string>
+    <string name="side_bar_del_mark">Удалить \u0020\u0020\u2713</string>
+    <string name="side_bar_notifications">Управление напоми-\nнаниями</string>
+    <string name="side_bar_del_mode">Удалить несколько\nзаписей</string>
+    <string name="side_bar_rest_mode">Восстановить\nудаленные записи</string>
+    <string name="side_bar_move_mode">Перенос/копирование\nзаписей</string>
+    <string name="side_bar_archive_mode">Управление Архивом</string>
+
+    <!-- ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ -->
+    <string name="select_all">Выбрать все</string>
+    <string name="insert">Вставить</string>
     <string name="delete">Удалить</string>
-    <string name="nothing_to_share">В этом плейлисте нет списка треков, которым можно поделиться</string>
-    <string name="attention">Внимание</string>
-    <string name="ok">OK</string>
-    <string name="send">Поделиться</string>
-    <string name="edit">Редактировать информацию</string>
-    <string name="del">Удалить плейлист</string>
-    <string name="delete_playlist">Удалить плейлист</string>
-    <string name="want_delete_playlist">Хотите удалить плейлист</string>
-    <string name="no">Нет</string>
-    <string name="yes">Да</string>
-    <string name="edit_playlist">Редактировать</string>
-    <string name="save">Сохранить</string>
-    <string name="no_tracks">В этом плейлисте\nнет треков</string>
+    <string name="restore">Восстановить</string>
+
+    <!-- НАСТРОЙКИ -->
+    <string name="settings">НАСТРОЙКИ</string>
+    <string name="theme"><u>Тема</u></string>
+    <string name="light_theme"><b>Всегда светлая тема</b></string>
+    <string name="dark_theme"><b>Всегда темная тема</b></string>
+    <string name="system_theme"><b>Системная тема</b>\n<font size="14">меняется согласно настройкам телефона</font></string>
+    <string name="edit"><u>Редактирование</u></string>
+    <string name="edit_empty_dir">при открытии пустой папки, запускается редактирование новой строки</string>
+    <string name="sort_title"><u>Отметка о выполнении</u></string>
+    <string name="sort_text">после установки \u2713, запись перемещается в нижнюю часть списка</string>
+    <string name="strike_text">после установки \u2713, текст основного поля зачеркивается</string>
+    <string name="restore_period"><u>Период восстановления</u></string>
+    <string name="restore_period_text">срок хранения удаленной записи (1–7 дней). По истечении этого срока ее восстановление становится не возможным.</string>
+    <string name="notifications"><u>Напоминания</u></string>
+    <string name="show_notification">выдавть уведомление при наступлении времени напоминания</string>
+    <string name="show_hint_toast">Показывать пояснительные сообщения</string>
+
+    <string name="record_hint">Новая строка</string>
+    <string name="note_hint">1</string>
+
+    <string name="text_exit">Нажмите еще раз, чтобы выйти</string>
 
 </resources>

@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="yp_white">#FFFFFFFF</color>
-    <color name="yp_blue">#3772E7</color>
-    <color name="yp_light_blue">#1d8aff</color>
-    <color name="yp_black">#1A1B22</color>
-    <color name="yp_light_gray">#E6E8EB</color>
-    <color name="yp_text_gray">#AEAFB4</color>
-    <color name="grey_day">#521A1B22</color>
-    <color name="grey_night">#52ffffff</color>
-    <color name="transparent_black">#99000000</color>
+    <color name="transparent">#00000000</color>         <!-- Прозрачный -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="white_alpha">#80ffffff</color>
+    <color name="red_icon">#c80000</color>
+    <color name="shadowColor">#14000000</color>                 <!-- Цвет тени -->
+    <color name="alphaBlue">#50039BE5</color>
+    <color name="yellow_dir">#fdd76e</color>
+    <color name="blue_icon">#00B1FF</color>
+    <color name="color_hint">#7eb5c5</color>
+    <color name="edit_text_accent">#80ffffff</color>
+
+    <!-- Светлая тема -->
+    <color name="light_background">#e4f2fd</color>   <!-- a4cded -->
+    <color name="light_color_bar">#3a689a</color>          <!-- 697989, 3a689a -->
+    <color name="light_color_bar_accent">#2c5575</color>       <!-- Цвет выделения объектов на панели инструментов -->
+
+    <!-- Темная тема -->
+    <color name="dark_background">#3f4953</color>       <!--  052e4d, 0f3857, 194261, 224b6b, 2c5575   -->
+    <color name="dark_color_bar">#1a2835</color>          <!-- 697989 -->
+    <color name="dark_color_bar_accent">#4c5a67</color>       <!-- Цвет выделения объектов на панели инструментов -->
+
+    <!-- Форматирование строк -->
+    <color name="text_color_1">@color/red_icon</color>
+    <color name="text_color_2">#deab03</color>
+    <color name="text_color_3">#00be00</color>
 </resources>

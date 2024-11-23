@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="colorSmallText"/>
     <attr name="colorBackground"/>
-    <attr name="colorBackgroundGrey"/>
-    <attr name="colorSwitchTint"/>
-    <attr name="colorFlag"/>
+    <attr name="colorYellowIcon"/>
+    <attr name="colorShadow"/>
+    <attr name="colorMainText"/>
+    <attr name="colorBarText"/>
+    <attr name="colorBar"/>
+    <attr name="colorEye"/>
+    <attr name="colorBarAccent"/>
 </resources>

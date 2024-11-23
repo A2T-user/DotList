@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/llSideBar"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/shadow"
+    android:paddingStart="2dp"
+    android:paddingEnd="6dp"
+    android:paddingBottom="6dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/floatinf_bar"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
+        android:paddingBottom="3dp">
+
+        <LinearLayout
+            android:id="@+id/llSideBarOpen"
+            tools:ignore="UseCompoundDrawables"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:background="@drawable/click_selector"
+            android:layout_marginVertical="0dp"
+            style="@style/LLSideBarStyle">
+
+            <ImageView
+                android:id="@+id/ivSideBarOpen"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_left"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tvSideBarOpen"
+                android:text="@string/side_bar_open"
+                style="@style/TVSideBarStyle" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="3dp"
+            android:background="@color/yellow_dir"/>
+
+        <LinearLayout
+            android:id="@+id/llSideBarSend"
+            tools:ignore="UseCompoundDrawables"
+            style="@style/LLSideBarStyle">
+
+            <ImageView
+                android:src="@drawable/ic_send"
+                tools:ignore= "ContentDescription"
+                style="@style/IVSideBarStyle" />
+
+            <TextView
+                android:id="@+id/tvSideBarSend"
+                android:text="@string/side_bar_send"
+                style="@style/TVSideBarStyle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llSideBarConvertText"
+            tools:ignore="UseCompoundDrawables"
+            style="@style/LLSideBarStyle">
+
+            <ImageView
+                android:src="@drawable/ic_convert_text"
+                tools:ignore= "ContentDescription"
+                style="@style/IVSideBarStyle" />
+
+            <TextView
+                android:id="@+id/tvSideBarConvertText"
+                android:text="@string/side_bar_convert_text"
+                style="@style/TVSideBarStyle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llSideBarDelMark"
+            tools:ignore="UseCompoundDrawables"
+            style="@style/LLSideBarStyle">
+
+            <ImageView
+                android:src="@drawable/ic_del_mark"
+                tools:ignore= "ContentDescription"
+                style="@style/IVSideBarStyle" />
+
+            <TextView
+                android:id="@+id/tvSideBarDelMark"
+                android:text="@string/side_bar_del_mark"
+                style="@style/TVSideBarStyle" />
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:id="@+id/llSideBarNotifications"
+            tools:ignore="UseCompoundDrawables"
+            style="@style/LLSideBarStyle">
+
+            <ImageView
+                android:src="@drawable/ic_notifications"
+                tools:ignore= "ContentDescription"
+                style="@style/IVSideBarStyle" />
+
+            <TextView
+                android:id="@+id/tvSideBarNotifications"
+                android:text="@string/side_bar_notifications"
+                style="@style/TVSideBarStyle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llSideBarDelMode"
+            tools:ignore="UseCompoundDrawables"
+            style="@style/LLSideBarStyle">
+
+            <ImageView
+                android:src="@drawable/ic_del_mode"
+                tools:ignore= "ContentDescription"
+                style="@style/IVSideBarStyle" />
+
+            <TextView
+                android:id="@+id/tvSideBarDelMode"
+                android:text="@string/side_bar_del_mode"
+                style="@style/TVSideBarStyle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llSideBarRestMode"
+            tools:ignore="UseCompoundDrawables"
+            style="@style/LLSideBarStyle">
+
+            <ImageView
+                android:src="@drawable/ic_rest_mode"
+                tools:ignore= "ContentDescription"
+                style="@style/IVSideBarStyle" />
+
+            <TextView
+                android:id="@+id/tvSideBarRestMode"
+                android:text="@string/side_bar_rest_mode"
+                style="@style/TVSideBarStyle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llSideBarMoveMode"
+            tools:ignore="UseCompoundDrawables"
+            style="@style/LLSideBarStyle">
+
+            <ImageView
+                android:src="@drawable/ic_move_mode"
+                tools:ignore= "ContentDescription"
+                style="@style/IVSideBarStyle" />
+
+            <TextView
+                android:id="@+id/tvSideBarMoveMode"
+                android:text="@string/side_bar_move_mode"
+                style="@style/TVSideBarStyle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llSideBarArchiveMode"
+            tools:ignore="UseCompoundDrawables"
+            style="@style/LLSideBarStyle">
+
+            <ImageView
+                android:src="@drawable/ic_archive_mode"
+                tools:ignore= "ContentDescription"
+                style="@style/IVSideBarStyle" />
+
+            <TextView
+                android:id="@+id/tvSideBarArchiveMode"
+                android:text="@string/side_bar_archive_mode"
+                style="@style/TVSideBarStyle" />
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>
