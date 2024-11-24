@@ -2,7 +2,7 @@
 <resources>
     <color name="transparent">#00000000</color>         <!-- Прозрачный -->
     <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="white">#fafafa</color>
     <color name="white_alpha">#80ffffff</color>
     <color name="red_icon">#c80000</color>
     <color name="shadowColor">#14000000</color>                 <!-- Цвет тени -->
@@ -13,7 +13,7 @@
     <color name="edit_text_accent">#80ffffff</color>
 
     <!-- Светлая тема -->
-    <color name="light_background">#e4f2fd</color>   <!-- a4cded -->
+    <color name="light_background">#f0f0f0</color>   <!-- a4cded -->
     <color name="light_color_bar">#3a689a</color>          <!-- 697989, 3a689a -->
     <color name="light_color_bar_accent">#2c5575</color>       <!-- Цвет выделения объектов на панели инструментов -->
 
