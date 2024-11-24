@@ -48,36 +48,7 @@ const val K_MAX_SHIFT_LEFT = -0.3f
 const val ANIMATION_DELEY = 300L
 const val EYE_ANIMATION_DELEY = 5000L
 
-class MainFragment : Fragment(), MainAdapterHelper {
-    //***************************************** Тестовый массив *****************************************************************************************************
-    val testArrayList = arrayListOf(
-        ListRecord(
-            1, 0, false, 1, false, "Запись 1", "11",0,
-            0,0, System.currentTimeMillis(), null, null, false,
-            false, false, false, false, false, false
-        ),
-        ListRecord(
-            2, 0, true, 2, false, "Запись 2", "12",1,
-            1,1, System.currentTimeMillis(), null, null, false,
-            false, false, false,  false, false, false
-        ),
-        ListRecord(
-            3, 0, false, 3, false, "Запись 3", "13",2,
-            2,0, System.currentTimeMillis(), null, null, false,
-            false, false, false,  false, false, false
-        ),
-        ListRecord(
-            4, 0, false, 4, false, "Запись 4", "13",3,
-            3,1, System.currentTimeMillis(), null, null, false,
-            false, false, false,  false, false, false
-        ),
-        ListRecord(
-            5, 0, false, 5, false, "Новая запись", "",0,
-            0,0, System.currentTimeMillis(), null, null, false,
-            false, false, false,  true, false, false
-        )
-    )
-    //***************************************************************************************************************************************************************
+class MainFragment : Fragment(), MainAdapterCallback {
     private val mainViewModel by viewModel<MainViewModel>()
     private val adapter = MainAdapter(this)
     private var mIth: ItemTouchHelper? = null
@@ -154,7 +125,7 @@ class MainFragment : Fragment(), MainAdapterHelper {
             fillingRecycler(records)
         }
 
-
+        mainViewModel.getRecords(specialMode, idDir)
 
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ГЛАВНАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -179,7 +150,7 @@ class MainFragment : Fragment(), MainAdapterHelper {
         val downX = AtomicReference( 0f)
         val downY = AtomicReference( 0f)
         val isTouch = AtomicBoolean(false)
-        binding.sideBarContainer.setOnTouchListener { v, event ->
+        binding.sideBarContainer.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     downX.set(event.x)
@@ -202,7 +173,7 @@ class MainFragment : Fragment(), MainAdapterHelper {
             return@setOnTouchListener isTouch.get()
         }
         // Потеря фокуса кнопкой развернуть/свернуть убирает бок.панель
-        sideToolbarBinding.llSideBarOpen.setOnFocusChangeListener { v, hasFocus ->
+        sideToolbarBinding.llSideBarOpen.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) sideBarShowOrHide(false)
         }
 
@@ -250,7 +221,7 @@ class MainFragment : Fragment(), MainAdapterHelper {
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ НИЖНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // Свайп вниз закрывает нижнюю панель и переводит рециклер в обычный режим
-        modesToolbarBinding.clModesToolbar.setOnTouchListener { v, event ->
+        modesToolbarBinding.clModesToolbar.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     downX.set(event.x)
@@ -547,8 +518,8 @@ class MainFragment : Fragment(), MainAdapterHelper {
                 if (item != null) {
                     if (!item.isNew  && specialMode == SpecialMode.NORMAL) {
                         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-                            if (isCurrentlyActive) {
-                                distX = if (abs(moveX.toDouble()) < 0.5 * widthScreen) {
+                            distX = if (isCurrentlyActive) {
+                                if (abs(moveX.toDouble()) < 0.5 * widthScreen) {
                                     dX
                                 } else if (moveX >= 0) {
                                     0.5f * widthScreen
@@ -557,9 +528,9 @@ class MainFragment : Fragment(), MainAdapterHelper {
                                 }
                             } else {
                                 if (moveX > 0.0f) {
-                                    distX = if (moveX < 0.5f * maxShiftToRight) 0.0f else maxShiftToRight
+                                    if (moveX < 0.5f * maxShiftToRight) 0.0f else maxShiftToRight
                                 } else {
-                                    distX = if (moveX > 0.5f * maxShiftToLeft) 0.0f else maxShiftToLeft
+                                    if (moveX > 0.5f * maxShiftToLeft) 0.0f else maxShiftToLeft
                                 }
                             }
                             getDefaultUIUtil().onDraw(c, recyclerView, foregroundView, distX, 0.0f, actionState, isCurrentlyActive)
@@ -634,43 +605,42 @@ class MainFragment : Fragment(), MainAdapterHelper {
     }
 
     fun mainBackPressed () {
-        adapter.isKeyboardON = false           // Если нажат Back, клавиатура точно скрыта
+        adapter.isKeyboardON = false            // Если нажат Back, клавиатура точно скрыта
         requestFocusInTouch()
         noSleepModeOff()                        // Выключение режима БЕЗ СНА
-        //goToParentDir ()                        // Переход к родительской папке
+        goToParentDir ()                        // Переход к родительской папке
     }
 
-    /*private fun goToParentDir () {
-        mainViewModel.getParentDir(idDir).observe(viewLifecycleOwner) { parentDir ->
-            idDir = parentDir[0].first
-            nameDir = parentDir[0].second
-            topToolbarBinding.pathDir.text = nameDir
-            openDirMode = OpenDirMode.PARENT_DIR
-            mainViewModel.getRecords(specialMode, idDir)
+    private fun goToParentDir () {
+        mainViewModel.getParentDir(idDir).observe(viewLifecycleOwner) { id ->
+            goToDir(id[0], OpenDirMode.PARENT_DIR)
         }
     }
 
     override fun goToChildDir (id: Long) {
+        goToDir(id, OpenDirMode.CHILD_DIR)
+    }
+
+    private fun goToDir (id: Long, openDirMode: OpenDirMode) {
         idDir = id
         mainViewModel.getNameDir(idDir).observe(viewLifecycleOwner) { names ->
             nameDir = names[0]
             topToolbarBinding.pathDir.text = nameDir
-            openDirMode = OpenDirMode.CHILD_DIR
+            this.openDirMode = openDirMode
             mainViewModel.getRecords(specialMode, idDir)
         }
     }
 
     override fun getIdCurrentDir(): Long = idDir
 
-    override fun insertNewRecord(record: ListRecord) {
+    override fun insertNewRecord(record: ListRecord) = lifecycleScope.launch {
         val position = adapter.records.size -1
-        mainViewModel.insertRecord(record).observe(viewLifecycleOwner) { id ->
-            adapter.records[position].id = id
-            adapter.notifyItemChanged(position)
-        }
+        val id = mainViewModel.insertRecord(record)
+        adapter.records[position].id = id
+        adapter.notifyItemChanged(position)
     }
 
     override fun updateRecord(record: ListRecord) {
         mainViewModel.updateRecord(record)
-    }*/
+    }
 }

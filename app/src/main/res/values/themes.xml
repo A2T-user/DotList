@@ -12,5 +12,6 @@
         <item name="colorMainText">@color/black</item>                              <!-- Цвет основного текста-->
         <item name="colorEye">@color/dark_color_bar</item>
         <item name="colorBarAccent">@color/light_color_bar_accent</item>
+        <item name="enableEditText">@color/white</item>
     </style>
 </resources>

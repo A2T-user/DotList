@@ -8,4 +8,5 @@
     <attr name="colorBar"/>
     <attr name="colorEye"/>
     <attr name="colorBarAccent"/>
+    <attr name="enableEditText"/>
 </resources>

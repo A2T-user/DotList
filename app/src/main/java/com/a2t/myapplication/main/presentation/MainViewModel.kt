@@ -10,6 +10,7 @@ import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.presentation.model.SpecialMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainViewModel (
     private val mainInteractor: MainInteractor
@@ -90,10 +91,10 @@ class MainViewModel (
             0,
             null,
             null,
-            false,
-            false,
-            false,
-            false,
+            isArchive = false,
+            isDelete = false,
+            isFull = false,
+            isAllCheck = false,
             true,
             startEdit,
             false
@@ -108,20 +109,21 @@ class MainViewModel (
         return maxNpp
     }
 
-    /*fun getNameDir (idDir: Long): LiveData<List<String>> {
+    fun getNameDir (idDir: Long): LiveData<List<String>> {
         return mainInteractor.getNameDir(idDir)
     }
 
-    fun getParentDir(idDir: Long): LiveData<List<Pair<Long, String>>> {
+    fun getParentDir(idDir: Long): LiveData<List<Long>> {
         return mainInteractor.getParentDir(idDir)
     }
 
-    fun insertRecord(record: ListRecord): LiveData<Long> {
-        return mainInteractor.insertRecord(record)
+    suspend fun insertRecord(record: ListRecord)= withContext(Dispatchers.IO) {
+        mainInteractor.insertRecord(record)
     }
+
 
     fun updateRecord(record: ListRecord) {
         mainInteractor.updateRecord(record)
-    }*/
+    }
 
 }

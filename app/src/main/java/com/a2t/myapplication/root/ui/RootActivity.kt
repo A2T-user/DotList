@@ -12,7 +12,6 @@ import com.a2t.myapplication.App
 import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.ActivityRootBinding
 import com.a2t.myapplication.main.ui.MainFragment
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -20,7 +19,6 @@ class RootActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRootBinding
     private lateinit var navController: NavController
     private lateinit var mainBackPressedCallback: OnBackPressedCallback
-    private var backJob: Job? = null
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {

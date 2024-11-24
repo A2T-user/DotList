@@ -2,7 +2,7 @@
 <resources>
     <color name="transparent">#00000000</color>         <!-- Прозрачный -->
     <color name="black">#FF000000</color>
-    <color name="white">#fafafa</color>
+    <color name="white">#FFFFFFFF</color>
     <color name="white_alpha">#80ffffff</color>
     <color name="red_icon">#c80000</color>
     <color name="shadowColor">#14000000</color>                 <!-- Цвет тени -->
@@ -10,7 +10,7 @@
     <color name="yellow_dir">#fdd76e</color>
     <color name="blue_icon">#00B1FF</color>
     <color name="color_hint">#7eb5c5</color>
-    <color name="edit_text_accent">#80ffffff</color>
+    <color name="edit_text_accent">#50ffffff</color>
 
     <!-- Светлая тема -->
     <color name="light_background">#f0f0f0</color>   <!-- a4cded -->
