@@ -20,7 +20,7 @@ class ActionEditText : AppCompatEditText {
     override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection? {
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             imeOptions =
-                EditorInfo.IME_ACTION_DONE or EditorInfo.IME_FLAG_NO_EXTRACT_UI // В положении ландшафт, отменить полноэкранный режим клавиатуры
+                    EditorInfo.IME_ACTION_DONE or EditorInfo.IME_FLAG_NO_EXTRACT_UI     // В положении ландшафт, отменить полноэкранный режим клавиатуры
         }
         val conn = super.onCreateInputConnection(outAttrs)
         outAttrs.imeOptions = outAttrs.imeOptions and EditorInfo.IME_FLAG_NO_ENTER_ACTION.inv()

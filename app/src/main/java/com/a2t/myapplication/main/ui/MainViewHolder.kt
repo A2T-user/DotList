@@ -98,12 +98,8 @@ class MainViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
         aetRecord.textSize = textSizeRecord
         aetNote.textSize = 0.75f * textSizeRecord
         aetRecord.setText(item.record)
-        if (item.note.isEmpty()) {
-            aetNote.isVisible = false
-        } else {
-            aetNote.isVisible = true
-            aetNote.setText(item.note)
-        }
+        aetNote.setText(item.note)
+        aetNote.isVisible = item.note.isNotEmpty()
         changeTextColor(item.textColor)
         changeTextStyle(item.textStyle)
         changeTextUnder(item.textUnder)
@@ -116,7 +112,7 @@ class MainViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
 
     fun changeTextColor (textColor: Int) {
         val context = App.appContext
-        val color = when (textColor) {
+        when (textColor) {
             1 -> {
                 aetRecord.setTextColor(ContextCompat.getColor(context, R.color.text_color_1))
                 aetNote.setTextColor(ContextCompat.getColor(context, R.color.text_color_1))

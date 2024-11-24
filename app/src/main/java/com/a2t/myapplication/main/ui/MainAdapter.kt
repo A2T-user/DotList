@@ -24,10 +24,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Objects
 
 class MainAdapter (
-    private val mah: MainAdapterHelper
+    private val mah: MainAdapterCallback
 ) : RecyclerView.Adapter<MainViewHolder> () {
 
     val records = ArrayList<ListRecord>()
@@ -48,6 +47,7 @@ class MainAdapter (
         val item = records[position]
         val bufferItem = getBufferItemById(item.id)
         holder.bind(item)
+        holder.llAction.isVisible = true
         if (specialMode == SpecialMode.NORMAL) {
             holder.checkbox.isClickable = true
             holder.checkbox.isEnabled = true
@@ -57,6 +57,7 @@ class MainAdapter (
         }
         when (specialMode) {
             SpecialMode.NORMAL -> {
+                holder.ivAction.setImageResource(R.drawable.ic_finger)
                 if (item.isNew) {
                     holder.checkbox.isClickable = false
                     holder.checkbox.isEnabled = false
@@ -67,7 +68,7 @@ class MainAdapter (
                     }
                 }
                 // ############################################## РЕАКЦИЯ ОБЪЕКТОВ FOREGROUND ###################################################
-                holder.llAction.setOnTouchListener { v: View?, event: MotionEvent ->
+                holder.llAction.setOnTouchListener { _: View?, event: MotionEvent ->
                     if (specialMode == SpecialMode.NORMAL && event.action == MotionEvent.ACTION_DOWN) {
                         mah.onStartDrag(holder)
                     }
@@ -86,12 +87,12 @@ class MainAdapter (
                 // ######################################## РЕАКЦИЯ ТЕКСТОВЫХ ПОЛЕЙ ############################################################
 
                 // Отклик поля RECORD на нажатие клавиши ОК клавиатуры - переход в поле PRIM или завершения редактирования
-                holder.aetRecord.setOnEditorActionListener { v, actionId, event ->
-                    if (actionId == EditorInfo.IME_ACTION_DONE || (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                        if (Objects.requireNonNull(holder.aetRecord.getText()).toString().isEmpty()) {         // Если поле RECORD пустое
-                            endEditMode(item, holder, false) // Завершения редактирования
-                        } else {                                                                                // Если поле RECORD не пустое
-                            holder.aetNote.requestFocus() // переход в поле PRIM
+                holder.aetRecord.setOnEditorActionListener { _, actionId, event ->
+                    if (actionId == EditorInfo.IME_ACTION_DONE || (event.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
+                        if (holder.aetRecord.getText().toString().isEmpty()) {          // Если поле RECORD пустое
+                            endEditMode(item, holder, false)                        // Завершения редактирования
+                        } else {                                                        // Если поле RECORD не пустое
+                            holder.aetNote.requestFocus()                               // переход в поле PRIM
                         }
                     }
                     true
@@ -99,9 +100,8 @@ class MainAdapter (
 
 
                 // Отклик поля PRIM на нажатие клавиши ОК клавиатуры - завершения редактирования
-                holder.aetNote.setOnEditorActionListener { v, actionId, event ->
-                    if (actionId == EditorInfo.IME_ACTION_DONE || (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                        holder.aetRecord.requestFocus() // Передача фокуса полю RECORD
+                holder.aetNote.setOnEditorActionListener { _, actionId, event ->
+                    if (actionId == EditorInfo.IME_ACTION_DONE || (event.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
                         endEditMode(item, holder, true)
                     }
                     true
@@ -109,15 +109,16 @@ class MainAdapter (
 
 
                 // Отклик поля RECORD на потерю фокуса - завершения редактирования
-                holder.aetRecord.setOnFocusChangeListener { v, hasFocus ->
-                    if (!hasFocus && !holder.aetNote.hasFocus() && item.isEdit) endEditMode(item, holder, false) // Если фокус перешел не в поле NOTE, завершить редактирование
+                holder.aetRecord.setOnFocusChangeListener { _, hasFocus ->
+                    if (!hasFocus && !holder.aetNote.hasFocus() && item.isEdit)     // Если фокус перешел не в поле NOTE,
+                        endEditMode(item, holder, false) //                     // завершить редактирование
                 }
 
                 // Отклик поля PRIM на получение фокуса - проверка пуст.строка/потерю - завершения редактирования
-                holder.aetNote.setOnFocusChangeListener { v, hasFocus ->
+                holder.aetNote.setOnFocusChangeListener { _, hasFocus ->
                     if (hasFocus) {
-                        if (Objects.requireNonNull(holder.aetRecord.getText()).toString().isEmpty()) {  // Если строка пустая, перевести фокус в поле RECORD
-                            holder.aetRecord.requestFocus()
+                        if (holder.aetRecord.getText().toString().isEmpty()) {      // Если строка RECORD пустая,
+                            holder.aetRecord.requestFocus()                         // перевести фокус в поле RECORD
                         }
                     } else {
                         if (!holder.aetRecord.hasFocus() && item.isEdit) { // Если фокус перешел не в поле RECORD Завершить редактирование
@@ -129,24 +130,22 @@ class MainAdapter (
 
             }
             SpecialMode.MOVE -> {
+                holder.ivAction.setImageResource(R.drawable.ic_menu)
                 if (bufferItem != null) {
                     when(bufferItem.action){
                         1 -> flipPicture(holder.ivAction, R.drawable.ic_cut_red)
                         2 -> flipPicture(holder.ivAction, R.drawable.ic_copy_red)
                         else -> {}
                     }
-                } else {
-                    flipPicture(holder.ivAction, R.drawable.ic_menu)
                 }
 
 
 
             }
             SpecialMode.DELETE -> {
+                holder.ivAction.setImageResource(R.drawable.ic_basket_white)
                 if (bufferItem != null) {
                     flipPicture(holder.ivAction, R.drawable.ic_del_mode)
-                } else {
-                    flipPicture(holder.ivAction, R.drawable.ic_basket_white)
                 }
 
 
@@ -154,10 +153,9 @@ class MainAdapter (
 
             }
             SpecialMode.RESTORE -> {
+                holder.ivAction.setImageResource(R.drawable.ic_basket_white)
                 if (bufferItem != null) {
                     flipPicture(holder.ivAction, R.drawable.ic_rest_mode)
-                } else {
-                    flipPicture(holder.ivAction, R.drawable.ic_basket_white)
                 }
 
 
@@ -165,10 +163,9 @@ class MainAdapter (
 
             }
             SpecialMode.ARCHIVE -> {
+                holder.ivAction.setImageResource(R.drawable.ic_archive_trans)
                 if (item.isArchive) {
                     flipPicture(holder.ivAction, R.drawable.ic_archive_red)
-                } else {
-                    flipPicture(holder.ivAction, R.drawable.ic_archive_trans)
                 }
 
 
@@ -221,11 +218,7 @@ class MainAdapter (
         enableEditText(holder.aetRecord, true)
         enableEditText(holder.aetNote, true)
         holder.aetRecord.requestFocus()
-        Objects.requireNonNull(holder.aetRecord.getText())?.length.let {
-            if (it != null) {
-                holder.aetRecord.setSelection(it)
-            }
-        } // Курсор в конец строки
+        holder.aetRecord.setSelection(holder.aetRecord.getText()!!.length) // Курсор в конец строки
         if (!isKeyboardON) {                                                                              // Если клавиатуры нет на экране
             showKeyboard(holder.aetRecord, true) // вывести клавиатуру
             isKeyboardON = true
@@ -237,29 +230,28 @@ class MainAdapter (
         if (item.isEdit) {                // Если включен режим редактирования
             item.isEdit = false // Выключаем режим редактирования
             // Отбрасываем начальные и конечные пробелы в полях RECORD и PRIM
-            var s: String = Objects.requireNonNull(holder.aetRecord.text).toString().trim()
-            holder.aetRecord.setText(s)
-            s = Objects.requireNonNull(holder.aetNote.getText()).toString().trim()
-            holder.aetNote.setText(s)
+            var str: String = holder.aetRecord.text.toString().trim()
+            holder.aetRecord.setText(str)
+            str = holder.aetNote.getText().toString().trim()
+            holder.aetNote.setText(str)
             isKeyboardON = false
             val maxNpp = item.npp
             if (item.isNew) {      // Новая строка
-                if (!holder.aetRecord.getText().toString().isEmpty()) {     // строка не пустая
+                if (holder.aetRecord.getText().toString().isNotEmpty()) {     // строка не пустая
                     item.record = holder.aetRecord.getText().toString()
                     item.note = holder.aetNote.getText().toString()
                     item.isNew = false
                     item.lastEditTime = System.currentTimeMillis()
-                    /*mah.insertNewRecord(item)                               // Запись в БД
+                    mah.insertNewRecord(item)                               // Запись в БД
                     // Создание новой строки
                     val record = ListRecord(
                         0, mah.getIdCurrentDir(), false, maxNpp + 1, false,
                         "", "", 0, 0, 0, 0,
-                        null, null, false, false, false,
-                        false, true, em, false
+                        null, null, isArchive = false, isDelete = false, isFull = false,
+                        isAllCheck = false, true, em, false
                     )
-
                     if (em) isKeyboardON = true
-                    records.add(record)*/
+                    records.add(record)
                     val position: Int = records.size - 1
                     notifyItemInserted(position)
                     notifyItemRangeChanged(position, 1)
@@ -269,7 +261,7 @@ class MainAdapter (
                     holder.aetRecord.setText(item.record)          // вернуть старое значение строки из массива
                 }
 
-                if (!holder.aetRecord.getText().toString().equals(item.record) || !holder.aetNote.getText().toString().equals(item.record)) { // Новые значения не равны старым
+                if (holder.aetRecord.getText().toString() != item.record || holder.aetNote.getText().toString() != item.record) { // Новые значения не равны старым
                     // Обновляем параметры элемента массива и холдер
                     item.record = holder.aetRecord.getText().toString()
                     item.note = holder.aetNote.getText().toString()
@@ -281,9 +273,9 @@ class MainAdapter (
             }
             // Заполнение поля PRIM
             if (item.note.isEmpty()) {
-                holder.aetNote.setVisibility(View.GONE)
+                holder.aetNote.isVisible = false
             } else {
-                holder.aetNote.setVisibility(View.VISIBLE)
+                holder.aetNote.isVisible = true
                 holder.aetNote.setText(item.note)
             }
         }
@@ -299,7 +291,7 @@ class MainAdapter (
     }
 
     // Открытие/закрытие доступа к полю EditText
-    fun enableEditText(et: EditText, enable: Boolean) {
+    private fun enableEditText(et: EditText, enable: Boolean) {
         et.isEnabled = enable
         et.isClickable = enable
         et.isLongClickable = enable
@@ -308,13 +300,13 @@ class MainAdapter (
     // Вывести/убрать клавиатуру
     private fun showKeyboard(et: EditText, show: Boolean) {
         val imm = checkNotNull(App.appContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-        if (show) {      // Вывести клавиатуру
-            CoroutineScope(Dispatchers.Main).launch {
-                delay(10)
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(10)
+            if (show) {      // Вывести клавиатуру
                 imm.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT)
+            } else {            // Убрать клавиатуру
+                imm.hideSoftInputFromWindow(et.windowToken, 0)
             }
-        } else {            // Убрать клавиатуру
-            imm.hideSoftInputFromWindow(et.windowToken, 0)
         }
     }
 

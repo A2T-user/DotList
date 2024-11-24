@@ -1,20 +1,24 @@
 package com.a2t.myapplication.main.data.impl
 
+import androidx.lifecycle.LiveData
 import com.a2t.myapplication.common.data.db.AppDatabase
 import com.a2t.myapplication.main.data.RecordDBConverter
 import com.a2t.myapplication.main.data.entity.ListRecordEntity
 import com.a2t.myapplication.main.domain.api.MainRepository
 import com.a2t.myapplication.main.domain.model.ListRecord
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 
 class MainRepositoryImpl(
     private val appDatabase: AppDatabase,
     private val recordDBConverter: RecordDBConverter
 ): MainRepository {
 
-    /*// Добавление новой записи и получение ее id
-    override fun insertRecord(record: ListRecord): LiveData<Long> {
+    // Добавление новой записи и получение ее id
+    override fun insertRecord(record: ListRecord): Long {
         return appDatabase.mainRecordDao().insertRecord(recordDBConverter.map(record))
     }
 
@@ -23,7 +27,7 @@ class MainRepositoryImpl(
         CoroutineScope(Dispatchers.IO).launch {
             appDatabase.mainRecordDao().updateRecord(recordDBConverter.map(record))
         }
-    }*/
+    }
 
 
     // Получение массива списка. Режим NORMAL, MOVE, DELETE
@@ -46,7 +50,7 @@ class MainRepositoryImpl(
         val record =  recordDBConverter.map(recordEntity)
         val records = appDatabase.mainRecordDao().getRecordsNormalMode(record.id)
         if (records.isNotEmpty()) record.isFull = true
-        if (records.all { it.isChecked == true }) record.isAllCheck = true
+        if (records.all { it.isChecked }) record.isAllCheck = true
         return record
     }
     // Получение массива списка. Режим ARCHIVE
@@ -63,7 +67,7 @@ class MainRepositoryImpl(
         val record =  recordDBConverter.map(recordEntity)
         val records = appDatabase.mainRecordDao().getRecordsArchiveMode(record.id)
         if (records.isNotEmpty()) record.isFull = true
-        if (records.all { it.isChecked == true }) record.isAllCheck = true
+        if (records.all { it.isChecked }) record.isAllCheck = true
         return record
     }
 
@@ -81,17 +85,17 @@ class MainRepositoryImpl(
         val record =  recordDBConverter.map(recordEntity)
         val records = appDatabase.mainRecordDao().getRecordsRestoreMode(record.id)
         if (records.isNotEmpty()) record.isFull = true
-        if (records.all { it.isChecked == true }) record.isAllCheck = true
+        if (records.all { it.isChecked }) record.isAllCheck = true
         return record
     }
 
-    /*// Получение имени папки
+    // Получение имени папки
     override fun getNameDir(idDir: Long): LiveData<List<String>> {
         return appDatabase.mainRecordDao().getNameDir(idDir)
     }
 
     // Получение id и имени родительской папки
-    override fun getParentDir(idDir: Long): LiveData<List<Pair<Long, String>>> {
+    override fun getParentDir(idDir: Long): LiveData<List<Long>> {
         return appDatabase.mainRecordDao().getParentDir(idDir)
-    }*/
+    }
 }
