@@ -599,7 +599,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     // Вызывается из адаптера для возврата Foreground в исходное положение
-    fun returnHolderToOriginalState(viewHolder: RecyclerView.ViewHolder) {
+    override fun returnHolderToOriginalState(viewHolder: RecyclerView.ViewHolder) {
         val foregroundView = (viewHolder as MainViewHolder).llForeground
         ItemTouchHelper.Callback.getDefaultUIUtil().clearView(foregroundView)
     }
