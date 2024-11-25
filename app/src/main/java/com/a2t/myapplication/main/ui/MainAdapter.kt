@@ -259,16 +259,14 @@ class MainAdapter (
             } else {   // Старая строка
                 if (holder.aetRecord.getText().toString().isEmpty()) {  // Если aetRecord пустое,
                     holder.aetRecord.setText(item.record)          // вернуть старое значение строки из массива
-                }
-
-                if (holder.aetRecord.getText().toString() != item.record || holder.aetNote.getText().toString() != item.record) { // Новые значения не равны старым
+                } else if (holder.aetRecord.getText().toString() != item.record
+                    || holder.aetNote.getText().toString() != item.record) { // Новые значения не равны старым
                     // Обновляем параметры элемента массива и холдер
                     item.record = holder.aetRecord.getText().toString()
                     item.note = holder.aetNote.getText().toString()
                     item.lastEditTime = System.currentTimeMillis()
                     holder.bind(item)
-                    // Сохранение в БД
-                    //mah.updateRecord(item)
+                    mah.updateRecord(item)  // Сохранение в БД
                 }
             }
             // Заполнение поля PRIM
