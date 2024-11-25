@@ -26,7 +26,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainAdapter (
-    private val mah: MainAdapterCallback
+    private val mac: MainAdapterCallback
 ) : RecyclerView.Adapter<MainViewHolder> () {
 
     val records = ArrayList<ListRecord>()
@@ -67,13 +67,13 @@ class MainAdapter (
                         startEditMode(item, holder)
                     }
                 }
+                // ############################################## РЕАКЦИЯ ОБЪЕКТОВ BACKGROUND ###################################################
+
+
+
+
+
                 // ############################################## РЕАКЦИЯ ОБЪЕКТОВ FOREGROUND ###################################################
-                holder.llAction.setOnTouchListener { _: View?, event: MotionEvent ->
-                    if (specialMode == SpecialMode.NORMAL && event.action == MotionEvent.ACTION_DOWN) {
-                        mah.onStartDrag(holder)
-                    }
-                    false
-                }
                 holder.llForeground.setOnClickListener {
                     if (item.isDir) {
                         isKeyboardON = false
@@ -84,9 +84,18 @@ class MainAdapter (
                 }
 
 
-                // ######################################## РЕАКЦИЯ ТЕКСТОВЫХ ПОЛЕЙ ############################################################
+                // Изменения в CheckBox
+                holder.checkbox.setOnClickListener {
+                    clickCheckbox(holder, item)
+                }
+                holder.clCheckbox.setOnClickListener{
+                    holder.checkbox.isChecked = !holder.checkbox.isChecked
+                    clickCheckbox(holder, item)
+                }
 
-                // Отклик поля RECORD на нажатие клавиши ОК клавиатуры - переход в поле PRIM или завершения редактирования
+
+                // ######################################## РЕАКЦИЯ ТЕКСТОВЫХ ПОЛЕЙ ############################################################
+                // Отклик поля RECORD на нажатие клавиши ОК клавиатуры
                 holder.aetRecord.setOnEditorActionListener { _, actionId, event ->
                     if (actionId == EditorInfo.IME_ACTION_DONE || (event.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
                         if (holder.aetRecord.getText().toString().isEmpty()) {          // Если поле RECORD пустое
@@ -97,37 +106,38 @@ class MainAdapter (
                     }
                     true
                 }
-
-
-                // Отклик поля PRIM на нажатие клавиши ОК клавиатуры - завершения редактирования
+                // Отклик поля PRIM на нажатие клавиши ОК клавиатуры
                 holder.aetNote.setOnEditorActionListener { _, actionId, event ->
-                    if (actionId == EditorInfo.IME_ACTION_DONE || (event.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
-                        endEditMode(item, holder, true)
+                    if (actionId == EditorInfo.IME_ACTION_DONE
+                        || (event.action == KeyEvent.ACTION_DOWN
+                        && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
+                        endEditMode(item, holder, true)                         // Завершения редактирования
                     }
                     true
                 }
-
-
                 // Отклик поля RECORD на потерю фокуса - завершения редактирования
                 holder.aetRecord.setOnFocusChangeListener { _, hasFocus ->
                     if (!hasFocus && !holder.aetNote.hasFocus() && item.isEdit)     // Если фокус перешел не в поле NOTE,
                         endEditMode(item, holder, false) //                     // завершить редактирование
                 }
-
                 // Отклик поля PRIM на получение фокуса - проверка пуст.строка/потерю - завершения редактирования
                 holder.aetNote.setOnFocusChangeListener { _, hasFocus ->
                     if (hasFocus) {
-                        if (holder.aetRecord.getText().toString().isEmpty()) {      // Если строка RECORD пустая,
+                        if (holder.aetRecord.getText().toString().isEmpty()) {       // Если строка RECORD пустая,
                             holder.aetRecord.requestFocus()                         // перевести фокус в поле RECORD
                         }
-                    } else {
-                        if (!holder.aetRecord.hasFocus() && item.isEdit) { // Если фокус перешел не в поле RECORD Завершить редактирование
-                            endEditMode(item, holder, false)
-                        }
+                    } else if (!holder.aetRecord.hasFocus() && item.isEdit) {           // Если фокус перешел не в поле RECORD
+                            endEditMode(item, holder, false)                    // Завершить редактирование
                     }
                 }
 
-
+                // Перетаскивание
+                holder.llAction.setOnTouchListener { _: View?, event: MotionEvent ->
+                    if (specialMode == SpecialMode.NORMAL && event.action == MotionEvent.ACTION_DOWN) {
+                        mac.onStartDrag(holder)
+                    }
+                    false
+                }
             }
             SpecialMode.MOVE -> {
                 holder.ivAction.setImageResource(R.drawable.ic_menu)
@@ -173,13 +183,6 @@ class MainAdapter (
 
             }
         }
-
-
-
-
-
-
-        //holder.itemView.setOnClickListener { clickListener.onTrackClick(item) }
     }
 
     // Анимация переворота иконки вокруг Y
@@ -242,10 +245,10 @@ class MainAdapter (
                     item.note = holder.aetNote.getText().toString()
                     item.isNew = false
                     item.lastEditTime = System.currentTimeMillis()
-                    mah.insertNewRecord(item)                               // Запись в БД
+                    mac.insertNewRecord(item)                               // Запись в БД
                     // Создание новой строки
                     val record = ListRecord(
-                        0, mah.getIdCurrentDir(), false, maxNpp + 1, false,
+                        0, mac.getIdCurrentDir(), false, maxNpp + 1, false,
                         "", "", 0, 0, 0, 0,
                         null, null, isArchive = false, isDelete = false, isFull = false,
                         isAllCheck = false, true, em, false
@@ -266,7 +269,7 @@ class MainAdapter (
                     item.note = holder.aetNote.getText().toString()
                     item.lastEditTime = System.currentTimeMillis()
                     holder.bind(item)
-                    mah.updateRecord(item)  // Сохранение в БД
+                    mac.updateRecord(item)  // Сохранение в БД
                 }
             }
             // Заполнение поля PRIM
@@ -285,6 +288,7 @@ class MainAdapter (
             delay(50)
             enableEditText(holder.aetRecord, false)
             enableEditText(holder.aetNote, false)
+            mac.correctingPositionOfRecordByCheck(holder)
         }
     }
 
@@ -308,7 +312,15 @@ class MainAdapter (
         }
     }
 
+    fun clickCheckbox(holder: MainViewHolder, item: ListRecord) {
+        mac.requestFocusInTouch()
+        item.isChecked = holder.checkbox.isChecked
+        item.lastEditTime = System.currentTimeMillis()
+        holder.bind(item)
+        mac.updateRecord(item)  // Сохранение в БД
+        // Если включен режим сортировки по меткам, перемещаем строку в нужную группу
+        mac.correctingPositionOfRecordByCheck (holder)
+    }
+
     override fun getItemCount() = records.size
-
-
 }

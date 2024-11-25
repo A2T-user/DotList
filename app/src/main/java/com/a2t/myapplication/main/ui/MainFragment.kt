@@ -296,7 +296,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     // Присвоение фокуса
-    private fun requestFocusInTouch () {
+    override fun requestFocusInTouch () {
         topToolbarBinding.imageEye.isFocusableInTouchMode = true
         topToolbarBinding.imageEye.requestFocus()
         topToolbarBinding.imageEye.isFocusableInTouchMode = false
@@ -586,8 +586,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 } else {
                     returnHolderToOriginalState(viewHolder)
                 }
-                // Сортировка по меткам *********************************************************************************************************************************
-                if (isMove && App.appSettings.sortingChecks) {}//correctionPositionAfterMove(viewHolder as MainViewHolder)
+                // Сортировка по меткам
+                if (isMove) correctingPositionOfRecordByCheck(viewHolder as MainViewHolder)
             }
         }
         mIth = ItemTouchHelper(mIthScb!!)
@@ -638,6 +638,22 @@ class MainFragment : Fragment(), MainAdapterCallback {
         val id = mainViewModel.insertRecord(record)
         adapter.records[position].id = id
         adapter.notifyItemChanged(position)
+    }
+
+    override fun correctingPositionOfRecordByCheck (viewHolder: MainViewHolder) {
+        if (App.appSettings.sortingChecks) {
+            val fromPosition = adapter.records.indexOfFirst { it.id == viewHolder.id }
+            val sortedRecords = ArrayList<ListRecord>()
+            sortedRecords.addAll(adapter.records)
+            val newRecord = sortedRecords.removeLast()
+            sortedRecords.sortWith(compareBy(ListRecord::isChecked, ListRecord::npp))
+            sortedRecords.add(newRecord)
+            val toPosition = sortedRecords.indexOfFirst { it.id == viewHolder.id }
+            if (fromPosition != toPosition) adapter.notifyItemMoved(fromPosition, toPosition)
+            adapter.records.clear()
+            adapter.records.addAll(sortedRecords)
+            adapter.notifyItemRangeChanged(0, sortedRecords.size - 1)
+        }
     }
 
     override fun updateRecord(record: ListRecord) {

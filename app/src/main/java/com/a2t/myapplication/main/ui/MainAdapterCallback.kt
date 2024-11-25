@@ -10,4 +10,6 @@ interface MainAdapterCallback {
     fun getIdCurrentDir (): Long
     fun insertNewRecord(record: ListRecord): Job
     fun updateRecord(record: ListRecord)
+    fun requestFocusInTouch ()
+    fun correctingPositionOfRecordByCheck (viewHolder: MainViewHolder)
 }
