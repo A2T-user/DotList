@@ -68,11 +68,30 @@ class MainAdapter (
                     }
                 }
                 // ############################################## РЕАКЦИЯ ОБЪЕКТОВ BACKGROUND ###################################################
+                // Потеря фокуса background приводит к откату смещения Foreground
+                holder.llBackground.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
+                    if (!hasFocus) mac.returnHolderToOriginalState(holder)
+                }
 
+                holder.ivBtnDel.setOnClickListener {            // Удалить запись
+                    mac.requestFocusInTouch()
 
+                }
 
+                holder.ivBtnEdit.setOnClickListener {            // Редактировать запись
+                    mac.requestFocusInTouch()
+                    startEditMode(item, holder)
+                }
+                holder.ivBtnBell.setOnClickListener {            // Создать/редактировать напоминание
+                    mac.requestFocusInTouch()
 
-
+                }
+                holder.ivBtnDir.setOnClickListener {            // строка <-> папка
+                    mac.requestFocusInTouch()
+                    item.isDir = !item.isDir
+                    holder.bind(item)
+                    mac.updateRecord(item)
+                }
                 // ############################################## РЕАКЦИЯ ОБЪЕКТОВ FOREGROUND ###################################################
                 holder.llForeground.setOnClickListener {
                     if (item.isDir) {
@@ -312,7 +331,7 @@ class MainAdapter (
         }
     }
 
-    fun clickCheckbox(holder: MainViewHolder, item: ListRecord) {
+    private fun clickCheckbox(holder: MainViewHolder, item: ListRecord) {
         mac.requestFocusInTouch()
         item.isChecked = holder.checkbox.isChecked
         item.lastEditTime = System.currentTimeMillis()

@@ -12,4 +12,5 @@ interface MainAdapterCallback {
     fun updateRecord(record: ListRecord)
     fun requestFocusInTouch ()
     fun correctingPositionOfRecordByCheck (viewHolder: MainViewHolder)
+    fun returnHolderToOriginalState(viewHolder: RecyclerView.ViewHolder)
 }
