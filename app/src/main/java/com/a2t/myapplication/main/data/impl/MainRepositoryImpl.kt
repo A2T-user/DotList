@@ -29,7 +29,6 @@ class MainRepositoryImpl(
         }
     }
 
-
     // Получение массива списка. Режим NORMAL, MOVE, DELETE
     override fun getRecordsNormalMode(idDir: Long): Flow<List<ListRecord>> = flow {
         val records = appDatabase.mainRecordDao().getRecordsNormalMode(idDir)

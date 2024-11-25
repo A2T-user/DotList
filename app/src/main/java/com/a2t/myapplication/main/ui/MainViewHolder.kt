@@ -52,33 +52,26 @@ class MainViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
         id = item.id
         //background
         ivBtnEdit.isVisible = item.isDir
-        var res = if (item.alarmTime == null) {
-            R.drawable.ic_bell_plus
-        } else {
-            R.drawable.ic_bell_edit
-        }
+        var res = if (item.alarmTime == null) R.drawable.ic_bell_plus else R.drawable.ic_bell_edit
         ivBtnBell.setImageResource(res)
         if (item.isFull) {
             ivBtnDir.isVisible = false
         } else {
             ivBtnDir.isVisible = true
-            res = if (item.isDir) {
-                R.drawable.ic_dir_off
-            } else {
-                R.drawable.ic_dir_on
-            }
+            res = if (item.isDir) R.drawable.ic_dir_off else R.drawable.ic_dir_on
             ivBtnDir.setImageResource(res)
         }
         //foreground
         if (item.isDir) {
             ivDirIcon.visibility = View.VISIBLE
-            if (!item.isFull) {
-                ivDirIcon.setImageResource(R.drawable.ic_dir_empty)
+            res = if (!item.isFull) {
+                R.drawable.ic_dir_empty
             } else if (item.isAllCheck) {
-                ivDirIcon.setImageResource(R.drawable.ic_dir_check)
+                R.drawable.ic_dir_check
             } else {
-                ivDirIcon.setImageResource(R.drawable.ic_dir_full)
+                R.drawable.ic_dir_full
             }
+            ivDirIcon.setImageResource(res)
         } else {
             ivDirIcon.visibility = View.INVISIBLE
         }
@@ -88,11 +81,7 @@ class MainViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
         } else {
             aetRecord.paintFlags = aetRecord.paintFlags and (Paint.STRIKE_THRU_TEXT_FLAG.inv())  // Снять зачеркивание
         }
-        if (item.lastEditTime != 0L) {
-            tvDateTime.text = AlarmHelper.convertDateTime(item.lastEditTime)
-        } else {
-            tvDateTime.text = ""
-        }
+        tvDateTime.text = if (item.lastEditTime != 0L) AlarmHelper.convertDateTime(item.lastEditTime) else ""
         //Установка размера шрифта
         val textSizeRecord = App.appSettings.textSize
         aetRecord.textSize = textSizeRecord
@@ -105,12 +94,10 @@ class MainViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
         changeTextUnder(item.textUnder)
         changeBellType(item)
         changeBellIcon ()
-        item.alarmTime?.let {
-            tvTimeBell_2.text = DateFormat.format("dd.M.yy HH:mm", it).toString()
-        }
+        item.alarmTime?.let { tvTimeBell_2.text = DateFormat.format("dd.M.yy HH:mm", it).toString() }
     }
 
-    fun changeTextColor (textColor: Int) {
+    private fun changeTextColor (textColor: Int) {
         val context = App.appContext
         when (textColor) {
             1 -> {
@@ -132,7 +119,7 @@ class MainViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
         }
     }
 
-    fun changeTextStyle (textStyle: Int) {
+    private fun changeTextStyle (textStyle: Int) {
         aetRecord.setTypeface(
             null,
             when (textStyle) {
@@ -145,7 +132,7 @@ class MainViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
     }
 
     // Включение/выключение подчеркивания остовного поля
-    fun changeTextUnder(textUnder: Int) {
+    private fun changeTextUnder(textUnder: Int) {
         if (textUnder == 1) {
             aetRecord.paintFlags = aetRecord.paintFlags or Paint.UNDERLINE_TEXT_FLAG // Подчеркнуть
         } else {
@@ -164,19 +151,18 @@ class MainViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
         } else if (alarmTime > systemTime) {
             bellType = 2
             CoroutineScope(Dispatchers.Main).launch {
-                delay(systemTime - alarmTime)
+                delay(alarmTime - systemTime)
+                bellType = 3
                 changeBellIcon()
             }
         } else {
             bellType = 3
         }
         if (alarmTime != null) {
-            if (alarmTime <= endCurrentDay) {
-                bellType = 0
-                CoroutineScope(Dispatchers.Main).launch {
-                    delay(endCurrentDay - alarmTime)
-                    changeBellIcon()
-                }
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(endCurrentDay - alarmTime + 1)
+                changeBellType(item)
+                changeBellIcon()
             }
         }
     }

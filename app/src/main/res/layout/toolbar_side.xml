@@ -10,7 +10,7 @@
     android:background="@drawable/shadow"
     android:paddingStart="2dp"
     android:paddingEnd="6dp"
-    android:paddingBottom="6dp">
+    android:paddingBottom="8dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:background="@drawable/click_selector"
-            android:layout_marginVertical="0dp"
+            android:layout_marginVertical="2dp"
             style="@style/LLSideBarStyle">
 
             <ImageView
