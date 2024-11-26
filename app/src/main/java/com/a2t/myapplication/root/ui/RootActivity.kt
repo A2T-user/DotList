@@ -30,14 +30,6 @@ class RootActivity : AppCompatActivity() {
         navHostFragment = supportFragmentManager.findFragmentById(R.id.container_view) as NavHostFragment
         navController = navHostFragment.navController
 
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.mainFragment -> {
-                }
-                else -> {}
-            }
-        }
-
         // $$$$$$$$$$$$$$$$$$$$$$   Реакция на нажатие системной кнопки BACK   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         rootBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
