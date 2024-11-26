@@ -2,15 +2,25 @@ package com.a2t.myapplication.main.domain.api
 
 import androidx.lifecycle.LiveData
 import com.a2t.myapplication.main.domain.model.ListRecord
-import kotlinx.coroutines.flow.Flow
+
 
 interface MainRepository {
+    // Добавление новой записи
     fun insertRecord(record: ListRecord): Long
+    // Обновление записи
     fun updateRecord(record: ListRecord)
-    fun getRecordsNormalMode(idDir: Long): Flow<List<ListRecord>>
-    fun getRecordsNormalModeSortedByCheck(idDir: Long): Flow<List<ListRecord>>
-    fun getRecordsArchiveMode(idDir: Long): Flow<List<ListRecord>>
-    fun getRecordsRestoreMode(idDir: Long): Flow<List<ListRecord>>
+
+    // Возвращает список записей для режимов NORMAL, MOVE, DELETE
+    fun getRecordsForNormalMoveDeleteModes(idDir: Long): List<ListRecord>
+    // Возвращает список записей для режимов NORMAL, MOVE, DELETE с сортировкой по isChecked
+    fun getRecordsForNormalMoveDeleteModesByCheck(idDir: Long): List<ListRecord>
+    // Возвращает список записей для режимов RESTORE(isDelete = 1), ARCHIVE(isDelete = 0)
+    fun getRecordsForRestoreArchiveModes(idDir: Long, isDelete: Int): List<ListRecord>
+    // Возвращает список записей для режимов RESTORE(isDelete = 1), ARCHIVE(isDelete = 0) с сортировкой по isChecked
+    fun getRecordsForRestoreArchiveModesByCheck(idDir: Long, isDelete: Int): List<ListRecord>
+
+    // Возвращает список имен папок с одним элементом - именем папки с id = idDir
     fun getNameDir(idDir: Long): LiveData<List<String>>
+    // Возвращает список id родительских папок с одним элементом - id родительской папки для папки с id = idDir
     fun getParentDir(idDir: Long): LiveData<List<Long>>
 }

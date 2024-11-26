@@ -16,9 +16,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class RootActivity : AppCompatActivity() {
+    private lateinit var navHostFragment: NavHostFragment
     private lateinit var binding: ActivityRootBinding
     private lateinit var navController: NavController
-    private lateinit var mainBackPressedCallback: OnBackPressedCallback
+    private lateinit var rootBackPressedCallback: OnBackPressedCallback
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,36 +27,37 @@ class RootActivity : AppCompatActivity() {
         binding = ActivityRootBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        navHostFragment = supportFragmentManager.findFragmentById(R.id.container_view) as NavHostFragment
+        navController = navHostFragment.navController
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.mainFragment -> {
+                }
+                else -> {}
+            }
+        }
+
         // $$$$$$$$$$$$$$$$$$$$$$   Реакция на нажатие системной кнопки BACK   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        val mainBackPressedCallback = object : OnBackPressedCallback(true) {
+        rootBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                val fragment: MainFragment? = supportFragmentManager.findFragmentById(R.id.mainFragment) as MainFragment?
-                if (fragment != null) {
+                val fragment = navHostFragment.childFragmentManager.fragments.firstOrNull()
+                if (fragment is MainFragment) {
                     if (fragment.idDir > 0) {
                         fragment.mainBackPressed()
                     } else {                                    // Выход по двойному нажатию Back
-                        showHintToast(getString(R.string.text_exit), 5000) // Сообщение
-                        mainBackPressedCallback.isEnabled = false
+                        Toast.makeText(this@RootActivity, R.string.text_exit, Toast.LENGTH_SHORT).show() // Сообщение
+                        rootBackPressedCallback.isEnabled = false
                         // Сбросить первое касание через 2 секунды
                         lifecycleScope.launch {
                             delay(2000)
-                            mainBackPressedCallback.isEnabled = true
+                            rootBackPressedCallback.isEnabled = true
                         }
                     }
                 }
             }
         }
-        onBackPressedDispatcher.addCallback(this, mainBackPressedCallback)
-
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.container_view) as NavHostFragment
-        navController = navHostFragment.navController
-
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.mainFragment -> mainBackPressedCallback.isEnabled = true
-                else -> mainBackPressedCallback.isEnabled = false
-            }
-        }
+        onBackPressedDispatcher.addCallback(this, rootBackPressedCallback)
     }
 
     // Включение/выключение режима БЕЗ СНА
