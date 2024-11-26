@@ -96,7 +96,7 @@ class MainAdapter (
                 holder.llForeground.setOnClickListener {
                     if (item.isDir) {
                         isKeyboardON = false
-                        //mah.goToChildDir(item.id)
+                        mac.goToChildDir(item.id)
                     } else {
                         if (!item.isEdit) startEditMode(item, holder)
                     }

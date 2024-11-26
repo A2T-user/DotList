@@ -8,8 +8,6 @@ import com.a2t.myapplication.main.domain.api.MainRepository
 import com.a2t.myapplication.main.domain.model.ListRecord
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class MainRepositoryImpl(
@@ -21,79 +19,68 @@ class MainRepositoryImpl(
     override fun insertRecord(record: ListRecord): Long {
         return appDatabase.mainRecordDao().insertRecord(recordDBConverter.map(record))
     }
-
     // Обновление записи
     override fun updateRecord(record: ListRecord) {
         CoroutineScope(Dispatchers.IO).launch {
             appDatabase.mainRecordDao().updateRecord(recordDBConverter.map(record))
         }
     }
-
-    // Получение массива списка. Режим NORMAL, MOVE, DELETE
-    override fun getRecordsNormalMode(idDir: Long): Flow<List<ListRecord>> = flow {
-        val records = appDatabase.mainRecordDao().getRecordsNormalMode(idDir)
-        emit(convertFromListRecordEntityNormal(records))
+    // NORMAL, MOVE, DELETE
+    // Возвращает список записей для режимов NORMAL, MOVE, DELETE
+    override fun getRecordsForNormalMoveDeleteModes(idDir: Long): List<ListRecord> {
+        return convertFromListRecordEntityForNormalMoveDeleteModes(
+            appDatabase.mainRecordDao().getRecordsForNormalMoveDeleteModes(idDir)
+        )
     }
-
-    // Получение массива списка. Режим NORMAL, MOVE, DELETE с сортировкой меток
-    override fun getRecordsNormalModeSortedByCheck(idDir: Long): Flow<List<ListRecord>> = flow {
-        val records = appDatabase.mainRecordDao().getRecordsNormalModeSortedByCheck(idDir)
-        emit(convertFromListRecordEntityNormal(records))
+    // Возвращает список записей для режимов NORMAL, MOVE, DELETE с сортировкой по isChecked
+    override fun getRecordsForNormalMoveDeleteModesByCheck(idDir: Long): List<ListRecord> {
+        return convertFromListRecordEntityForNormalMoveDeleteModes(
+            appDatabase.mainRecordDao().getRecordsForNormalMoveDeleteModesByCheck(idDir)
+        )
     }
-
-    private suspend fun convertFromListRecordEntityNormal(records: List<ListRecordEntity>): List<ListRecord> {
-        return records.map { record ->  convertInListRecordNormal(record) }
+    private  fun convertFromListRecordEntityForNormalMoveDeleteModes(records: List<ListRecordEntity>): List<ListRecord> {
+        return records.map { record ->  convertInListRecordForNormalMoveDeleteModes(record) }
     }
-
-    private suspend fun convertInListRecordNormal(recordEntity: ListRecordEntity): ListRecord {
+    private fun convertInListRecordForNormalMoveDeleteModes(recordEntity: ListRecordEntity): ListRecord {
         val record =  recordDBConverter.map(recordEntity)
-        val records = appDatabase.mainRecordDao().getRecordsNormalMode(record.id)
-        if (records.isNotEmpty()) record.isFull = true
-        if (records.all { it.isChecked }) record.isAllCheck = true
-        return record
-    }
-    // Получение массива списка. Режим ARCHIVE
-    override fun getRecordsArchiveMode(idDir: Long): Flow<List<ListRecord>> = flow {
-        val records = appDatabase.mainRecordDao().getRecordsArchiveMode(idDir)
-        emit(convertFromListRecordEntityArchive(records))
-    }
-
-    private suspend fun convertFromListRecordEntityArchive(records: List<ListRecordEntity>): List<ListRecord> {
-        return records.map { record ->  convertInListRecordArchive(record) }
-    }
-
-    private suspend fun convertInListRecordArchive(recordEntity: ListRecordEntity): ListRecord {
-        val record =  recordDBConverter.map(recordEntity)
-        val records = appDatabase.mainRecordDao().getRecordsArchiveMode(record.id)
+        val records = appDatabase.mainRecordDao().getRecordsForNormalMoveDeleteModes(record.id)
         if (records.isNotEmpty()) record.isFull = true
         if (records.all { it.isChecked }) record.isAllCheck = true
         return record
     }
 
-    // Получение массива списка. Режим RESTORE
-    override fun getRecordsRestoreMode(idDir: Long): Flow<List<ListRecord>> = flow {
-        val records = appDatabase.mainRecordDao().getRecordsRestoreMode(idDir)
-        emit(convertFromListRecordEntityRestore(records))
+    // RESTORE, ARCHIVE
+    // Возвращает список записей для режимов RESTORE(isDelete = 1), ARCHIVE(isDelete = 0)
+    override fun getRecordsForRestoreArchiveModes(idDir: Long, isDelete: Int): List<ListRecord> {
+        return convertFromListRecordEntityForRestoreArchiveModes(
+            appDatabase.mainRecordDao().getRecordsForRestoreArchiveModes(idDir, isDelete),
+            isDelete
+        )
     }
-
-    private suspend fun convertFromListRecordEntityRestore(records: List<ListRecordEntity>): List<ListRecord> {
-        return records.map { record ->  convertInListRecordRestore(record) }
+    // Возвращает список записей для режимов RESTORE(isDelete = 1), ARCHIVE(isDelete = 0) с сортировкой по isChecked
+    override fun getRecordsForRestoreArchiveModesByCheck(idDir: Long, isDelete: Int): List<ListRecord> {
+        return convertFromListRecordEntityForRestoreArchiveModes(
+            appDatabase.mainRecordDao().getRecordsForRestoreArchiveModesByCheck(idDir, isDelete),
+            isDelete
+        )
     }
-
-    private suspend fun convertInListRecordRestore(recordEntity: ListRecordEntity): ListRecord {
+    private  fun convertFromListRecordEntityForRestoreArchiveModes(records: List<ListRecordEntity>, isDelete: Int): List<ListRecord> {
+        return records.map { record ->  convertInListRecordForRestoreArchiveModes(record, isDelete) }
+    }
+    private fun convertInListRecordForRestoreArchiveModes(recordEntity: ListRecordEntity, isDelete: Int): ListRecord {
         val record =  recordDBConverter.map(recordEntity)
-        val records = appDatabase.mainRecordDao().getRecordsRestoreMode(record.id)
+        val records = appDatabase.mainRecordDao().getRecordsForRestoreArchiveModes(record.id, isDelete)
         if (records.isNotEmpty()) record.isFull = true
         if (records.all { it.isChecked }) record.isAllCheck = true
         return record
     }
 
-    // Получение имени папки
+    // Возвращает список имен папок с одним элементом - именем папки с id = idDir
     override fun getNameDir(idDir: Long): LiveData<List<String>> {
         return appDatabase.mainRecordDao().getNameDir(idDir)
     }
 
-    // Получение id и имени родительской папки
+    // Возвращает список id родительских папок с одним элементом - id родительской папки для папки с id = idDir
     override fun getParentDir(idDir: Long): LiveData<List<Long>> {
         return appDatabase.mainRecordDao().getParentDir(idDir)
     }

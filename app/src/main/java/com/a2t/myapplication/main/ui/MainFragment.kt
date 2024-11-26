@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -55,7 +56,6 @@ class MainFragment : Fragment(), MainAdapterCallback {
     private var mIthScb: ItemTouchHelper.Callback? = null
     var idDir = 0L
     private var nameDir = "R:"
-    private var openDirMode = OpenDirMode.NEW_DIR
     var specialMode = SpecialMode.NORMAL
     private lateinit var binding: FragmentMainBinding
     private lateinit var topToolbarBinding: ToolbarTopBinding
@@ -120,13 +120,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
         initializingRecyclerView ()
 
-
-        mainViewModel.getMainLiveData().observe(viewLifecycleOwner) { records ->
-            fillingRecycler(records)
-        }
-
-        mainViewModel.getRecords(specialMode, idDir)
-
+        goToNormalMode()
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ГЛАВНАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
@@ -145,7 +139,6 @@ class MainFragment : Fragment(), MainAdapterCallback {
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ БОКОВАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
         // swipe влево по флагу для открытия БОКОВОЙ ПАНЕЛИ
         val downX = AtomicReference( 0f)
         val downY = AtomicReference( 0f)
@@ -163,7 +156,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                         val dX = event.x - downX.get()
                         val dY = event.y - downY.get()
                         if (abs(dX/dY) > 1.5 && dX < 0) {                    // Если жест горизонталный, влево
-                            enableSpecialMode()               // Переход в нормальный режим
+                            enableSpecialMode()                                 // Переход в нормальный режим
                             sideBarShowOrHide(true)                       // Открыть боковую панель
                             noSleepModeOff()                                    // Выключение режима БЕЗ СНА
                         }
@@ -184,39 +177,38 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
         // Кнопка режима Удаления
         sideToolbarBinding.llSideBarDelMode.setOnClickListener {
+            Log.e ("МОЁ", "Удаления")
             requestFocusInTouch()
             specialMode = SpecialMode.DELETE
-            openDirMode = OpenDirMode.NEW_DIR
             enableSpecialMode()
-            mainViewModel.getRecords(specialMode, idDir)
-
+            goToDir(OpenDirMode.NEW_DIR)
         }
 
         // Кнопка режима Восстановления
         sideToolbarBinding.llSideBarRestMode.setOnClickListener {
+            Log.e ("МОЁ", "Восстановления")
             requestFocusInTouch()
             specialMode = SpecialMode.RESTORE
-            openDirMode = OpenDirMode.NEW_DIR
             enableSpecialMode()
-            mainViewModel.getRecords(specialMode, idDir)
+            goToDir(OpenDirMode.NEW_DIR)
         }
 
         // Кнопка режима Переноса
         sideToolbarBinding.llSideBarMoveMode.setOnClickListener {
+            Log.e ("МОЁ", "Переноса")
             requestFocusInTouch()
             specialMode = SpecialMode.MOVE
-            openDirMode = OpenDirMode.NEW_DIR
             enableSpecialMode()
-            mainViewModel.getRecords(specialMode, idDir)
+            goToDir(OpenDirMode.NEW_DIR)
         }
 
         // Кнопка режима Архив
         sideToolbarBinding.llSideBarArchiveMode.setOnClickListener {
+            Log.e ("МОЁ", "Архив")
             requestFocusInTouch()
             specialMode = SpecialMode.ARCHIVE
-            openDirMode = OpenDirMode.NEW_DIR
             enableSpecialMode()
-            mainViewModel.getRecords(specialMode, idDir)
+            goToDir(OpenDirMode.NEW_DIR)
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ НИЖНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -245,23 +237,6 @@ class MainFragment : Fragment(), MainAdapterCallback {
         modesToolbarBinding.btnClose.setOnClickListener {
             goToNormalMode ()
         }
-    }
-
-    private fun fillingRecycler(records: List<ListRecord>) {
-        val animationController = when (openDirMode) {
-            OpenDirMode.NEW_DIR -> animOpenNewDir
-            OpenDirMode.CHILD_DIR -> animOpenChildDir
-            OpenDirMode.PARENT_DIR -> animOpenParentDir
-        }
-        binding.recycler.layoutAnimation = animationController
-
-        adapter.specialMode = specialMode
-        adapter.buffer.clear()
-        adapter.records.clear()
-        adapter.records.addAll(records)
-        adapter.notifyDataSetChanged()          // Выводим список треков
-        binding.recycler.scheduleLayoutAnimation()   // Анимация обновления строк рециклера
-
     }
 
     // Режим БЕЗ СНА
@@ -302,19 +277,11 @@ class MainFragment : Fragment(), MainAdapterCallback {
         topToolbarBinding.imageEye.isFocusableInTouchMode = false
     }
 
-    // Возврат в режим NORMAL
-    private fun goToNormalMode () {
-        requestFocusInTouch()
-        specialMode = SpecialMode.NORMAL
-        openDirMode = OpenDirMode.NEW_DIR
-        enableSpecialMode()
-        mainViewModel.getRecords(specialMode, idDir)
-    }
 
     // Открытие специального режима
     private fun enableSpecialMode () {
         noSleepModeOff()           // Выключение режима БЕЗ СНА
-        topToolbarBinding.imageEye.visibility = if(specialMode == SpecialMode.NORMAL) View.VISIBLE else View.GONE
+        topToolbarBinding.imageEye.isVisible = specialMode == SpecialMode.NORMAL
         showSpecialModeToolbar()
     }
 
@@ -605,36 +572,126 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     fun mainBackPressed () {
+        Log.e ("МОЁ", "mainBackPressed")
         adapter.isKeyboardON = false            // Если нажат Back, клавиатура точно скрыта
         requestFocusInTouch()
         noSleepModeOff()                        // Выключение режима БЕЗ СНА
         goToParentDir ()                        // Переход к родительской папке
     }
 
+    // Возврат в режим NORMAL
+    private fun goToNormalMode () {
+        requestFocusInTouch()
+        specialMode = SpecialMode.NORMAL
+        enableSpecialMode()
+        goToDir(OpenDirMode.NEW_DIR)
+    }
+
     private fun goToParentDir () {
         mainViewModel.getParentDir(idDir).observe(viewLifecycleOwner) { id ->
-            goToDir(id[0], OpenDirMode.PARENT_DIR)
+            idDir = id[0]
+            goToDir(OpenDirMode.PARENT_DIR)
         }
     }
 
     override fun goToChildDir (id: Long) {
-        goToDir(id, OpenDirMode.CHILD_DIR)
+        idDir = id
+        goToDir(OpenDirMode.CHILD_DIR)
     }
 
-    private fun goToDir (id: Long, openDirMode: OpenDirMode) {
-        idDir = id
-        mainViewModel.getNameDir(idDir).observe(viewLifecycleOwner) { names ->
-            nameDir = names[0]
-            topToolbarBinding.pathDir.text = nameDir
-            this.openDirMode = openDirMode
-            mainViewModel.getRecords(specialMode, idDir)
-        }
+    private fun goToDir (openDirMode: OpenDirMode) {
+        getRecords(specialMode, idDir, openDirMode)
     }
+
+    private fun fillingRecycler(records: List<ListRecord>, openDirMode: OpenDirMode) {
+        val animationController = when (openDirMode) {
+            OpenDirMode.NEW_DIR -> animOpenNewDir
+            OpenDirMode.CHILD_DIR -> animOpenChildDir
+            OpenDirMode.PARENT_DIR -> animOpenParentDir
+        }
+        binding.recycler.layoutAnimation = animationController
+        mainViewModel.getNameDir(idDir).observe(viewLifecycleOwner) { names ->
+            nameDir = if (names.isEmpty()) "R:" else names[0]
+            topToolbarBinding.pathDir.text = nameDir
+        }
+        adapter.specialMode = specialMode
+        adapter.buffer.clear()
+        adapter.records.clear()
+        adapter.records.addAll(records)
+        adapter.notifyDataSetChanged()
+        binding.recycler.scheduleLayoutAnimation()      // Анимация обновления строк рециклера
+
+    }
+
+    private fun getRecords(specialMode: SpecialMode, idDir: Long, openDirMode: OpenDirMode)= lifecycleScope.launch {
+        val records = when(specialMode) {
+            SpecialMode.NORMAL, SpecialMode.MOVE, SpecialMode.DELETE -> {
+                if (App.appSettings.sortingChecks) {
+                    mainViewModel.getRecordsForNormalMoveDeleteModesByCheck(idDir)
+                } else {
+                    mainViewModel.getRecordsForNormalMoveDeleteModes(idDir)
+                }
+            }
+            SpecialMode.RESTORE -> {
+                if (App.appSettings.sortingChecks) {
+                    mainViewModel.getRecordsForRestoreArchiveModesByCheck(idDir, 1)
+                } else {
+                    mainViewModel.getRecordsForRestoreArchiveModes(idDir, 1)
+                }
+            }
+            SpecialMode.ARCHIVE -> {
+                if (App.appSettings.sortingChecks) {
+                    mainViewModel.getRecordsForRestoreArchiveModesByCheck(idDir, 0)
+                } else {
+                    mainViewModel.getRecordsForRestoreArchiveModes(idDir, 0)
+                }
+            }
+        }
+        val mutableRecords = records.toMutableList()
+        if (specialMode == SpecialMode.NORMAL) {
+            mutableRecords.add(getNewRecord(idDir, mutableRecords,mutableRecords.isEmpty() && App.appSettings.editEmptyDir))
+        }
+        fillingRecycler(mutableRecords, openDirMode)
+    }
+
+    private fun getNewRecord (idDir: Long, records: List<ListRecord>, startEdit: Boolean): ListRecord {
+        return ListRecord(
+            0,
+            idDir,
+            false,
+            getMaxNpp(records) + 1,
+            false,
+            "",
+            "",
+            0,
+            0,
+            0,
+            0,
+            null,
+            null,
+            isArchive = false,
+            isDelete = false,
+            isFull = false,
+            isAllCheck = false,
+            true,
+            startEdit,
+            false
+        )
+    }
+
+    private fun getMaxNpp (records: List<ListRecord>): Int {
+        var maxNpp = 0
+        for (rec: ListRecord in records) {
+            if (rec.npp > maxNpp) maxNpp = rec.npp
+        }
+        return maxNpp
+    }
+
 
     override fun getIdCurrentDir(): Long = idDir
 
     override fun insertNewRecord(record: ListRecord) = lifecycleScope.launch {
-        val position = adapter.records.size -1
+        val position = adapter.records.size - 1
         val id = mainViewModel.insertRecord(record)
         adapter.records[position].id = id
         adapter.notifyItemChanged(position)
