@@ -69,7 +69,7 @@ class MainAdapter (
                 }
                 // ############################################## РЕАКЦИЯ ОБЪЕКТОВ BACKGROUND ###################################################
                 // Потеря фокуса background приводит к откату смещения Foreground
-                holder.llBackground.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
+                holder.llBackground.setOnFocusChangeListener{ _: View?, hasFocus: Boolean ->
                     if (!hasFocus) mac.returnHolderToOriginalState(holder)
                 }
 

@@ -33,7 +33,6 @@ import com.a2t.myapplication.databinding.ToolbarSmallBinding
 import com.a2t.myapplication.databinding.ToolbarTopBinding
 import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.presentation.MainViewModel
-import com.a2t.myapplication.main.presentation.model.OpenDirMode
 import com.a2t.myapplication.main.presentation.model.SpecialMode
 import com.a2t.myapplication.root.ui.RootActivity
 import kotlinx.coroutines.delay
@@ -181,7 +180,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
             requestFocusInTouch()
             specialMode = SpecialMode.DELETE
             enableSpecialMode()
-            goToDir(OpenDirMode.NEW_DIR)
+            goToDir(animOpenNewDir)
         }
 
         // Кнопка режима Восстановления
@@ -190,7 +189,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
             requestFocusInTouch()
             specialMode = SpecialMode.RESTORE
             enableSpecialMode()
-            goToDir(OpenDirMode.NEW_DIR)
+            goToDir(animOpenNewDir)
         }
 
         // Кнопка режима Переноса
@@ -199,7 +198,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
             requestFocusInTouch()
             specialMode = SpecialMode.MOVE
             enableSpecialMode()
-            goToDir(OpenDirMode.NEW_DIR)
+            goToDir(animOpenNewDir)
         }
 
         // Кнопка режима Архив
@@ -208,7 +207,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
             requestFocusInTouch()
             specialMode = SpecialMode.ARCHIVE
             enableSpecialMode()
-            goToDir(OpenDirMode.NEW_DIR)
+            goToDir(animOpenNewDir)
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ НИЖНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -584,31 +583,26 @@ class MainFragment : Fragment(), MainAdapterCallback {
         requestFocusInTouch()
         specialMode = SpecialMode.NORMAL
         enableSpecialMode()
-        goToDir(OpenDirMode.NEW_DIR)
+        goToDir(animOpenNewDir)
     }
 
     private fun goToParentDir () {
         mainViewModel.getParentDir(idDir).observe(viewLifecycleOwner) { id ->
             idDir = id[0]
-            goToDir(OpenDirMode.PARENT_DIR)
+            goToDir(animOpenParentDir)
         }
     }
 
     override fun goToChildDir (id: Long) {
         idDir = id
-        goToDir(OpenDirMode.CHILD_DIR)
+        goToDir(animOpenChildDir)
     }
 
-    private fun goToDir (openDirMode: OpenDirMode) {
-        getRecords(specialMode, idDir, openDirMode)
+    private fun goToDir (animationController: LayoutAnimationController) {
+        showList(specialMode, idDir, animationController)
     }
 
-    private fun fillingRecycler(records: List<ListRecord>, openDirMode: OpenDirMode) {
-        val animationController = when (openDirMode) {
-            OpenDirMode.NEW_DIR -> animOpenNewDir
-            OpenDirMode.CHILD_DIR -> animOpenChildDir
-            OpenDirMode.PARENT_DIR -> animOpenParentDir
-        }
+    private fun fillingRecycler(records: List<ListRecord>, animationController: LayoutAnimationController) {
         binding.recycler.layoutAnimation = animationController
         mainViewModel.getNameDir(idDir).observe(viewLifecycleOwner) { names ->
             nameDir = if (names.isEmpty()) "R:" else names[0]
@@ -623,7 +617,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
     }
 
-    private fun getRecords(specialMode: SpecialMode, idDir: Long, openDirMode: OpenDirMode)= lifecycleScope.launch {
+    private fun showList(specialMode: SpecialMode, idDir: Long, animationController: LayoutAnimationController)= lifecycleScope.launch {
         val records = when(specialMode) {
             SpecialMode.NORMAL, SpecialMode.MOVE, SpecialMode.DELETE -> {
                 if (App.appSettings.sortingChecks) {
@@ -651,7 +645,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         if (specialMode == SpecialMode.NORMAL) {
             mutableRecords.add(getNewRecord(idDir, mutableRecords,mutableRecords.isEmpty() && App.appSettings.editEmptyDir))
         }
-        fillingRecycler(mutableRecords, openDirMode)
+        fillingRecycler(mutableRecords, animationController)
     }
 
     private fun getNewRecord (idDir: Long, records: List<ListRecord>, startEdit: Boolean): ListRecord {
