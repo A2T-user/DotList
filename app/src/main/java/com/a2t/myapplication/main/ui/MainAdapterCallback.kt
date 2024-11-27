@@ -13,4 +13,6 @@ interface MainAdapterCallback {
     fun requestFocusInTouch ()
     fun correctingPositionOfRecordByCheck (viewHolder: MainViewHolder)
     fun returnHolderToOriginalState(viewHolder: RecyclerView.ViewHolder)
+    fun showContextMenuFormat(viewHolder: MainViewHolder)
+    fun showContextMenuMove(viewHolder: MainViewHolder)
 }

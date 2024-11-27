@@ -8,6 +8,9 @@
     android:background="@drawable/shadow"
     android:paddingHorizontal="4dp"
     android:paddingBottom="6dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:visibility="gone">
 
     <LinearLayout
