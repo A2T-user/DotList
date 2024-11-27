@@ -11,16 +11,14 @@ class MainViewModel (
     private val mainInteractor: MainInteractor
 ) : ViewModel() {
 
+    // Добавление новой записи и получение ее id
     suspend fun insertRecord(record: ListRecord)= withContext(Dispatchers.IO) {
         mainInteractor.insertRecord(record)
     }
-
-
+    // Обновление записи
     fun updateRecord(record: ListRecord) {
         mainInteractor.updateRecord(record)
     }
-
-
 
     // Возвращает список записей для режимов NORMAL, MOVE, DELETE
     suspend fun getRecordsForNormalMoveDeleteModes(idDir: Long)= withContext(Dispatchers.IO) {
@@ -39,11 +37,11 @@ class MainViewModel (
         mainInteractor.getRecordsForRestoreArchiveModesByCheck(idDir, isDelete)
     }
 
-
+    // Возвращает список имен папок с одним элементом - именем папки с id = idDir
     fun getNameDir (idDir: Long): LiveData<List<String>> {
         return mainInteractor.getNameDir(idDir)
     }
-
+    // Возвращает список id родительских папок с одним элементом - id родительской папки для папки с id = idDir
     fun getParentDir(idDir: Long): LiveData<List<Long>> {
         return mainInteractor.getParentDir(idDir)
     }

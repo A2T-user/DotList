@@ -53,7 +53,7 @@ class SettingsFragment : Fragment() {
                 period++
                 binding.tvRestorePeriod.text = period.toString()
                 App.appSettings.restorePeriod = period
-                settingsViewModel.updateSettings(App.appSettings)
+                settingsViewModel.updateSettings()
             }
         }
 
@@ -63,39 +63,39 @@ class SettingsFragment : Fragment() {
                 period--
                 binding.tvRestorePeriod.text = period.toString()
                 App.appSettings.restorePeriod = period
-                settingsViewModel.updateSettings(App.appSettings)
+                settingsViewModel.updateSettings()
             }
         }
         // Редактирование
         binding.swEditEmptyDir.setOnCheckedChangeListener { _, checked ->
             App.appSettings.editEmptyDir = checked
-            settingsViewModel.updateSettings(App.appSettings)
+            settingsViewModel.updateSettings()
         }
         // Сортировка
         binding.swSortingChecks.setOnCheckedChangeListener { _, checked ->
             App.appSettings.sortingChecks = checked
-            settingsViewModel.updateSettings(App.appSettings)
+            settingsViewModel.updateSettings()
         }
         // Зачеркивание
         binding.swCrossingChecks.setOnCheckedChangeListener { _, checked ->
             App.appSettings.crossedOutOn = checked
-            settingsViewModel.updateSettings(App.appSettings)
+            settingsViewModel.updateSettings()
         }
         // Напоминания
         binding.swNotificationOn.setOnCheckedChangeListener { _, checked ->
             App.appSettings.notificationOn = checked
-            settingsViewModel.updateSettings(App.appSettings)
+            settingsViewModel.updateSettings()
         }
         // Сообщения
         binding.swShowHintToast .setOnCheckedChangeListener { _, checked ->
             App.appSettings.hintToastOn = checked
-            settingsViewModel.updateSettings(App.appSettings)
+            settingsViewModel.updateSettings()
         }
     }
 
     private fun changeTheme () {
         installNullCheckTheme()
-        settingsViewModel.updateSettings(App.appSettings)
+        settingsViewModel.updateSettings()
         (requireContext().applicationContext as App).switchTheme()
     }
 

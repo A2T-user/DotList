@@ -33,6 +33,8 @@ class MainAdapter (
     val buffer = ArrayList<BufferItem>()
     var specialMode = SpecialMode.NORMAL
     var isKeyboardON = false
+    var currentHolder: MainViewHolder? = null
+    var currentHolderPosition = -1
     private val flipAnimator1: Animator = AnimatorInflater.loadAnimator(App.appContext, R.animator.flip_1)
     private val flipAnimator2: Animator = AnimatorInflater.loadAnimator(App.appContext, R.animator.flip_2)
 
@@ -103,6 +105,15 @@ class MainAdapter (
                 }
 
 
+                // Открытие меню форматирования текста
+                holder.llForeground.setOnLongClickListener{
+                    currentHolder = holder
+                    currentHolderPosition = position
+                    if (!item.isNew) mac.showContextMenuFormat(holder)    // Не для новой строки
+                    true
+                }
+
+
                 // Изменения в CheckBox
                 holder.checkbox.setOnClickListener {
                     clickCheckbox(holder, item)
@@ -166,6 +177,12 @@ class MainAdapter (
                         2 -> flipPicture(holder.ivAction, R.drawable.ic_copy_red)
                         else -> {}
                     }
+                }
+                // Открытие меню форматирования текста
+                holder.ivAction.setOnClickListener{
+                    currentHolder = holder
+                    currentHolderPosition = position
+                    mac.showContextMenuMove(holder)    // Не для новой строки
                 }
 
 

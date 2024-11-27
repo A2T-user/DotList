@@ -19,7 +19,7 @@ class RootActivity : AppCompatActivity() {
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var binding: ActivityRootBinding
     private lateinit var navController: NavController
-    private lateinit var rootBackPressedCallback: OnBackPressedCallback
+    private lateinit var mainBackPressedCallback: OnBackPressedCallback
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,25 +31,32 @@ class RootActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         // $$$$$$$$$$$$$$$$$$$$$$   Реакция на нажатие системной кнопки BACK   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        rootBackPressedCallback = object : OnBackPressedCallback(true) {
+        mainBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                val fragment = navHostFragment.childFragmentManager.fragments.firstOrNull()
-                if (fragment is MainFragment) {
-                    if (fragment.idDir > 0) {
-                        fragment.mainBackPressed()
+                val currentFragment = navHostFragment.childFragmentManager.fragments.firstOrNull()
+                if (currentFragment is MainFragment) {
+                    if (currentFragment.idDir > 0) {
+                        currentFragment.mainBackPressed()
                     } else {                                    // Выход по двойному нажатию Back
                         Toast.makeText(this@RootActivity, R.string.text_exit, Toast.LENGTH_SHORT).show() // Сообщение
-                        rootBackPressedCallback.isEnabled = false
+                        mainBackPressedCallback.isEnabled = false
                         // Сбросить первое касание через 2 секунды
                         lifecycleScope.launch {
                             delay(2000)
-                            rootBackPressedCallback.isEnabled = true
+                            mainBackPressedCallback.isEnabled = true
                         }
                     }
                 }
             }
         }
-        onBackPressedDispatcher.addCallback(this, rootBackPressedCallback)
+        onBackPressedDispatcher.addCallback(this, mainBackPressedCallback)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.mainFragment -> mainBackPressedCallback.isEnabled = true
+                else -> mainBackPressedCallback.isEnabled = false
+            }
+        }
     }
 
     // Включение/выключение режима БЕЗ СНА

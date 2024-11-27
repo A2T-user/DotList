@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -12,6 +13,8 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -35,21 +38,29 @@ import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.presentation.MainViewModel
 import com.a2t.myapplication.main.presentation.model.SpecialMode
 import com.a2t.myapplication.root.ui.RootActivity
+import com.a2t.myapplication.settings.presentation.SettingsViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Collections
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.abs
+import kotlin.math.hypot
 
 const val K_MAX_SHIFT_RIGHT = 0.2f
 const val K_MAX_SHIFT_LEFT = -0.3f
 const val ANIMATION_DELEY = 300L
 const val EYE_ANIMATION_DELEY = 5000L
+// Что бы избежать инерции, будем выполнять изменение шрифта не каждый раз, а один раз
+// на NUMBER_OF_OPERATIO_ZOOM срабатываний
+const val NUMBER_OF_OPERATIO_ZOOM = 5
+const val STEP_ZOOM = 0.5f                                     // Шаг изменения высоты шрифта
 
 class MainFragment : Fragment(), MainAdapterCallback {
     private val mainViewModel by viewModel<MainViewModel>()
+    private val settingsViewModel by viewModel<SettingsViewModel>()
     private val adapter = MainAdapter(this)
     private var mIth: ItemTouchHelper? = null
     private var mIthScb: ItemTouchHelper.Callback? = null
@@ -63,12 +74,16 @@ class MainFragment : Fragment(), MainAdapterCallback {
     private lateinit var contextMenuFormatBinding: ContextMenuFormatBinding
     private lateinit var contextMenuMoveBinding: ContextMenuMoveBinding
     private lateinit var modesToolbarBinding: ToolbarModesBinding
+    private var isZOOMode = false                                  // Режим ZOOM
+    private var oldDist = 1f                                       // Расстояние между пальцами начальное
+    private var newDist = 0f                                               // конечное, жест ZOOM
+    private var sizeGrandText = 20f
     private var isSideToolbarFullShow = false
     private var widthScreen = 0                                    // Ширина экрана
     private var heightScreen = 0                                   // Ширина экрана
-    private var maxShiftToRight = 0f                                // Величина максимального смещения при свайпе в право
-    private var maxShiftToLeft = 0f                                 // Величина максимального смещения при свайпе в лево
-    private var hidhtContextMenu = 0f                               // Высота контекстного меню
+    private var maxShiftToRight = 0f                               // Величина максимального смещения при свайпе в право
+    private var maxShiftToLeft = 0f                                // Величина максимального смещения при свайпе в лево
+    private var hidhtContextMenu = 0                               // Высота контекстного меню
     private lateinit var animationMoveMode: Animation
     private lateinit var animationDeleteMode: Animation
     private lateinit var animationRestoreMode: Animation
@@ -102,10 +117,11 @@ class MainFragment : Fragment(), MainAdapterCallback {
         // Определяем ширину экрана, пределы смещения холдера вдоль оси Х вправо и влево
         widthScreen = requireContext().resources.displayMetrics.widthPixels
         heightScreen = requireContext().resources.displayMetrics.heightPixels
-        val dpSize = this.resources.displayMetrics.density        // Размер dp
-        hidhtContextMenu = 56 * dpSize                                  // Высота контекстного меню в px
+        val dpSize = this.resources.displayMetrics.density              // Размер dp
+        hidhtContextMenu = (56 * dpSize).toInt()                        // Высота контекстного меню в px
         maxShiftToRight = widthScreen * K_MAX_SHIFT_RIGHT               // Величина максимального смещения при свайпе в право
         maxShiftToLeft = widthScreen * K_MAX_SHIFT_LEFT                 // Величина максимального смещения при свайпе в лево
+        sizeGrandText = App.appSettings.textSize
 
         // Анимации
         animationMoveMode = AnimationUtils.loadAnimation(requireContext(), R.anim.arrow_right)
@@ -117,9 +133,59 @@ class MainFragment : Fragment(), MainAdapterCallback {
         animOpenChildDir = AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.anim_open_child_dir)
         animOpenParentDir = AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.anim_open_parent_dir)
 
+
+
         initializingRecyclerView ()
 
         goToNormalMode()
+
+
+        // Изменение высоты шрифта
+
+        val j = AtomicInteger() // Счетчик срабатываний Zoom
+        binding.recycler.setOnTouchListener{ _: View?, event: MotionEvent ->
+            requestFocusInTouch()
+            when (event.action and MotionEvent.ACTION_MASK) {
+                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
+                    isZOOMode = false
+                    }
+
+                MotionEvent.ACTION_POINTER_DOWN -> {
+                    val dx = event.getX(0) - event.getX(1)
+                    val dy = event.getY(0) - event.getY(1)
+                    oldDist = hypot(dx.toDouble(), dy.toDouble()).toFloat()
+                    isZOOMode = true
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    j.getAndIncrement()
+                    if (j.get() == NUMBER_OF_OPERATIO_ZOOM) {
+                        j.set(0) // Обнуляем счетчик
+                        if (isZOOMode) {
+                            val dx = event.getX(0) - event.getX(1)
+                            val dy = event.getY(0) - event.getY(1)
+                            newDist = hypot(dx.toDouble(), dy.toDouble()).toFloat()
+                            val coef = newDist / oldDist
+                            val oldH = sizeGrandText
+                            if (coef < 1f) {
+                                sizeGrandText -= STEP_ZOOM
+                                if (sizeGrandText < 18) sizeGrandText = 18f
+                            } else if (coef > 1f) {
+                                sizeGrandText += STEP_ZOOM
+                                if (sizeGrandText > 27) sizeGrandText = 27f
+                            }
+                            App.appSettings.textSize = sizeGrandText
+                            settingsViewModel.updateSettings()      // Сохраняем параметры
+                            // Изменить размер шрифта в поле имя папки
+                            topToolbarBinding.pathDir.setTextSize(TypedValue.COMPLEX_UNIT_SP, 0.75f * sizeGrandText)
+                            // Перерисовать recyclerView
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
+                }
+            }
+            isZOOMode
+        }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ГЛАВНАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
@@ -176,7 +242,6 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
         // Кнопка режима Удаления
         sideToolbarBinding.llSideBarDelMode.setOnClickListener {
-            Log.e ("МОЁ", "Удаления")
             requestFocusInTouch()
             specialMode = SpecialMode.DELETE
             enableSpecialMode()
@@ -185,7 +250,6 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
         // Кнопка режима Восстановления
         sideToolbarBinding.llSideBarRestMode.setOnClickListener {
-            Log.e ("МОЁ", "Восстановления")
             requestFocusInTouch()
             specialMode = SpecialMode.RESTORE
             enableSpecialMode()
@@ -194,7 +258,6 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
         // Кнопка режима Переноса
         sideToolbarBinding.llSideBarMoveMode.setOnClickListener {
-            Log.e ("МОЁ", "Переноса")
             requestFocusInTouch()
             specialMode = SpecialMode.MOVE
             enableSpecialMode()
@@ -203,14 +266,13 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
         // Кнопка режима Архив
         sideToolbarBinding.llSideBarArchiveMode.setOnClickListener {
-            Log.e ("МОЁ", "Архив")
             requestFocusInTouch()
             specialMode = SpecialMode.ARCHIVE
             enableSpecialMode()
             goToDir(animOpenNewDir)
         }
 
-        //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ НИЖНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ НИЖНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // Свайп вниз закрывает нижнюю панель и переводит рециклер в обычный режим
         modesToolbarBinding.clModesToolbar.setOnTouchListener { _, event ->
             when (event.action) {
@@ -235,6 +297,27 @@ class MainFragment : Fragment(), MainAdapterCallback {
         // Клик по кнопке Закрыть закрывает нижнюю панель и переводит рециклер в обычный режим
         modesToolbarBinding.btnClose.setOnClickListener {
             goToNormalMode ()
+        }
+        //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ КОНТЕКСТНОЕ МЕНЮ ФОРМАТ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        // Потеря фокуса контекст.меню приводит к скрытию меню
+        contextMenuFormatBinding.llContextMenuFormat.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
+            if (!hasFocus) {
+                v?.isVisible = false
+            }
+        }
+        // $$$$$$$$$$$$$$$$$$ КНОПКИ КОНТЕКСТНОГО МЕНЮ ФОРМАТ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        contextMenuFormatBinding.btnTextColor1.setOnClickListener {
+
+        }
+
+
+
+        //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ КОНТЕКСТНОЕ МЕНЮ MOVE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        // Потеря фокуса контекст.меню приводит к скрытию меню
+        contextMenuMoveBinding.llContextMenuMove.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
+            if (!hasFocus) {
+                v?.isVisible = false
+            }
         }
     }
 
@@ -571,7 +654,6 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     fun mainBackPressed () {
-        Log.e ("МОЁ", "mainBackPressed")
         adapter.isKeyboardON = false            // Если нажат Back, клавиатура точно скрыта
         requestFocusInTouch()
         noSleepModeOff()                        // Выключение режима БЕЗ СНА
@@ -599,23 +681,10 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     private fun goToDir (animationController: LayoutAnimationController) {
+        Log.e("МОЁ", "goToDir")
         showList(specialMode, idDir, animationController)
     }
 
-    private fun fillingRecycler(records: List<ListRecord>, animationController: LayoutAnimationController) {
-        binding.recycler.layoutAnimation = animationController
-        mainViewModel.getNameDir(idDir).observe(viewLifecycleOwner) { names ->
-            nameDir = if (names.isEmpty()) "R:" else names[0]
-            topToolbarBinding.pathDir.text = nameDir
-        }
-        adapter.specialMode = specialMode
-        adapter.buffer.clear()
-        adapter.records.clear()
-        adapter.records.addAll(records)
-        adapter.notifyDataSetChanged()
-        binding.recycler.scheduleLayoutAnimation()      // Анимация обновления строк рециклера
-
-    }
 
     private fun showList(specialMode: SpecialMode, idDir: Long, animationController: LayoutAnimationController)= lifecycleScope.launch {
         val records = when(specialMode) {
@@ -646,6 +715,21 @@ class MainFragment : Fragment(), MainAdapterCallback {
             mutableRecords.add(getNewRecord(idDir, mutableRecords,mutableRecords.isEmpty() && App.appSettings.editEmptyDir))
         }
         fillingRecycler(mutableRecords, animationController)
+    }
+
+    private fun fillingRecycler(records: List<ListRecord>, animationController: LayoutAnimationController) {
+        binding.recycler.layoutAnimation = animationController
+        mainViewModel.getNameDir(idDir).observe(viewLifecycleOwner) { names ->
+            nameDir = if (names.isEmpty()) "R:" else names[0]
+            topToolbarBinding.pathDir.text = nameDir
+        }
+        adapter.specialMode = specialMode
+        adapter.buffer.clear()
+        adapter.records.clear()
+        adapter.records.addAll(records)
+        adapter.notifyDataSetChanged()
+        binding.recycler.scheduleLayoutAnimation()      // Анимация обновления строк рециклера
+
     }
 
     private fun getNewRecord (idDir: Long, records: List<ListRecord>, startEdit: Boolean): ListRecord {
@@ -709,5 +793,46 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
     override fun updateRecord(record: ListRecord) {
         mainViewModel.updateRecord(record)
+    }
+
+    override fun showContextMenuFormat(viewHolder: MainViewHolder) {
+        showContextMenu(viewHolder, contextMenuFormatBinding.llContextMenuFormat)
+    }
+
+    override fun showContextMenuMove(viewHolder: MainViewHolder) {
+        showContextMenu(viewHolder, contextMenuMoveBinding.llContextMenuMove)
+    }
+
+    private fun showContextMenu(viewHolder: MainViewHolder, contextMenu: LinearLayout) {
+        // Передвигаем контекст.меню в нужную точку
+        val params = contextMenu.layoutParams as FrameLayout.LayoutParams
+        params.topMargin = getYContextMenu(viewHolder)
+        contextMenu.layoutParams = params
+        contextMenu.isVisible = true
+        contextMenu.requestFocus()
+    }
+    // По скольку метод getLocationOnScreen возвращает значение Y в системе координат с началом отсчета
+    // в верхнем левом углу экрана, а контекстное меню вставляется в контейнер с началом отсчета
+    // в верхнем левом углу верхней панели инструментов, вводим коррекцию
+    private fun getYContextMenu (viewHolder: MainViewHolder): Int {
+        val location = IntArray(2)
+        topToolbarBinding.llTopToolbar.getLocationOnScreen(location)
+        val hStatusBar = location[1]            // Высота строки состояния
+        val borderY =
+            heightScreen * 2 / 3                // Граница:
+                                                // для холдеров находящихся НАД ней контекст.меню выводится ПОД холдером,
+                                                // для холдеров находящихся ПОД граеницей - НАД холдером
+        binding.recycler.getLocationOnScreen(location)
+        viewHolder.llForeground.getLocationOnScreen(location)
+        val holderTopY = location[1] - hStatusBar       // Y верхнего угла холдера с коррекцией на высоту строки состояния
+        val holderBottomY =
+            holderTopY + viewHolder.llForeground.height // Y нижнего угла холдера
+        val coordinateY = if (holderTopY < borderY) {   // Если холдер находится над границей
+            holderBottomY + 20                          // Контекст.меню выводится на 20 пикселов ниже холдера
+        } else {
+            holderTopY - 20 - hidhtContextMenu          // Контекст.меню выводится на 20 пикселов выше холдера
+        }
+        return coordinateY                              // Y точки, в которую надо вывести контекст.меню
+
     }
 }
