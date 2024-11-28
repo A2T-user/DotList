@@ -3,4 +3,4 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:animation="@anim/open_child_dir"
     android:animationOrder="normal"
-    android:delay="0%"/>
+    android:delay="2%"/>

@@ -3,10 +3,10 @@
     android:height="@dimen/icon_size_mode"
     android:viewportWidth="24"
     android:viewportHeight="24">
-    <group android:scaleX="-1.1"
+    <group android:scaleX="-0.95"
         android:scaleY="-0.75"
         android:rotation="15"
-        android:translateX="21.5"
+        android:translateX="19.5"
         android:translateY="27.3">
         <path
             android:fillColor="@color/red_icon"

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -57,11 +56,14 @@ const val EYE_ANIMATION_DELEY = 5000L
 // на NUMBER_OF_OPERATIO_ZOOM срабатываний
 const val NUMBER_OF_OPERATIO_ZOOM = 5
 const val STEP_ZOOM = 0.5f                                     // Шаг изменения высоты шрифта
+const val ID_DIR = "id_dir"
+const val SPECIAL_MODE = "special_mode"
 
 class MainFragment : Fragment(), MainAdapterCallback {
     private val mainViewModel by viewModel<MainViewModel>()
     private val settingsViewModel by viewModel<SettingsViewModel>()
     private val adapter = MainAdapter(this)
+    private lateinit var recycler: RecyclerView
     private var mIth: ItemTouchHelper? = null
     private var mIthScb: ItemTouchHelper.Callback? = null
     var idDir = 0L
@@ -101,12 +103,19 @@ class MainFragment : Fragment(), MainAdapterCallback {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMainBinding.inflate(layoutInflater)
+        recycler = binding.recycler
         topToolbarBinding = binding.topToolbar
         smallToolbarBinding = binding.smallToolbar
         sideToolbarBinding = binding.sideBar
         contextMenuFormatBinding = binding.contextMenuFormat
         contextMenuMoveBinding = binding.contextMenuMove
         modesToolbarBinding = binding.modesToolbar
+
+        // Восстановление параметров при рестарте
+        if (savedInstanceState != null) {
+            idDir = savedInstanceState.getLong(ID_DIR, 0)
+            specialMode = specialMode.getModeByName(savedInstanceState.getString(SPECIAL_MODE, "NORMAL"))
+        }
         return binding.root
     }
     @SuppressLint("ClickableViewAccessibility")
@@ -133,18 +142,15 @@ class MainFragment : Fragment(), MainAdapterCallback {
         animOpenChildDir = AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.anim_open_child_dir)
         animOpenParentDir = AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.anim_open_parent_dir)
 
-
-
         initializingRecyclerView ()
 
-        goToNormalMode()
-
+        goToDir(animOpenNewDir)
 
         // Изменение высоты шрифта
 
         val j = AtomicInteger() // Счетчик срабатываний Zoom
-        binding.recycler.setOnTouchListener{ _: View?, event: MotionEvent ->
-            requestFocusInTouch()
+        recycler.setOnTouchListener{ _: View?, event: MotionEvent ->
+            requestEyeFocus()
             when (event.action and MotionEvent.ACTION_MASK) {
                 MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
                     isZOOMode = false
@@ -166,7 +172,6 @@ class MainFragment : Fragment(), MainAdapterCallback {
                             val dy = event.getY(0) - event.getY(1)
                             newDist = hypot(dx.toDouble(), dy.toDouble()).toFloat()
                             val coef = newDist / oldDist
-                            val oldH = sizeGrandText
                             if (coef < 1f) {
                                 sizeGrandText -= STEP_ZOOM
                                 if (sizeGrandText < 18) sizeGrandText = 18f
@@ -191,14 +196,14 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
         // Кнопка МЕНЮ
         topToolbarBinding.btnMenu.setOnClickListener {
-            requestFocusInTouch()                   // Присвоение фокуса
+            requestEyeFocus()                   // Присвоение фокуса
             noSleepModeOff()           // Выключение режима БЕЗ СНА
             findNavController().navigate(R.id.action_mainFragment_to_settingsFragment2)
         }
 
         // НЕ СПЯЩИЙ РЕЖИМ
         topToolbarBinding.imageEye.setOnClickListener {
-            requestFocusInTouch()                   // Присвоение фокуса
+            requestEyeFocus()                   // Присвоение фокуса
             if (isNoSleepMode) noSleepModeOff() else noSleepModeON()
 
         }
@@ -221,9 +226,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
                         val dX = event.x - downX.get()
                         val dY = event.y - downY.get()
                         if (abs(dX/dY) > 1.5 && dX < 0) {                    // Если жест горизонталный, влево
-                            enableSpecialMode()                                 // Переход в нормальный режим
-                            sideBarShowOrHide(true)                       // Открыть боковую панель
                             noSleepModeOff()                                    // Выключение режима БЕЗ СНА
+                            sideBarShowOrHide(true)                       // Открыть боковую панель
                         }
                     }
                 }
@@ -231,7 +235,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
             return@setOnTouchListener isTouch.get()
         }
         // Потеря фокуса кнопкой развернуть/свернуть убирает бок.панель
-        sideToolbarBinding.llSideBarOpen.setOnFocusChangeListener { _, hasFocus ->
+        sideToolbarBinding.ivSideBarOpen.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) sideBarShowOrHide(false)
         }
 
@@ -240,9 +244,17 @@ class MainFragment : Fragment(), MainAdapterCallback {
             sideBarFullOpenClose(!isSideToolbarFullShow)
         }
 
+        // Кнопка режима Переноса
+        sideToolbarBinding.llSideBarMoveMode.setOnClickListener {
+            requestFocusInTouch(view)
+            specialMode = SpecialMode.MOVE
+            enableSpecialMode()
+            goToDir(animOpenNewDir)
+        }
+
         // Кнопка режима Удаления
         sideToolbarBinding.llSideBarDelMode.setOnClickListener {
-            requestFocusInTouch()
+            requestFocusInTouch(view)
             specialMode = SpecialMode.DELETE
             enableSpecialMode()
             goToDir(animOpenNewDir)
@@ -250,26 +262,26 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
         // Кнопка режима Восстановления
         sideToolbarBinding.llSideBarRestMode.setOnClickListener {
-            requestFocusInTouch()
+            requestFocusInTouch(view)
             specialMode = SpecialMode.RESTORE
-            enableSpecialMode()
-            goToDir(animOpenNewDir)
-        }
-
-        // Кнопка режима Переноса
-        sideToolbarBinding.llSideBarMoveMode.setOnClickListener {
-            requestFocusInTouch()
-            specialMode = SpecialMode.MOVE
             enableSpecialMode()
             goToDir(animOpenNewDir)
         }
 
         // Кнопка режима Архив
         sideToolbarBinding.llSideBarArchiveMode.setOnClickListener {
-            requestFocusInTouch()
+            requestFocusInTouch(view)
             specialMode = SpecialMode.ARCHIVE
             enableSpecialMode()
             goToDir(animOpenNewDir)
+        }
+
+        //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        smallToolbarBinding.llRootDir.setOnClickListener {
+            if (idDir != 0L) {
+                idDir = 0L
+                goToDir(animOpenNewDir)
+            }
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ НИЖНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -353,10 +365,14 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     // Присвоение фокуса
-    override fun requestFocusInTouch () {
-        topToolbarBinding.imageEye.isFocusableInTouchMode = true
-        topToolbarBinding.imageEye.requestFocus()
-        topToolbarBinding.imageEye.isFocusableInTouchMode = false
+    override fun requestEyeFocus () {
+        requestFocusInTouch(topToolbarBinding.imageEye)
+    }
+
+    private fun requestFocusInTouch (view: View) {
+        view.isFocusableInTouchMode = true
+        view.requestFocus()
+        view.isFocusableInTouchMode = false
     }
 
 
@@ -453,19 +469,13 @@ class MainFragment : Fragment(), MainAdapterCallback {
         modesToolbarBinding.ivBarModes3.clearAnimation()
     }
 
-
-
-
-
-
     // Показать/скрыть боковую панель
     private fun sideBarShowOrHide (show: Boolean) {
         if (show) {
             binding.sideBarFlag.isVisible = false                           // Убрать ярлык боковой панели
             sideToolbarBinding.llSideBar.isVisible = true                   // Вывести бок.панель
-            // Вернуть кнопку "Развернуть панель" в исходное положение
+            sideToolbarBinding.ivSideBarOpen.requestFocus()                 // и перевести фокус на нее
             sideToolbarBinding.ivSideBarOpen.animate().rotation(0f)   // Кнопку Развернуть панель в исх.положение
-            sideToolbarBinding.llSideBarOpen.requestFocus()                 // и перевести фокус на нее
         } else {
             if (isSideToolbarFullShow) sideBarFullOpenClose(false)      // Свернуть бок.панель
             sideToolbarBinding.llSideBar.isVisible = false                  // Убрать бок.панель
@@ -510,8 +520,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
         // Записать изменения в БД *******************************************************************************************************************************************
     }
     private fun initializingRecyclerView () {
-        binding.recycler.adapter = adapter
-        binding.recycler.setLayoutManager(object : LinearLayoutManager(requireContext()) {
+        recycler.adapter = adapter
+        recycler.setLayoutManager(object : LinearLayoutManager(requireContext()) {
             // Разрешаем скольжение тоько при старте редактирования записи
             override fun requestChildRectangleOnScreen(
                 parent: RecyclerView,
@@ -528,10 +538,10 @@ class MainFragment : Fragment(), MainAdapterCallback {
         val itemAnimator: ItemAnimator = DefaultItemAnimator()
         itemAnimator.moveDuration = 300
         itemAnimator.removeDuration = 100
-        binding.recycler.setItemAnimator(itemAnimator)
-        binding.recycler.scheduleLayoutAnimation()
-        binding.recycler.layoutAnimation = animOpenNewDir
-        binding.recycler.invalidate()
+        recycler.setItemAnimator(itemAnimator)
+        recycler.scheduleLayoutAnimation()
+        recycler.layoutAnimation = animOpenNewDir
+        recycler.invalidate()
         mIthScb = object : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
@@ -640,7 +650,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
             }
         }
         mIth = ItemTouchHelper(mIthScb!!)
-        mIth!!.attachToRecyclerView(binding.recycler)
+        mIth!!.attachToRecyclerView(recycler)
     }
 
     override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
@@ -655,14 +665,14 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
     fun mainBackPressed () {
         adapter.isKeyboardON = false            // Если нажат Back, клавиатура точно скрыта
-        requestFocusInTouch()
+        requestEyeFocus()
         noSleepModeOff()                        // Выключение режима БЕЗ СНА
         goToParentDir ()                        // Переход к родительской папке
     }
 
     // Возврат в режим NORMAL
     private fun goToNormalMode () {
-        requestFocusInTouch()
+        requestEyeFocus()
         specialMode = SpecialMode.NORMAL
         enableSpecialMode()
         goToDir(animOpenNewDir)
@@ -681,44 +691,19 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     private fun goToDir (animationController: LayoutAnimationController) {
-        Log.e("МОЁ", "goToDir")
         showList(specialMode, idDir, animationController)
     }
 
-
     private fun showList(specialMode: SpecialMode, idDir: Long, animationController: LayoutAnimationController)= lifecycleScope.launch {
-        val records = when(specialMode) {
-            SpecialMode.NORMAL, SpecialMode.MOVE, SpecialMode.DELETE -> {
-                if (App.appSettings.sortingChecks) {
-                    mainViewModel.getRecordsForNormalMoveDeleteModesByCheck(idDir)
-                } else {
-                    mainViewModel.getRecordsForNormalMoveDeleteModes(idDir)
-                }
-            }
-            SpecialMode.RESTORE -> {
-                if (App.appSettings.sortingChecks) {
-                    mainViewModel.getRecordsForRestoreArchiveModesByCheck(idDir, 1)
-                } else {
-                    mainViewModel.getRecordsForRestoreArchiveModes(idDir, 1)
-                }
-            }
-            SpecialMode.ARCHIVE -> {
-                if (App.appSettings.sortingChecks) {
-                    mainViewModel.getRecordsForRestoreArchiveModesByCheck(idDir, 0)
-                } else {
-                    mainViewModel.getRecordsForRestoreArchiveModes(idDir, 0)
-                }
-            }
-        }
-        val mutableRecords = records.toMutableList()
-        if (specialMode == SpecialMode.NORMAL) {
-            mutableRecords.add(getNewRecord(idDir, mutableRecords,mutableRecords.isEmpty() && App.appSettings.editEmptyDir))
-        }
-        fillingRecycler(mutableRecords, animationController)
+        fillingRecycler(
+            mainViewModel.getRecords(specialMode, idDir),
+            animationController
+        )
+        updatFieldsOfSmallToolbar()
     }
 
     private fun fillingRecycler(records: List<ListRecord>, animationController: LayoutAnimationController) {
-        binding.recycler.layoutAnimation = animationController
+        recycler.layoutAnimation = animationController
         mainViewModel.getNameDir(idDir).observe(viewLifecycleOwner) { names ->
             nameDir = if (names.isEmpty()) "R:" else names[0]
             topToolbarBinding.pathDir.text = nameDir
@@ -728,43 +713,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
         adapter.records.clear()
         adapter.records.addAll(records)
         adapter.notifyDataSetChanged()
-        binding.recycler.scheduleLayoutAnimation()      // Анимация обновления строк рециклера
-
+        recycler.scheduleLayoutAnimation()      // Анимация обновления строк рециклера
     }
-
-    private fun getNewRecord (idDir: Long, records: List<ListRecord>, startEdit: Boolean): ListRecord {
-        return ListRecord(
-            0,
-            idDir,
-            false,
-            getMaxNpp(records) + 1,
-            false,
-            "",
-            "",
-            0,
-            0,
-            0,
-            0,
-            null,
-            null,
-            isArchive = false,
-            isDelete = false,
-            isFull = false,
-            isAllCheck = false,
-            true,
-            startEdit,
-            false
-        )
-    }
-
-    private fun getMaxNpp (records: List<ListRecord>): Int {
-        var maxNpp = 0
-        for (rec: ListRecord in records) {
-            if (rec.npp > maxNpp) maxNpp = rec.npp
-        }
-        return maxNpp
-    }
-
 
     override fun getIdCurrentDir(): Long = idDir
 
@@ -818,11 +768,9 @@ class MainFragment : Fragment(), MainAdapterCallback {
         val location = IntArray(2)
         topToolbarBinding.llTopToolbar.getLocationOnScreen(location)
         val hStatusBar = location[1]            // Высота строки состояния
-        val borderY =
-            heightScreen * 2 / 3                // Граница:
+        val borderY = heightScreen * 2 / 3      // Граница:
                                                 // для холдеров находящихся НАД ней контекст.меню выводится ПОД холдером,
                                                 // для холдеров находящихся ПОД граеницей - НАД холдером
-        binding.recycler.getLocationOnScreen(location)
         viewHolder.llForeground.getLocationOnScreen(location)
         val holderTopY = location[1] - hStatusBar       // Y верхнего угла холдера с коррекцией на высоту строки состояния
         val holderBottomY =
@@ -833,6 +781,26 @@ class MainFragment : Fragment(), MainAdapterCallback {
             holderTopY - 20 - hidhtContextMenu          // Контекст.меню выводится на 20 пикселов выше холдера
         }
         return coordinateY                              // Y точки, в которую надо вывести контекст.меню
-
     }
+
+    override fun updatFieldsOfSmallToolbar () {
+        var countLine = 0
+        var countDir = 0
+        adapter.records.forEach {
+            if (it.isDir) countDir++ else countLine++
+        }
+        if (specialMode == SpecialMode.NORMAL) countLine--
+        val sum = (countDir + countLine).toString()
+        smallToolbarBinding.tvSumLine.text = countLine.toString()
+        smallToolbarBinding.tvSumDir.text = countDir.toString()
+        smallToolbarBinding.tvSumSum.text = sum
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putLong(ID_DIR, idDir)
+        outState.putString(SPECIAL_MODE, specialMode.getModeName())
+    }
+
+
 }

@@ -40,8 +40,7 @@
         android:background="@drawable/btn_round"
         app:layout_constraintBottom_toBottomOf="@+id/btnHelp"
         app:layout_constraintStart_toStartOf="@+id/bar"
-        app:layout_constraintEnd_toEndOf="@+id/bar"
-        android:visibility="gone">
+        app:layout_constraintEnd_toEndOf="@+id/bar">
 
     <ImageView
         android:id="@+id/ivBarModes_3"
