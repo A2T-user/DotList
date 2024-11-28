@@ -26,9 +26,6 @@
             tools:ignore="UseCompoundDrawables"
             android:gravity="center"
             android:layout_gravity="center_horizontal"
-            android:clickable="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:background="@drawable/click_selector"
             android:layout_marginVertical="2dp"
             style="@style/LLSideBarStyle">
@@ -38,6 +35,9 @@
                 android:layout_width="40dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_arrow_left"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 tools:ignore="ContentDescription" />
 
             <TextView
@@ -118,6 +118,28 @@
                 style="@style/TVSideBarStyle" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="3dp"
+            android:background="@color/yellow_dir"/>
+
+        <LinearLayout
+            android:id="@+id/llSideBarMoveMode"
+            tools:ignore="UseCompoundDrawables"
+            style="@style/LLSideBarStyle">
+
+            <ImageView
+                android:src="@drawable/ic_move_mode"
+                tools:ignore= "ContentDescription"
+                style="@style/IVSideBarStyle" />
+
+            <TextView
+                android:id="@+id/tvSideBarMoveMode"
+                android:text="@string/side_bar_move_mode"
+                style="@style/TVSideBarStyle" />
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/llSideBarDelMode"
             tools:ignore="UseCompoundDrawables"
@@ -147,22 +169,6 @@
             <TextView
                 android:id="@+id/tvSideBarRestMode"
                 android:text="@string/side_bar_rest_mode"
-                style="@style/TVSideBarStyle" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/llSideBarMoveMode"
-            tools:ignore="UseCompoundDrawables"
-            style="@style/LLSideBarStyle">
-
-            <ImageView
-                android:src="@drawable/ic_move_mode"
-                tools:ignore= "ContentDescription"
-                style="@style/IVSideBarStyle" />
-
-            <TextView
-                android:id="@+id/tvSideBarMoveMode"
-                android:text="@string/side_bar_move_mode"
                 style="@style/TVSideBarStyle" />
         </LinearLayout>
 

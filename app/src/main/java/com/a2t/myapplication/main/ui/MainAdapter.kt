@@ -57,6 +57,14 @@ class MainAdapter (
             holder.checkbox.isClickable = false
             holder.checkbox.isEnabled = false
         }
+        holder.llForeground.setOnClickListener {
+            if (item.isDir) {
+                isKeyboardON = false
+                mac.goToChildDir(item.id)
+            } else {
+                if (specialMode == SpecialMode.NORMAL && !item.isEdit) startEditMode(item, holder)
+            }
+        }
         when (specialMode) {
             SpecialMode.NORMAL -> {
                 holder.ivAction.setImageResource(R.drawable.ic_finger)
@@ -76,34 +84,25 @@ class MainAdapter (
                 }
 
                 holder.ivBtnDel.setOnClickListener {            // Удалить запись
-                    mac.requestFocusInTouch()
+                    mac.requestEyeFocus()
 
                 }
 
                 holder.ivBtnEdit.setOnClickListener {            // Редактировать запись
-                    mac.requestFocusInTouch()
+                    mac.requestEyeFocus()
                     startEditMode(item, holder)
                 }
                 holder.ivBtnBell.setOnClickListener {            // Создать/редактировать напоминание
-                    mac.requestFocusInTouch()
+                    mac.requestEyeFocus()
 
                 }
                 holder.ivBtnDir.setOnClickListener {            // строка <-> папка
-                    mac.requestFocusInTouch()
+                    mac.requestEyeFocus()
                     item.isDir = !item.isDir
                     holder.bind(item)
                     mac.updateRecord(item)
                 }
                 // ############################################## РЕАКЦИЯ ОБЪЕКТОВ FOREGROUND ###################################################
-                holder.llForeground.setOnClickListener {
-                    if (item.isDir) {
-                        isKeyboardON = false
-                        mac.goToChildDir(item.id)
-                    } else {
-                        if (!item.isEdit) startEditMode(item, holder)
-                    }
-                }
-
 
                 // Открытие меню форматирования текста
                 holder.llForeground.setOnLongClickListener{
@@ -178,6 +177,7 @@ class MainAdapter (
                         else -> {}
                     }
                 }
+
                 // Открытие меню форматирования текста
                 holder.ivAction.setOnClickListener{
                     currentHolder = holder
@@ -189,6 +189,7 @@ class MainAdapter (
 
             }
             SpecialMode.DELETE -> {
+
                 holder.ivAction.setImageResource(R.drawable.ic_basket_white)
                 if (bufferItem != null) {
                     flipPicture(holder.ivAction, R.drawable.ic_del_mode)
@@ -199,6 +200,7 @@ class MainAdapter (
 
             }
             SpecialMode.RESTORE -> {
+
                 holder.ivAction.setImageResource(R.drawable.ic_basket_white)
                 if (bufferItem != null) {
                     flipPicture(holder.ivAction, R.drawable.ic_rest_mode)
@@ -209,6 +211,7 @@ class MainAdapter (
 
             }
             SpecialMode.ARCHIVE -> {
+
                 holder.ivAction.setImageResource(R.drawable.ic_archive_trans)
                 if (item.isArchive) {
                     flipPicture(holder.ivAction, R.drawable.ic_archive_red)
@@ -294,6 +297,7 @@ class MainAdapter (
                     val position: Int = records.size - 1
                     notifyItemInserted(position)
                     notifyItemRangeChanged(position, 1)
+                    mac.updatFieldsOfSmallToolbar()
                 }
             } else {   // Старая строка
                 if (holder.aetRecord.getText().toString().isEmpty()) {  // Если aetRecord пустое,
@@ -349,7 +353,7 @@ class MainAdapter (
     }
 
     private fun clickCheckbox(holder: MainViewHolder, item: ListRecord) {
-        mac.requestFocusInTouch()
+        mac.requestEyeFocus()
         item.isChecked = holder.checkbox.isChecked
         item.lastEditTime = System.currentTimeMillis()
         holder.bind(item)

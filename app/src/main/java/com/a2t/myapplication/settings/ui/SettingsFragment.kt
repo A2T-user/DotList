@@ -11,6 +11,9 @@ import com.a2t.myapplication.settings.domain.model.AppSettings
 import com.a2t.myapplication.settings.presentation.SettingsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+const val MIN_STORAGE_PERIOD_FOR_DELETED_RECORDS = 1
+const val MAX_STORAGE_PERIOD_FOR_DELETED_RECORDS = 7
+
 class SettingsFragment : Fragment() {
 
     private val settingsViewModel by viewModel<SettingsViewModel>()
@@ -49,7 +52,7 @@ class SettingsFragment : Fragment() {
         // Период восстановления
         binding.ivPlus.setOnClickListener {
             var period = App.appSettings.restorePeriod
-            if (period < 7) {
+            if (period < MAX_STORAGE_PERIOD_FOR_DELETED_RECORDS) {
                 period++
                 binding.tvRestorePeriod.text = period.toString()
                 App.appSettings.restorePeriod = period
@@ -59,7 +62,7 @@ class SettingsFragment : Fragment() {
 
         binding.ivMinus.setOnClickListener {
             var period = App.appSettings.restorePeriod
-            if (period > 1) {
+            if (period > MIN_STORAGE_PERIOD_FOR_DELETED_RECORDS) {
                 period--
                 binding.tvRestorePeriod.text = period.toString()
                 App.appSettings.restorePeriod = period
