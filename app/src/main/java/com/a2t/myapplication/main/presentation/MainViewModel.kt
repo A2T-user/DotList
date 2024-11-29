@@ -91,7 +91,7 @@ class MainViewModel (
         mainInteractor.getRecordsForNormalMoveDeleteModes(idDir)
     }
     // Возвращает список записей для режимов NORMAL, MOVE, DELETE с сортировкой по isChecked
-    suspend fun getRecordsForNormalMoveDeleteModesByCheck(idDir: Long)= withContext(Dispatchers.IO) {
+    private suspend fun getRecordsForNormalMoveDeleteModesByCheck(idDir: Long)= withContext(Dispatchers.IO) {
         mainInteractor.getRecordsForNormalMoveDeleteModesByCheck(idDir)
     }
     // Возвращает список записей для режимов RESTORE(isDelete = 1), ARCHIVE(isDelete = 0)
@@ -99,7 +99,7 @@ class MainViewModel (
         mainInteractor.getRecordsForRestoreArchiveModes(idDir, isDelete)
     }
     // Возвращает список записей для режимов RESTORE(isDelete = 1), ARCHIVE(isDelete = 0) с сортировкой по isChecked
-    suspend fun getRecordsForRestoreArchiveModesByCheck(idDir: Long, isDelete: Int)= withContext(Dispatchers.IO) {
+    private suspend fun getRecordsForRestoreArchiveModesByCheck(idDir: Long, isDelete: Int)= withContext(Dispatchers.IO) {
         mainInteractor.getRecordsForRestoreArchiveModesByCheck(idDir, isDelete)
     }
 
