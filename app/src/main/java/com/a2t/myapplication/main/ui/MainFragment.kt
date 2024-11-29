@@ -96,7 +96,9 @@ class MainFragment : Fragment(), MainAdapterCallback {
     private lateinit var animOpenParentDir: LayoutAnimationController
     private var archiveJob = lifecycleScope.launch {}
     private var eyeJob = lifecycleScope.launch {}
+    private var nameJob = lifecycleScope.launch {}
     private var isNoSleepMode = false
+    private var isClickAllowed = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -131,6 +133,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         maxShiftToRight = widthScreen * K_MAX_SHIFT_RIGHT               // Величина максимального смещения при свайпе в право
         maxShiftToLeft = widthScreen * K_MAX_SHIFT_LEFT                 // Величина максимального смещения при свайпе в лево
         sizeGrandText = App.appSettings.textSize
+        topToolbarBinding.pathDir.textSize = 0.75f * sizeGrandText
 
         // Анимации
         animationMoveMode = AnimationUtils.loadAnimation(requireContext(), R.anim.arrow_right)
@@ -199,6 +202,10 @@ class MainFragment : Fragment(), MainAdapterCallback {
             requestEyeFocus()                   // Присвоение фокуса
             noSleepModeOff()           // Выключение режима БЕЗ СНА
             findNavController().navigate(R.id.action_mainFragment_to_settingsFragment2)
+        }
+
+        topToolbarBinding.pathDir.setOnClickListener {
+            if (clickDebounce()) fullPathDir(idDir)
         }
 
         // НЕ СПЯЩИЙ РЕЖИМ
@@ -802,5 +809,39 @@ class MainFragment : Fragment(), MainAdapterCallback {
         outState.putString(SPECIAL_MODE, specialMode.getModeName())
     }
 
+    private fun fullPathDir (idDir: Long) {
+        var id = idDir
+        if (id > 0) {
+            mainViewModel.getParentDir(id).observe(viewLifecycleOwner) { ids ->
+                id = ids[0]
+                mainViewModel.getNameDir(id).observe(viewLifecycleOwner) { names ->
+                    val name = if (names.isEmpty()) "R:" else names[0]
+                    topToolbarBinding.pathDir.text = buildString {
+                        append(name)
+                        append("\\")
+                        append(topToolbarBinding.pathDir.text)
+                    }
+                    fullPathDir(id)
+                    nameJob.cancel()
+                    nameJob = lifecycleScope.launch {
+                        delay(5000)
+                        topToolbarBinding.pathDir.text = nameDir
+                    }
+                }
 
+            }
+        }
+    }
+
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(5100)
+                isClickAllowed = true
+            }
+        }
+        return current
+    }
 }
