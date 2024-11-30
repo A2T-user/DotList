@@ -20,10 +20,13 @@ import com.a2t.myapplication.common.utilities.AlarmHelper
 import com.a2t.myapplication.main.domain.model.ListRecord
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
+    private var endDayJob: Job? = null
+    private var alarmJob: Job? = null
     private var animationBell: Animation = AnimationUtils.loadAnimation(App.appContext, R.anim.anim_bell)
     var id: Long = 0
     var bellType = 0        // Тип иконки напоминания (0-скрыта, 1-белый, 2-красный, 3-анимация)
@@ -141,16 +144,19 @@ class MainViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
     }
 
     private fun changeBellType (item: ListRecord) {
+        alarmJob?.cancel()
+        endDayJob?.cancel()
         val alarmTime = item.alarmTime
         val systemTime = System.currentTimeMillis()
         val endCurrentDay = AlarmHelper.endOfCurrentDay()
+        val startCurrentDay = AlarmHelper.startOfCurrentDay()
         if (alarmTime == null) {
             bellType = 0
         } else if (alarmTime > endCurrentDay) {
             bellType = 1
         } else if (alarmTime > systemTime) {
             bellType = 2
-            CoroutineScope(Dispatchers.Main).launch {
+            alarmJob = CoroutineScope(Dispatchers.Main).launch {
                 delay(alarmTime - systemTime)
                 bellType = 3
                 changeBellIcon()
@@ -159,8 +165,12 @@ class MainViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
             bellType = 3
         }
         if (alarmTime != null) {
-            CoroutineScope(Dispatchers.Main).launch {
+            endDayJob = CoroutineScope(Dispatchers.Main).launch {
                 delay(endCurrentDay - alarmTime + 1)
+                if (alarmTime <= startCurrentDay) {
+                    item.alarmTime = null
+                    item.alarmText = null
+                }
                 changeBellType(item)
                 changeBellIcon()
             }
