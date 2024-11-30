@@ -16,6 +16,10 @@ class MainInteractorImpl(
     override fun updateRecord(record: ListRecord) {
         mainRepository.updateRecord(record)
     }
+    // Обновление записей
+    override fun updateRecords(records: List<ListRecord>) {
+        mainRepository.updateRecords(records)
+    }
 
     // Возвращает список записей для режимов NORMAL, MOVE, DELETE
     override fun getRecordsForNormalMoveDeleteModes(idDir: Long): List<ListRecord> {

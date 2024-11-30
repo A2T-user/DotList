@@ -14,7 +14,7 @@ class AlarmHelper {
             return midnight(24)
         }
 
-        fun midnight (hour: Int): Long {
+        fun midnight(hour: Int): Long {
             val currentDate = Date()
             val calendar = Calendar.getInstance()
             calendar.setTime(currentDate)

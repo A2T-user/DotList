@@ -9,6 +9,8 @@ interface MainRepository {
     fun insertRecord(record: ListRecord): Long
     // Обновление записи
     fun updateRecord(record: ListRecord)
+    // Обновление записей
+    fun updateRecords(records: List<ListRecord>)
 
     // Возвращает список записей для режимов NORMAL, MOVE, DELETE
     fun getRecordsForNormalMoveDeleteModes(idDir: Long): List<ListRecord>
