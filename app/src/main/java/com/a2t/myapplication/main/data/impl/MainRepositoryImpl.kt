@@ -25,6 +25,14 @@ class MainRepositoryImpl(
             appDatabase.mainRecordDao().updateRecord(recordDBConverter.map(record))
         }
     }
+    // Обновление записей
+    override fun updateRecords(records: List<ListRecord>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            appDatabase.mainRecordDao().updateRecords(records.map { record -> recordDBConverter.map(record) })
+        }
+    }
+
+
     // NORMAL, MOVE, DELETE
     // Возвращает список записей для режимов NORMAL, MOVE, DELETE
     override fun getRecordsForNormalMoveDeleteModes(idDir: Long): List<ListRecord> {

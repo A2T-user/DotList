@@ -19,6 +19,10 @@ interface MainRecordDao {
     @Update(entity = ListRecordEntity::class, onConflict = OnConflictStrategy.REPLACE)
     fun updateRecord(record: ListRecordEntity)
 
+    // Обновление записей
+    @Update(entity = ListRecordEntity::class, onConflict = OnConflictStrategy.REPLACE)
+    fun updateRecords(records: List<ListRecordEntity>)
+
     // Возвращает список записей для режимов NORMAL, MOVE, DELETE
     @Query("SELECT * FROM list_table WHERE idDir = :idDir AND isArchive = 0 AND isDelete = 0 ORDER BY npp ASC")
     fun getRecordsForNormalMoveDeleteModes(idDir: Long): List<ListRecordEntity>

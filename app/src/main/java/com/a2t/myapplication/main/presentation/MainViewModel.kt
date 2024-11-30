@@ -21,6 +21,10 @@ class MainViewModel (
     fun updateRecord(record: ListRecord) {
         mainInteractor.updateRecord(record)
     }
+    // Обновление записей
+    fun updateRecords(records: List<ListRecord>) {
+        mainInteractor.updateRecords(records)
+    }
 
     suspend fun getRecords(specialMode: SpecialMode, idDir: Long): List<ListRecord> {
         val records = when(specialMode) {

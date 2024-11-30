@@ -521,10 +521,9 @@ class MainFragment : Fragment(), MainAdapterCallback {
         return records.find { it.id == id }
     }
 
-    private fun updateNppInList (list: ArrayList<ListRecord>) {
-        for (i in 0 until list.size)
-            list[i].npp = i
-        // Записать изменения в БД *******************************************************************************************************************************************
+    private fun updateNppList (list: ArrayList<ListRecord>) {
+        list.forEachIndexed { index, item -> item.npp = index }
+        mainViewModel.updateRecords(list) // Записать изменения в БД
     }
     private fun initializingRecyclerView () {
         recycler.adapter = adapter
@@ -628,7 +627,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                             Collections.swap(listDir, i, i - 1)      // массива в новые позиции
                         }
                     }
-                    updateNppInList(listDir) // Обновить порядковые номера записей в массиве и БД******************************************************************************************
+                    updateNppList(listDir) // Обновить порядковые номера записей в массиве и БД
                     // Сообщение Recicler, что элемент перемещен
                     adapter.notifyItemMoved(fromPos, toPos)
                     if (fromPos > toPos) {
