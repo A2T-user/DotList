@@ -92,4 +92,10 @@ class MainRepositoryImpl(
     override fun getParentDir(idDir: Long): LiveData<List<Long>> {
         return appDatabase.mainRecordDao().getParentDir(idDir)
     }
+
+    // Возвращает список подчиненных записей для удаления
+    override fun selectionSubordinateRecordsToDelete(idDir: Long): List<ListRecord> {
+        val records = appDatabase.mainRecordDao().selectionSubordinateRecordsToDelete(idDir)
+        return records.map { record -> recordDBConverter.map(record) }
+    }
 }

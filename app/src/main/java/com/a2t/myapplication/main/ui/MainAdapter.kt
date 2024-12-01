@@ -85,7 +85,7 @@ class MainAdapter (
 
                 holder.ivBtnDel.setOnClickListener {            // Удалить запись
                     mac.requestEyeFocus()
-
+                    mac.deleteRecord(arrayListOf(item))
                 }
 
                 holder.ivBtnEdit.setOnClickListener {            // Редактировать запись
@@ -103,7 +103,6 @@ class MainAdapter (
                     mac.updateRecord(item)
                 }
                 // ############################################## РЕАКЦИЯ ОБЪЕКТОВ FOREGROUND ###################################################
-
                 // Открытие меню форматирования текста
                 holder.llForeground.setOnLongClickListener{
                     currentHolder = holder

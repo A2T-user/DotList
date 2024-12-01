@@ -47,4 +47,9 @@ class MainInteractorImpl(
     override fun getParentDir(idDir: Long): LiveData<List<Long>> {
         return mainRepository.getParentDir(idDir)
     }
+
+    // Возвращает список подчиненных записей для удаления
+    override fun selectionSubordinateRecordsToDelete(idDir: Long): List<ListRecord> {
+        return mainRepository.selectionSubordinateRecordsToDelete(idDir)
+    }
 }

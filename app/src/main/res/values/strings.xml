@@ -69,4 +69,10 @@
 
     <string name="text_exit">Нажмите еще раз, чтобы выйти</string>
 
+    <string name="del">Удаление</string>
+    <string name="del_attempt">Попытка удалить записей: %1$s</string>
+    <string name="del_subordinate">.\nТакже будет удалено вложенных записей: %1$s</string>
+    <string name="del_archive">,\nвключая архивных папок: %1$s.</string>
+    <string name="del_negative_btn">Отмена</string>
+
 </resources>

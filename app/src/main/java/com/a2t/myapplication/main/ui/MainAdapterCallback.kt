@@ -16,4 +16,5 @@ interface MainAdapterCallback {
     fun showContextMenuFormat(viewHolder: MainViewHolder)
     fun showContextMenuMove(viewHolder: MainViewHolder)
     fun updatFieldsOfSmallToolbar ()
+    fun deleteRecord (records: List<ListRecord>)
 }

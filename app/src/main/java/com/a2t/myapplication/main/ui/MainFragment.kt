@@ -38,6 +38,7 @@ import com.a2t.myapplication.main.presentation.MainViewModel
 import com.a2t.myapplication.main.presentation.model.SpecialMode
 import com.a2t.myapplication.root.ui.RootActivity
 import com.a2t.myapplication.settings.presentation.SettingsViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -700,7 +701,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         showList(specialMode, idDir, animationController)
     }
 
-    private fun showList(specialMode: SpecialMode, idDir: Long, animationController: LayoutAnimationController)= lifecycleScope.launch {
+    private fun showList(specialMode: SpecialMode, idDir: Long, animationController: LayoutAnimationController) = lifecycleScope.launch {
         fillingRecycler(
             mainViewModel.getRecords(specialMode, idDir),
             animationController
@@ -842,5 +843,41 @@ class MainFragment : Fragment(), MainAdapterCallback {
             }
         }
         return current
+    }
+
+    override fun deleteRecord(records: List<ListRecord>) {
+        lifecycleScope.launch {
+            val mutableRecords = mutableListOf<ListRecord>()
+            getSubordinateRecords(records, mutableRecords)
+            val selectedRecords = records.size
+            val subordinateRecords = mutableRecords.size
+            mutableRecords.addAll(records)
+            val countArchive = mutableRecords.count { it.isArchive }
+            var mess = getString(R.string.del_attempt, selectedRecords.toString())
+            var str = if (subordinateRecords != 0) getString(R.string.del_subordinate, subordinateRecords.toString()) else ""
+            mess += str
+            str = if (countArchive != 0) getString(R.string.del_archive, countArchive.toString()) else ""
+            mess += str + "."
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.del))
+                .setMessage(mess)
+                .setNeutralButton(getString(R.string.del_negative_btn)) { _, _ -> }
+                .setPositiveButton(getString(R.string.delete)) { dialog, which ->
+                    mutableRecords.forEach { it.isDelete = true }
+                    mainViewModel.updateRecords(mutableRecords)
+                    goToNormalMode()
+                }
+                .show()
+        }
+    }
+
+    private suspend fun getSubordinateRecords(records: List<ListRecord>, mutableRecords: MutableList<ListRecord>) {
+        records.forEach { record ->
+            if (record.isDir) {
+                val selectionRecords = mainViewModel.selectionSubordinateRecordsToDelete(record.id)
+                mutableRecords.addAll(selectionRecords)
+                getSubordinateRecords(selectionRecords, mutableRecords)
+            }
+        }
     }
 }
