@@ -91,19 +91,19 @@ class MainViewModel (
     }
 
     // Возвращает список записей для режимов NORMAL, MOVE, DELETE
-    private suspend fun getRecordsForNormalMoveDeleteModes(idDir: Long)= withContext(Dispatchers.IO) {
+    private suspend fun getRecordsForNormalMoveDeleteModes(idDir: Long) = withContext(Dispatchers.IO) {
         mainInteractor.getRecordsForNormalMoveDeleteModes(idDir)
     }
     // Возвращает список записей для режимов NORMAL, MOVE, DELETE с сортировкой по isChecked
-    private suspend fun getRecordsForNormalMoveDeleteModesByCheck(idDir: Long)= withContext(Dispatchers.IO) {
+    private suspend fun getRecordsForNormalMoveDeleteModesByCheck(idDir: Long) = withContext(Dispatchers.IO) {
         mainInteractor.getRecordsForNormalMoveDeleteModesByCheck(idDir)
     }
     // Возвращает список записей для режимов RESTORE(isDelete = 1), ARCHIVE(isDelete = 0)
-    private suspend fun getRecordsForRestoreArchiveModes(idDir: Long, isDelete: Int)= withContext(Dispatchers.IO) {
+    private suspend fun getRecordsForRestoreArchiveModes(idDir: Long, isDelete: Int) = withContext(Dispatchers.IO) {
         mainInteractor.getRecordsForRestoreArchiveModes(idDir, isDelete)
     }
     // Возвращает список записей для режимов RESTORE(isDelete = 1), ARCHIVE(isDelete = 0) с сортировкой по isChecked
-    private suspend fun getRecordsForRestoreArchiveModesByCheck(idDir: Long, isDelete: Int)= withContext(Dispatchers.IO) {
+    private suspend fun getRecordsForRestoreArchiveModesByCheck(idDir: Long, isDelete: Int) = withContext(Dispatchers.IO) {
         mainInteractor.getRecordsForRestoreArchiveModesByCheck(idDir, isDelete)
     }
 
@@ -114,5 +114,10 @@ class MainViewModel (
     // Возвращает список id родительских папок с одним элементом - id родительской папки для папки с id = idDir
     fun getParentDir(idDir: Long): LiveData<List<Long>> {
         return mainInteractor.getParentDir(idDir)
+    }
+
+    // Возвращает список подчиненных записей для удаления
+    suspend fun selectionSubordinateRecordsToDelete(idDir: Long) = withContext(Dispatchers.IO) {
+        mainInteractor.selectionSubordinateRecordsToDelete(idDir)
     }
 }

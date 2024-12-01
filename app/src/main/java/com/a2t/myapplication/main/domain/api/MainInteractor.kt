@@ -25,4 +25,7 @@ interface MainInteractor {
     fun getNameDir(idDir: Long): LiveData<List<String>>
     // Возвращает список id родительских папок с одним элементом - id родительской папки для папки с id = idDir
     fun getParentDir(idDir: Long): LiveData<List<Long>>
+
+    // Возвращает список подчиненных записей для удаления
+    fun selectionSubordinateRecordsToDelete(idDir: Long): List<ListRecord>
 }

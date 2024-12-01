@@ -47,6 +47,9 @@ interface MainRecordDao {
     @Query("SELECT idDir FROM list_table WHERE id = :idDir")
     fun getParentDir(idDir: Long): LiveData<List<Long>>
 
+    // Возвращает список подчиненных записей для удаления
+    @Query("SELECT * FROM list_table WHERE idDir = :idDir AND isDelete = 0")
+    fun selectionSubordinateRecordsToDelete(idDir: Long): List<ListRecordEntity>
 
 
     /*@Query("DELETE FROM favorite_table WHERE trackId = :trackId")
