@@ -1,6 +1,5 @@
 package com.a2t.myapplication.main.domain.impl
 
-import androidx.lifecycle.LiveData
 import com.a2t.myapplication.main.domain.api.MainInteractor
 import com.a2t.myapplication.main.domain.api.MainRepository
 import com.a2t.myapplication.main.domain.model.ListRecord
@@ -40,11 +39,11 @@ class MainInteractorImpl(
 
 
     // Возвращает список имен папок с одним элементом - именем папки с id = idDir
-    override fun getNameDir(idDir: Long): LiveData<List<String>> {
+    override fun getNameDir(idDir: Long): List<String> {
         return mainRepository.getNameDir(idDir)
     }
     // Возвращает список id родительских папок с одним элементом - id родительской папки для папки с id = idDir
-    override fun getParentDir(idDir: Long): LiveData<List<Long>> {
+    override fun getParentDir(idDir: Long): List<Long> {
         return mainRepository.getParentDir(idDir)
     }
 

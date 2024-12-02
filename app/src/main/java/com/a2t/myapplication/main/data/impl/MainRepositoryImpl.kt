@@ -1,6 +1,5 @@
 package com.a2t.myapplication.main.data.impl
 
-import androidx.lifecycle.LiveData
 import com.a2t.myapplication.common.data.db.AppDatabase
 import com.a2t.myapplication.main.data.RecordDBConverter
 import com.a2t.myapplication.main.data.entity.ListRecordEntity
@@ -84,12 +83,12 @@ class MainRepositoryImpl(
     }
 
     // Возвращает список имен папок с одним элементом - именем папки с id = idDir
-    override fun getNameDir(idDir: Long): LiveData<List<String>> {
+    override fun getNameDir(idDir: Long): List<String> {
         return appDatabase.mainRecordDao().getNameDir(idDir)
     }
 
     // Возвращает список id родительских папок с одним элементом - id родительской папки для папки с id = idDir
-    override fun getParentDir(idDir: Long): LiveData<List<Long>> {
+    override fun getParentDir(idDir: Long): List<Long> {
         return appDatabase.mainRecordDao().getParentDir(idDir)
     }
 

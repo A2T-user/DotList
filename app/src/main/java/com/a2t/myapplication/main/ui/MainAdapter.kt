@@ -283,6 +283,7 @@ class MainAdapter (
                     item.note = holder.aetNote.getText().toString()
                     item.isNew = false
                     item.lastEditTime = System.currentTimeMillis()
+                    holder.bind(item)
                     mac.insertNewRecord(item)                               // Запись в БД
                     // Создание новой строки
                     val record = ListRecord(
@@ -293,9 +294,9 @@ class MainAdapter (
                     )
                     if (em) isKeyboardON = true
                     records.add(record)
-                    val position: Int = records.size - 1
+                    val position = records.size - 1
                     notifyItemInserted(position)
-                    notifyItemRangeChanged(position, 1)
+                    notifyItemRangeChanged(position -1, 2)
                     mac.updatFieldsOfSmallToolbar()
                 }
             } else {   // Старая строка

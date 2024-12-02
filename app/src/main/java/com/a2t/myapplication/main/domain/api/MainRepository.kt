@@ -1,6 +1,5 @@
 package com.a2t.myapplication.main.domain.api
 
-import androidx.lifecycle.LiveData
 import com.a2t.myapplication.main.domain.model.ListRecord
 
 
@@ -22,9 +21,9 @@ interface MainRepository {
     fun getRecordsForRestoreArchiveModesByCheck(idDir: Long, isDelete: Int): List<ListRecord>
 
     // Возвращает список имен папок с одним элементом - именем папки с id = idDir
-    fun getNameDir(idDir: Long): LiveData<List<String>>
+    fun getNameDir(idDir: Long): List<String>
     // Возвращает список id родительских папок с одним элементом - id родительской папки для папки с id = idDir
-    fun getParentDir(idDir: Long): LiveData<List<Long>>
+    fun getParentDir(idDir: Long): List<Long>
 
     // Возвращает список подчиненных записей для удаления
     fun selectionSubordinateRecordsToDelete(idDir: Long): List<ListRecord>

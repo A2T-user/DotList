@@ -146,7 +146,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
         animOpenChildDir = AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.anim_open_child_dir)
         animOpenParentDir = AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.anim_open_parent_dir)
 
-        initializingRecyclerView ()
+        enableSpecialMode()
+        initializingRecyclerView()
 
         goToDir(animOpenNewDir)
 
@@ -288,7 +289,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         smallToolbarBinding.llRootDir.setOnClickListener {
             if (idDir != 0L) {
                 idDir = 0L
-                goToDir(animOpenNewDir)
+                goToDir(animOpenParentDir)
             }
         }
 
@@ -343,7 +344,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
     // Режим БЕЗ СНА
     // Включение режима БЕЗ СНА
-    private fun noSleepModeON () {
+    private fun noSleepModeON() {
         isNoSleepMode = true
         (requireActivity() as RootActivity).switchNoSleepMode(true)    // В активити включаем keepScreenOn
         topToolbarBinding.imageEye.setImageResource(R.drawable.ic_eye_open) // Сменить иконку
@@ -355,7 +356,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         (requireActivity() as RootActivity).showHintToast(getString(R.string.no_seep_mode_on), Toast.LENGTH_SHORT)
     }
     // Выключение режима БЕЗ СНА
-    private fun noSleepModeOff () {
+    private fun noSleepModeOff() {
         if (isNoSleepMode) {
             isNoSleepMode = false
             (requireActivity() as RootActivity).switchNoSleepMode(false)       // В активити выключаем keepScreenOn
@@ -373,7 +374,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     // Присвоение фокуса
-    override fun requestEyeFocus () {
+    override fun requestEyeFocus() {
         requestFocusInTouch(topToolbarBinding.imageEye)
     }
 
@@ -385,14 +386,14 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
 
     // Открытие специального режима
-    private fun enableSpecialMode () {
+    private fun enableSpecialMode() {
         noSleepModeOff()           // Выключение режима БЕЗ СНА
         topToolbarBinding.imageEye.isVisible = specialMode == SpecialMode.NORMAL
         showSpecialModeToolbar()
     }
 
     // Показать панель инструментов специального режима
-    private fun showSpecialModeToolbar () {
+    private fun showSpecialModeToolbar() {
         stopAllModeAnimations()         // Остановить все анимации
         if (specialMode == SpecialMode.NORMAL) {
             modesToolbarBinding.clModesToolbar.isVisible = false
@@ -424,7 +425,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         }
     }
 
-    private fun showIconMode () {
+    private fun showIconMode() {
         stopAllModeAnimations()         // Остановить все анимации панели режимов
         when (specialMode) {
             SpecialMode.MOVE -> {
@@ -459,7 +460,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     // Анимация Архива
-    private suspend fun archiveModeAnimation () {
+    private suspend fun archiveModeAnimation() {
         delay(ANIMATION_DELEY)
         modesToolbarBinding.ivBarModes2.startAnimation(animationArchiveMode)            // Анимация
         delay(ANIMATION_DELEY)
@@ -470,7 +471,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     // Остановить все анимации
-    private fun stopAllModeAnimations () {
+    private fun stopAllModeAnimations() {
         archiveJob.cancel()
         modesToolbarBinding.ivBarModes1.clearAnimation()
         modesToolbarBinding.ivBarModes2.clearAnimation()
@@ -478,7 +479,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     // Показать/скрыть боковую панель
-    private fun sideBarShowOrHide (show: Boolean) {
+    private fun sideBarShowOrHide(show: Boolean) {
         if (show) {
             binding.sideBarFlag.isVisible = false                           // Убрать ярлык боковой панели
             sideToolbarBinding.llSideBar.isVisible = true                   // Вывести бок.панель
@@ -492,7 +493,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     // Разворачивание/сворачивание боковой панели
-    private fun sideBarFullOpenClose (full: Boolean) {
+    private fun sideBarFullOpenClose(full: Boolean) {
         if (full) {
             sideToolbarBinding.ivSideBarOpen.animate().rotation(180f)     // Перевернуть кнопку Развернуть панель
             showSideBarText(true)                                         // Показать пояснительный текст кнопок
@@ -506,7 +507,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     // Показать пояснительный текст кнопок боковой панели
-    private fun showSideBarText (show: Boolean) {
+    private fun showSideBarText(show: Boolean) {
         sideToolbarBinding.tvSideBarOpen.isVisible = show                   // Текст кнопки Развернуть панель
         sideToolbarBinding.tvSideBarSend.isVisible = show                   // Текст кнопки Переслать
         sideToolbarBinding.tvSideBarConvertText.isVisible = show            // Текст кнопки Конвертация
@@ -518,15 +519,15 @@ class MainFragment : Fragment(), MainAdapterCallback {
         sideToolbarBinding.tvSideBarArchiveMode.isVisible = show            // Текст кнопки Архив
     }
 
-    private fun getItemById (id: Long, records: List<ListRecord>): ListRecord? {
+    private fun getItemById(id: Long, records: List<ListRecord>): ListRecord? {
         return records.find { it.id == id }
     }
 
-    private fun updateNppList (list: ArrayList<ListRecord>) {
+    private fun updateNppList(list: ArrayList<ListRecord>) {
         list.forEachIndexed { index, item -> item.npp = index }
         mainViewModel.updateRecords(list) // Записать изменения в БД
     }
-    private fun initializingRecyclerView () {
+    private fun initializingRecyclerView() {
         recycler.adapter = adapter
         recycler.setLayoutManager(object : LinearLayoutManager(requireContext()) {
             // Разрешаем скольжение тоько при старте редактирования записи
@@ -670,7 +671,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         ItemTouchHelper.Callback.getDefaultUIUtil().clearView(foregroundView)
     }
 
-    fun mainBackPressed () {
+    fun mainBackPressed() {
         adapter.isKeyboardON = false            // Если нажат Back, клавиатура точно скрыта
         requestEyeFocus()
         noSleepModeOff()                        // Выключение режима БЕЗ СНА
@@ -678,40 +679,40 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     // Возврат в режим NORMAL
-    private fun goToNormalMode () {
+    private fun goToNormalMode() {
         requestEyeFocus()
         specialMode = SpecialMode.NORMAL
         enableSpecialMode()
         goToDir(animOpenNewDir)
     }
 
-    private fun goToParentDir () {
-        mainViewModel.getParentDir(idDir).observe(viewLifecycleOwner) { id ->
-            idDir = id[0]
+    private fun goToParentDir() {
+        mainViewModel.getParentDir(idDir) { ids ->
+            idDir = ids[0]
             goToDir(animOpenParentDir)
         }
     }
 
-    override fun goToChildDir (id: Long) {
+    override fun goToChildDir(id: Long) {
         idDir = id
         goToDir(animOpenChildDir)
     }
 
-    private fun goToDir (animationController: LayoutAnimationController) {
+    private fun goToDir(animationController: LayoutAnimationController) {
         showList(specialMode, idDir, animationController)
     }
 
     private fun showList(specialMode: SpecialMode, idDir: Long, animationController: LayoutAnimationController) = lifecycleScope.launch {
-        fillingRecycler(
-            mainViewModel.getRecords(specialMode, idDir),
-            animationController
-        )
-        updatFieldsOfSmallToolbar()
+        mainViewModel.getRecords(specialMode, idDir) { records ->
+            fillingRecycler(records, animationController)
+            updatFieldsOfSmallToolbar()
+        }
+
     }
 
     private fun fillingRecycler(records: List<ListRecord>, animationController: LayoutAnimationController) {
         recycler.layoutAnimation = animationController
-        mainViewModel.getNameDir(idDir).observe(viewLifecycleOwner) { names ->
+        mainViewModel.getNameDir(idDir) { names ->
             nameDir = if (names.isEmpty()) "R:" else names[0]
             topToolbarBinding.pathDir.text = nameDir
         }
@@ -725,14 +726,14 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
     override fun getIdCurrentDir(): Long = idDir
 
-    override fun insertNewRecord(record: ListRecord) = lifecycleScope.launch {
-        val position = adapter.records.size - 1
-        val id = mainViewModel.insertRecord(record)
-        adapter.records[position].id = id
-        adapter.notifyItemChanged(position)
+    override fun insertNewRecord(item: ListRecord) {
+        mainViewModel.insertRecord(item) { id ->
+            item.id = id
+        }
+
     }
 
-    override fun correctingPositionOfRecordByCheck (viewHolder: MainViewHolder) {
+    override fun correctingPositionOfRecordByCheck(viewHolder: MainViewHolder) {
         if (App.appSettings.sortingChecks) {
             val fromPosition = adapter.records.indexOfFirst { it.id == viewHolder.id }
             val sortedRecords = ArrayList<ListRecord>()
@@ -771,7 +772,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     // По скольку метод getLocationOnScreen возвращает значение Y в системе координат с началом отсчета
     // в верхнем левом углу экрана, а контекстное меню вставляется в контейнер с началом отсчета
     // в верхнем левом углу верхней панели инструментов, вводим коррекцию
-    private fun getYContextMenu (viewHolder: MainViewHolder): Int {
+    private fun getYContextMenu(viewHolder: MainViewHolder): Int {
         val location = IntArray(2)
         topToolbarBinding.llTopToolbar.getLocationOnScreen(location)
         val hStatusBar = location[1]            // Высота строки состояния
@@ -790,7 +791,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         return coordinateY                              // Y точки, в которую надо вывести контекст.меню
     }
 
-    override fun updatFieldsOfSmallToolbar () {
+    override fun updatFieldsOfSmallToolbar() {
         var countLine = 0
         var countDir = 0
         adapter.records.forEach {
@@ -809,12 +810,12 @@ class MainFragment : Fragment(), MainAdapterCallback {
         outState.putString(SPECIAL_MODE, specialMode.getModeName())
     }
 
-    private fun fullPathDir (idDir: Long) {
+    private fun fullPathDir(idDir: Long) {
         var id = idDir
         if (id > 0) {
-            mainViewModel.getParentDir(id).observe(viewLifecycleOwner) { ids ->
+            mainViewModel.getParentDir(id) { ids ->
                 id = ids[0]
-                mainViewModel.getNameDir(id).observe(viewLifecycleOwner) { names ->
+                mainViewModel.getNameDir(id) { names ->
                     val name = if (names.isEmpty()) "R:" else names[0]
                     topToolbarBinding.pathDir.text = buildString {
                         append(name)
@@ -846,9 +847,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     override fun deleteRecord(records: List<ListRecord>) {
-        lifecycleScope.launch {
-            val mutableRecords = mutableListOf<ListRecord>()
-            getSubordinateRecords(records, mutableRecords)
+        mainViewModel.selectionSubordinateRecordsToDelete(records) { mRecords ->
+            val mutableRecords = mRecords.toMutableList()
             val selectedRecords = records.size
             val subordinateRecords = mutableRecords.size
             mutableRecords.addAll(records)
@@ -857,7 +857,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
             var str = if (subordinateRecords != 0) getString(R.string.del_subordinate, subordinateRecords.toString()) else ""
             mess += str
             str = if (countArchive != 0) getString(R.string.del_archive, countArchive.toString()) else ""
-            mess += str + "."
+            mess += "$str."
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.del))
                 .setMessage(mess)
@@ -865,19 +865,17 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 .setPositiveButton(getString(R.string.delete)) { dialog, which ->
                     mutableRecords.forEach { it.isDelete = true }
                     mainViewModel.updateRecords(mutableRecords)
-                    goToNormalMode()
+                    if (specialMode == SpecialMode.NORMAL) {
+                        val position = adapter.records.indexOfFirst { it.id == records[0].id }
+                        adapter.records.removeAt(position)
+                        adapter.notifyItemRemoved(position) // Уведомление об удалении
+                        adapter.notifyItemRangeChanged(position, adapter.records .size - position)
+                    } else {
+                        goToNormalMode()
+                    }
                 }
                 .show()
         }
-    }
 
-    private suspend fun getSubordinateRecords(records: List<ListRecord>, mutableRecords: MutableList<ListRecord>) {
-        records.forEach { record ->
-            if (record.isDir) {
-                val selectionRecords = mainViewModel.selectionSubordinateRecordsToDelete(record.id)
-                mutableRecords.addAll(selectionRecords)
-                getSubordinateRecords(selectionRecords, mutableRecords)
-            }
-        }
     }
 }
