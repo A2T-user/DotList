@@ -13,5 +13,6 @@
         <item name="colorEye">@color/dark_color_bar</item>
         <item name="colorBarAccent">@color/light_color_bar_accent</item>
         <item name="enableEditText">@color/white</item>
+        <item name="colorIcon">@color/blue_icon</item>
     </style>
 </resources>

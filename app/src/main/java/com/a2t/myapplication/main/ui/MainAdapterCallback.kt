@@ -5,15 +5,15 @@ import com.a2t.myapplication.main.domain.model.ListRecord
 
 interface MainAdapterCallback {
     fun onStartDrag(viewHolder: RecyclerView.ViewHolder)
-    fun goToChildDir (id: Long)
-    fun getIdCurrentDir (): Long
+    fun goToChildDir(id: Long)
+    fun getIdCurrentDir(): Long
     fun insertNewRecord(item: ListRecord)
     fun updateRecord(record: ListRecord)
-    fun requestEyeFocus ()
-    fun correctingPositionOfRecordByCheck (viewHolder: MainViewHolder)
+    fun requestMenuFocus()
+    fun correctingPositionOfRecordByCheck(viewHolder: MainViewHolder)
     fun returnHolderToOriginalState(viewHolder: RecyclerView.ViewHolder)
     fun showContextMenuFormat(viewHolder: MainViewHolder)
     fun showContextMenuMove(viewHolder: MainViewHolder)
-    fun updatFieldsOfSmallToolbar ()
-    fun deleteRecord (records: List<ListRecord>)
+    fun updatFieldsOfSmallToolbar()
+    fun deleteRecord(records: List<ListRecord>)
 }

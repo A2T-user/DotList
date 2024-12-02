@@ -84,20 +84,20 @@ class MainAdapter (
                 }
 
                 holder.ivBtnDel.setOnClickListener {            // Удалить запись
-                    mac.requestEyeFocus()
+                    mac.requestMenuFocus()
                     mac.deleteRecord(arrayListOf(item))
                 }
 
                 holder.ivBtnEdit.setOnClickListener {            // Редактировать запись
-                    mac.requestEyeFocus()
+                    mac.requestMenuFocus()
                     startEditMode(item, holder)
                 }
                 holder.ivBtnBell.setOnClickListener {            // Создать/редактировать напоминание
-                    mac.requestEyeFocus()
+                    mac.requestMenuFocus()
 
                 }
                 holder.ivBtnDir.setOnClickListener {            // строка <-> папка
-                    mac.requestEyeFocus()
+                    mac.requestMenuFocus()
                     item.isDir = !item.isDir
                     holder.bind(item)
                     mac.updateRecord(item)
@@ -210,12 +210,13 @@ class MainAdapter (
 
             }
             SpecialMode.ARCHIVE -> {
-
-                holder.ivAction.setImageResource(R.drawable.ic_archive_trans)
-                if (item.isArchive) {
-                    flipPicture(holder.ivAction, R.drawable.ic_archive_red)
+                if (item.isDir) {
+                    holder.ivAction.isVisible = true
+                    holder.ivAction.setImageResource(R.drawable.ic_archive_trans)
+                    if (item.isArchive) flipPicture(holder.ivAction, R.drawable.ic_archive_red)
+                } else {
+                    holder.ivAction.isVisible = false
                 }
-
 
 
 
@@ -353,7 +354,7 @@ class MainAdapter (
     }
 
     private fun clickCheckbox(holder: MainViewHolder, item: ListRecord) {
-        mac.requestEyeFocus()
+        mac.requestMenuFocus()
         item.isChecked = holder.checkbox.isChecked
         item.lastEditTime = System.currentTimeMillis()
         holder.bind(item)

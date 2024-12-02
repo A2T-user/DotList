@@ -7,5 +7,6 @@
         <item name="colorEye">@color/light_color_bar</item>
         <item name="colorBarAccent">@color/dark_color_bar_accent</item>
         <item name="enableEditText">@color/edit_text_accent</item>
+        <item name="colorIcon">@color/yellow_dir</item>
     </style>
 </resources>

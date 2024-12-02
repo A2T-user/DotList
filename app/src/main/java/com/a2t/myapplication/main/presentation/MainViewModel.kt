@@ -1,6 +1,6 @@
 package com.a2t.myapplication.main.presentation
 
-import android.util.Log
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a2t.myapplication.App
@@ -144,7 +144,6 @@ class MainViewModel (
         viewModelScope.launch(Dispatchers.IO) {
             val mutableRecords = mutableListOf<ListRecord>()
             getSubordinateRecordsToDelet(records, mutableRecords)
-            Log.e("МОЁ", "mutableRecords = " + mutableRecords.size)
             withContext(Dispatchers.Main) {
                 callback(mutableRecords)
             }
