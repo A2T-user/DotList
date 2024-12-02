@@ -155,7 +155,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
         val j = AtomicInteger() // Счетчик срабатываний Zoom
         recycler.setOnTouchListener{ _: View?, event: MotionEvent ->
-            requestEyeFocus()
+            requestMenuFocus()
             when (event.action and MotionEvent.ACTION_MASK) {
                 MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
                     isZOOMode = false
@@ -201,7 +201,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
         // Кнопка МЕНЮ
         topToolbarBinding.btnMenu.setOnClickListener {
-            requestEyeFocus()                   // Присвоение фокуса
+            requestMenuFocus()                   // Присвоение фокуса
             noSleepModeOff()           // Выключение режима БЕЗ СНА
             findNavController().navigate(R.id.action_mainFragment_to_settingsFragment2)
         }
@@ -212,7 +212,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
         // НЕ СПЯЩИЙ РЕЖИМ
         topToolbarBinding.imageEye.setOnClickListener {
-            requestEyeFocus()                   // Присвоение фокуса
+            requestMenuFocus()                   // Присвоение фокуса
             if (isNoSleepMode) noSleepModeOff() else noSleepModeON()
 
         }
@@ -249,8 +249,11 @@ class MainFragment : Fragment(), MainAdapterCallback {
         }
 
         // Кнопка Развернуть/Свернуть боковую панель
-        sideToolbarBinding.llSideBarOpen.setOnClickListener {
-            sideBarFullOpenClose(!isSideToolbarFullShow)
+        sideToolbarBinding.ivSideBarOpen.setOnClickListener {
+            sideBarFullOpenClose()
+        }
+        sideToolbarBinding.tvSideBarOpen.setOnClickListener {
+            sideBarFullOpenClose()
         }
 
         // Кнопка режима Переноса
@@ -285,7 +288,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
             goToDir(animOpenNewDir)
         }
 
-        //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         smallToolbarBinding.llRootDir.setOnClickListener {
             if (idDir != 0L) {
                 idDir = 0L
@@ -374,8 +377,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     // Присвоение фокуса
-    override fun requestEyeFocus() {
-        requestFocusInTouch(topToolbarBinding.imageEye)
+    override fun requestMenuFocus() {
+        requestFocusInTouch(topToolbarBinding.btnMenu)
     }
 
     private fun requestFocusInTouch (view: View) {
@@ -486,24 +489,22 @@ class MainFragment : Fragment(), MainAdapterCallback {
             sideToolbarBinding.ivSideBarOpen.requestFocus()                 // и перевести фокус на нее
             sideToolbarBinding.ivSideBarOpen.animate().rotation(0f)   // Кнопку Развернуть панель в исх.положение
         } else {
-            if (isSideToolbarFullShow) sideBarFullOpenClose(false)      // Свернуть бок.панель
+            if (isSideToolbarFullShow) sideBarFullOpenClose()      // Свернуть бок.панель
             sideToolbarBinding.llSideBar.isVisible = false                  // Убрать бок.панель
             binding.sideBarFlag.isVisible = true
         }
     }
 
     // Разворачивание/сворачивание боковой панели
-    private fun sideBarFullOpenClose(full: Boolean) {
-        if (full) {
-            sideToolbarBinding.ivSideBarOpen.animate().rotation(180f)     // Перевернуть кнопку Развернуть панель
-            showSideBarText(true)                                         // Показать пояснительный текст кнопок
-            isSideToolbarFullShow = true
-        } else {
+    private fun sideBarFullOpenClose() {
+        if (isSideToolbarFullShow) {
             sideToolbarBinding.ivSideBarOpen.animate().rotation(0f)       // Перевернуть кнопку Развернуть панель
             showSideBarText(false)                                        // Убрать пояснительный текст кнопок
-            isSideToolbarFullShow = false
-
+        } else {
+            sideToolbarBinding.ivSideBarOpen.animate().rotation(180f)     // Перевернуть кнопку Развернуть панель
+            showSideBarText(true)                                         // Показать пояснительный текст кнопок
         }
+        isSideToolbarFullShow = !isSideToolbarFullShow
     }
 
     // Показать пояснительный текст кнопок боковой панели
@@ -673,14 +674,14 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
     fun mainBackPressed() {
         adapter.isKeyboardON = false            // Если нажат Back, клавиатура точно скрыта
-        requestEyeFocus()
+        requestMenuFocus()
         noSleepModeOff()                        // Выключение режима БЕЗ СНА
         goToParentDir ()                        // Переход к родительской папке
     }
 
     // Возврат в режим NORMAL
     private fun goToNormalMode() {
-        requestEyeFocus()
+        requestMenuFocus()
         specialMode = SpecialMode.NORMAL
         enableSpecialMode()
         goToDir(animOpenNewDir)
@@ -862,7 +863,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 .setTitle(getString(R.string.del))
                 .setMessage(mess)
                 .setNeutralButton(getString(R.string.del_negative_btn)) { _, _ -> }
-                .setPositiveButton(getString(R.string.delete)) { dialog, which ->
+                .setPositiveButton(getString(R.string.delete)) { _, _ ->
                     mutableRecords.forEach { it.isDelete = true }
                     mainViewModel.updateRecords(mutableRecords)
                     if (specialMode == SpecialMode.NORMAL) {

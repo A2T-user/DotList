@@ -9,7 +9,7 @@
     android:orientation="vertical"
     android:background="@drawable/shadow"
     android:paddingStart="2dp"
-    android:paddingEnd="6dp"
+    android:paddingEnd="7dp"
     android:paddingBottom="8dp">
 
     <LinearLayout
@@ -146,7 +146,7 @@
             style="@style/LLSideBarStyle">
 
             <ImageView
-                android:src="@drawable/ic_del_mode"
+                android:src="@drawable/ic_del_mode_yell"
                 tools:ignore= "ContentDescription"
                 style="@style/IVSideBarStyle" />
 
@@ -162,7 +162,7 @@
             style="@style/LLSideBarStyle">
 
             <ImageView
-                android:src="@drawable/ic_rest_mode"
+                android:src="@drawable/ic_rest_mode_yell"
                 tools:ignore= "ContentDescription"
                 style="@style/IVSideBarStyle" />
 

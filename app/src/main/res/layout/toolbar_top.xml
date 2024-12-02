@@ -18,7 +18,6 @@
         android:contentDescription="@string/menu_desc"
         android:clickable="true"
         android:focusable="true"
-        android:scaleType="centerInside"
         android:src="@drawable/ic_burger"
         android:paddingHorizontal="10dp" />
 
@@ -34,6 +33,8 @@
         android:textSize="16sp"
         android:gravity="center_vertical"
         android:paddingHorizontal="8dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginVertical="6dp"
         android:drawablePadding="4dp"
         app:drawableStartCompat="@drawable/ic_full_dir"/>
 
@@ -43,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingVertical="6dp"
-        android:paddingHorizontal="10dp"
+        android:layout_marginEnd="10dp"
         android:src="@drawable/ic_eye_closed"
         android:clickable="true"
         android:focusable="true"

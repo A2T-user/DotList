@@ -9,4 +9,5 @@
     <attr name="colorEye"/>
     <attr name="colorBarAccent"/>
     <attr name="enableEditText"/>
+    <attr name="colorIcon"/>
 </resources>

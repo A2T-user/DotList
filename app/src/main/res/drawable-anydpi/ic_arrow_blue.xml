@@ -8,7 +8,7 @@
         android:rotation="-90"
         android:translateX="56"
         android:translateY="355">
-        <path android:fillColor="@color/blue_icon"
+        <path android:fillColor="?attr/colorBar"
             android:strokeWidth="1"
             android:strokeColor="@color/white"
             android:pathData="M12,8V4l8,8 -8,8v-4H4V8z"/>
