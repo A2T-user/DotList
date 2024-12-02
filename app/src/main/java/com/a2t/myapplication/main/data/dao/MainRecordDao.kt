@@ -1,6 +1,5 @@
 package com.a2t.myapplication.main.data.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -41,11 +40,11 @@ interface MainRecordDao {
 
     // Возвращает список имен папок с одним элементом - именем папки с id = idDir
     @Query("SELECT record FROM list_table WHERE id = :idDir")
-    fun getNameDir(idDir: Long): LiveData<List<String>>
+    fun getNameDir(idDir: Long): List<String>
 
     // Возвращает список id родительских папок с одним элементом - id родительской папки для папки с id = idDir
     @Query("SELECT idDir FROM list_table WHERE id = :idDir")
-    fun getParentDir(idDir: Long): LiveData<List<Long>>
+    fun getParentDir(idDir: Long): List<Long>
 
     // Возвращает список подчиненных записей для удаления
     @Query("SELECT * FROM list_table WHERE idDir = :idDir AND isDelete = 0")
