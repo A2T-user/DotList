@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.App
 import com.a2t.myapplication.R
 import com.a2t.myapplication.main.domain.model.ListRecord
-import com.a2t.myapplication.main.presentation.model.BufferItem
 import com.a2t.myapplication.main.presentation.model.SpecialMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +29,8 @@ class MainAdapter (
 ) : RecyclerView.Adapter<MainViewHolder> () {
 
     val records = ArrayList<ListRecord>()
-    val buffer = ArrayList<BufferItem>()
+    val moveBuffer = ArrayList<ListRecord>()    // Буфер для режима MOVE(только перенос записей)
+    val mainBuffer = ArrayList<ListRecord>()    // Буфер для всех остальных специальных режимов
     var specialMode = SpecialMode.NORMAL
     var isKeyboardON = false
     var currentHolder: MainViewHolder? = null
@@ -85,7 +85,7 @@ class MainAdapter (
 
                 holder.ivBtnDel.setOnClickListener {            // Удалить запись
                     mac.requestMenuFocus()
-                    mac.deleteRecord(arrayListOf(item))
+                    mac.deleteRecords(arrayListOf(item))
                 }
 
                 holder.ivBtnEdit.setOnClickListener {            // Редактировать запись
@@ -169,13 +169,13 @@ class MainAdapter (
             }
             SpecialMode.MOVE -> {
                 holder.ivAction.setImageResource(R.drawable.ic_menu)
-                if (bufferItem != null) {
+                /*if (bufferItem != null) {
                     when(bufferItem.action){
                         1 -> flipPicture(holder.ivAction, R.drawable.ic_cut_red)
                         2 -> flipPicture(holder.ivAction, R.drawable.ic_copy_red)
                         else -> {}
                     }
-                }
+                }*/
 
                 // Открытие меню форматирования текста
                 holder.ivAction.setOnClickListener{
@@ -187,17 +187,28 @@ class MainAdapter (
 
 
             }
-            SpecialMode.DELETE -> {
 
+            SpecialMode.DELETE -> {
                 holder.ivAction.setImageResource(R.drawable.ic_basket_white)
-                if (bufferItem != null) {
-                    flipPicture(holder.ivAction, R.drawable.ic_del_mode)
+                if (mainBuffer.any { it.id == item.id }) {
+                    holder.ivAction.setImageResource(R.drawable.ic_del_mode)
+                }
+
+                // Выбор/отмена записи для удаления
+                holder.ivAction.setOnClickListener{
+                    if (mainBuffer.any { it.id == item.id }) {
+                        mainBuffer.removeAll { it.id == item.id }
+                        holder.ivAction.setImageResource(R.drawable.ic_basket_white)
+                    } else {
+                        mainBuffer.add(item)
+                        holder.ivAction.setImageResource(R.drawable.ic_del_mode)
+                    }
+                    mac.showNumberOfSelectedRecords()
                 }
 
 
-
-
             }
+
             SpecialMode.RESTORE -> {
 
                 holder.ivAction.setImageResource(R.drawable.ic_basket_white)
@@ -247,8 +258,8 @@ class MainAdapter (
         }
     }
 
-    private fun getBufferItemById (idToFind: Long): BufferItem? {
-        return buffer.find { it.id == idToFind }
+    private fun getBufferItemById (idToFind: Long): ListRecord? {
+        return mainBuffer.find { it.id == idToFind }
     }
 
     // Старт режима редактирования

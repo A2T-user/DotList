@@ -51,4 +51,9 @@ class MainInteractorImpl(
     override fun selectionSubordinateRecordsToDelete(idDir: Long): List<ListRecord> {
         return mainRepository.selectionSubordinateRecordsToDelete(idDir)
     }
+
+    // Удаление записей с итекшим сроком хранения
+    override fun deletingExpiredRecords() {
+        mainRepository.deletingExpiredRecords()
+    }
 }

@@ -25,6 +25,7 @@
             android:id="@+id/llSideBarOpen"
             tools:ignore="UseCompoundDrawables"
             android:gravity="center"
+            android:clickable="true"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/click_selector"
             android:layout_marginVertical="2dp"

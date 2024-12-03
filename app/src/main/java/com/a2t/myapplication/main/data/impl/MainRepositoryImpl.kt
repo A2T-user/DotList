@@ -1,5 +1,6 @@
 package com.a2t.myapplication.main.data.impl
 
+import com.a2t.myapplication.App
 import com.a2t.myapplication.common.data.db.AppDatabase
 import com.a2t.myapplication.main.data.RecordDBConverter
 import com.a2t.myapplication.main.data.entity.ListRecordEntity
@@ -96,5 +97,11 @@ class MainRepositoryImpl(
     override fun selectionSubordinateRecordsToDelete(idDir: Long): List<ListRecord> {
         val records = appDatabase.mainRecordDao().selectionSubordinateRecordsToDelete(idDir)
         return records.map { record -> recordDBConverter.map(record) }
+    }
+
+    // Удаление записей с итекшим сроком хранения
+    override fun deletingExpiredRecords() {
+        val time = System.currentTimeMillis() - App.appSettings.restorePeriod * 24 * 60 * 60 * 1000
+        appDatabase.mainRecordDao().deletingExpiredRecords(time)
     }
 }
