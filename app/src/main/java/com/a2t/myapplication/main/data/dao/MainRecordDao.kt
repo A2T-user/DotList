@@ -51,8 +51,8 @@ interface MainRecordDao {
     fun selectionSubordinateRecordsToDelete(idDir: Long): List<ListRecordEntity>
 
 
-    /*@Query("DELETE FROM favorite_table WHERE trackId = :trackId")
-    fun deleteTrackById (trackId:Int)*/
+    @Query("DELETE FROM list_table WHERE isDelete = 1 AND lastEditTime < :time")
+    fun deletingExpiredRecords (time: Long)
 
     /*@Query("SELECT trackId FROM favorite_table")
     fun getTracksId(): List<Int>*/

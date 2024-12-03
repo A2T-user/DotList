@@ -118,6 +118,10 @@ class MainFragment : Fragment(), MainAdapterCallback {
         if (savedInstanceState != null) {
             idDir = savedInstanceState.getLong(ID_DIR, 0)
             specialMode = specialMode.getModeByName(savedInstanceState.getString(SPECIAL_MODE, "NORMAL"))
+            adapter.mainBuffer.clear()
+            adapter.moveBuffer.clear()
+            adapter.mainBuffer.addAll(mainViewModel.mainBuffer)
+            adapter.moveBuffer.addAll(mainViewModel.moveBuffer)
         }
         return binding.root
     }
@@ -318,10 +322,38 @@ class MainFragment : Fragment(), MainAdapterCallback {
             }
             return@setOnTouchListener isTouch.get()
         }
-        // Клик по кнопке Закрыть закрывает нижнюю панель и переводит рециклер в обычный режим
+        // Клик по кнопке Закрыть закрывает нижнюю панель и переводит экран в обычный режим
         modesToolbarBinding.btnClose.setOnClickListener {
+            adapter.mainBuffer.clear()
+            adapter.moveBuffer.clear()
             goToNormalMode ()
         }
+
+        modesToolbarBinding.btnSelectAll.setOnClickListener {
+            if (specialMode == SpecialMode.DELETE || specialMode == SpecialMode.RESTORE) {
+                adapter.records.forEachIndexed { index, rec ->
+                    if (!rec.isNew && adapter.mainBuffer.all { it.id != rec.id }) {
+                        adapter.mainBuffer.add(rec)
+                        adapter.notifyItemChanged(index)
+                    }
+                }
+                showNumberOfSelectedRecords()
+            }
+        }
+
+        modesToolbarBinding.btnAction.setOnClickListener {
+            when(specialMode) {
+                SpecialMode.MOVE -> {}
+                SpecialMode.DELETE -> {
+                    lifecycleScope.launch {
+                        deleteRecords(adapter.mainBuffer)
+                    }
+                }
+                SpecialMode.RESTORE -> {}
+                else -> {}
+            }
+        }
+
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ КОНТЕКСТНОЕ МЕНЮ ФОРМАТ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // Потеря фокуса контекст.меню приводит к скрытию меню
         contextMenuFormatBinding.llContextMenuFormat.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
@@ -393,6 +425,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         noSleepModeOff()           // Выключение режима БЕЗ СНА
         topToolbarBinding.imageEye.isVisible = specialMode == SpecialMode.NORMAL
         showSpecialModeToolbar()
+        showNumberOfSelectedRecords()
     }
 
     // Показать панель инструментов специального режима
@@ -700,6 +733,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     private fun goToDir(animationController: LayoutAnimationController) {
+        mainViewModel.deletingExpiredRecords()
         showList(specialMode, idDir, animationController)
     }
 
@@ -718,7 +752,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
             topToolbarBinding.pathDir.text = nameDir
         }
         adapter.specialMode = specialMode
-        adapter.buffer.clear()
+        //adapter.mainBuffer.clear()
+        //adapter.moveBuffer.clear()
         adapter.records.clear()
         adapter.records.addAll(records)
         adapter.notifyDataSetChanged()
@@ -809,6 +844,10 @@ class MainFragment : Fragment(), MainAdapterCallback {
         super.onSaveInstanceState(outState)
         outState.putLong(ID_DIR, idDir)
         outState.putString(SPECIAL_MODE, specialMode.getModeName())
+        mainViewModel.mainBuffer.clear()
+        mainViewModel.moveBuffer.clear()
+        mainViewModel.mainBuffer.addAll(adapter.mainBuffer)
+        mainViewModel.moveBuffer.addAll(adapter.moveBuffer)
     }
 
     private fun fullPathDir(idDir: Long) {
@@ -847,13 +886,13 @@ class MainFragment : Fragment(), MainAdapterCallback {
         return current
     }
 
-    override fun deleteRecord(records: List<ListRecord>) {
-        mainViewModel.selectionSubordinateRecordsToDelete(records) { mRecords ->
-            val mutableRecords = mRecords.toMutableList()
+    override fun deleteRecords(records: List<ListRecord>) {
+        mainViewModel.selectionSubordinateRecordsToDelete(records) { list ->
+            val mutableRecords = list.toMutableList()
             val selectedRecords = records.size
             val subordinateRecords = mutableRecords.size
-            mutableRecords.addAll(records)
             val countArchive = mutableRecords.count { it.isArchive }
+            mutableRecords.addAll(records)
             var mess = getString(R.string.del_attempt, selectedRecords.toString())
             var str = if (subordinateRecords != 0) getString(R.string.del_subordinate, subordinateRecords.toString()) else ""
             mess += str
@@ -872,11 +911,19 @@ class MainFragment : Fragment(), MainAdapterCallback {
                         adapter.notifyItemRemoved(position) // Уведомление об удалении
                         adapter.notifyItemRangeChanged(position, adapter.records .size - position)
                     } else {
+                        adapter.mainBuffer.clear()
+                        adapter.moveBuffer.clear()
                         goToNormalMode()
                     }
                 }
                 .show()
         }
 
+    }
+
+    override fun showNumberOfSelectedRecords() {
+        val number = adapter.mainBuffer.size + adapter.moveBuffer.size
+        modesToolbarBinding.countRecords.text = number.toString()
+        modesToolbarBinding.countRecords.isVisible = number > 0
     }
 }

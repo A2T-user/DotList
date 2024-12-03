@@ -14,6 +14,8 @@ import kotlinx.coroutines.withContext
 class MainViewModel (
     private val mainInteractor: MainInteractor
 ) : ViewModel() {
+    val moveBuffer = ArrayList<ListRecord>()    // Буфер для режима MOVE(только перенос записей)
+    val mainBuffer = ArrayList<ListRecord>()    // Буфер для всех остальных специальных режимов
 
     // Обновление записи
     fun updateRecord(record: ListRecord) {
@@ -158,5 +160,10 @@ class MainViewModel (
                 getSubordinateRecordsToDelet(selectionRecords, mutableRecords)
             }
         }
+    }
+
+    // Удаление записей с итекшим сроком хранения
+    fun deletingExpiredRecords() {
+        mainInteractor.deletingExpiredRecords()
     }
 }

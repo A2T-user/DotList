@@ -27,4 +27,7 @@ interface MainInteractor {
 
     // Возвращает список подчиненных записей для удаления
     fun selectionSubordinateRecordsToDelete(idDir: Long): List<ListRecord>
+
+    // Удаление записей с итекшим сроком хранения
+    fun deletingExpiredRecords ()
 }
