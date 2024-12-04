@@ -2,7 +2,6 @@ package com.a2t.myapplication.main.domain.api
 
 import com.a2t.myapplication.main.domain.model.ListRecord
 
-
 interface MainRepository {
     // Добавление новой записи
     fun insertRecord(record: ListRecord): Long
@@ -27,7 +26,9 @@ interface MainRepository {
 
     // Возвращает список подчиненных записей для удаления
     fun selectionSubordinateRecordsToDelete(idDir: Long): List<ListRecord>
+    // Возвращает список подчиненных записей для восстановления
+    fun selectionSubordinateRecordsToRestore(idDir: Long): List<ListRecord>
 
     // Удаление записей с итекшим сроком хранения
-    fun deletingExpiredRecords ()
+    fun deletingExpiredRecords()
 }

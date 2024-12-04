@@ -50,9 +50,12 @@ interface MainRecordDao {
     @Query("SELECT * FROM list_table WHERE idDir = :idDir AND isDelete = 0")
     fun selectionSubordinateRecordsToDelete(idDir: Long): List<ListRecordEntity>
 
+    // Возвращает список подчиненных записей для восстановления
+    @Query("SELECT * FROM list_table WHERE idDir = :idDir AND isDelete = 1")
+    fun selectionSubordinateRecordsToRestore(idDir: Long): List<ListRecordEntity>
 
     @Query("DELETE FROM list_table WHERE isDelete = 1 AND lastEditTime < :time")
-    fun deletingExpiredRecords (time: Long)
+    fun deletingExpiredRecords(time: Long)
 
     /*@Query("SELECT trackId FROM favorite_table")
     fun getTracksId(): List<Int>*/

@@ -156,11 +156,9 @@ class MainFragment : Fragment(), MainAdapterCallback {
         goToDir(animOpenNewDir)
 
         // Изменение высоты шрифта
-
-        val j = AtomicInteger() // Счетчик срабатываний Zoom
+        val counter = AtomicInteger() // Счетчик срабатываний Zoom
         recycler.setOnTouchListener{ _: View?, event: MotionEvent ->
-            requestMenuFocus()
-            when (event.action and MotionEvent.ACTION_MASK) {
+            when(event.action and MotionEvent.ACTION_MASK) {
                 MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
                     isZOOMode = false
                     }
@@ -173,9 +171,9 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 }
 
                 MotionEvent.ACTION_MOVE -> {
-                    j.getAndIncrement()
-                    if (j.get() == NUMBER_OF_OPERATIO_ZOOM) {
-                        j.set(0) // Обнуляем счетчик
+                    counter.getAndIncrement()
+                    if (counter.get() == NUMBER_OF_OPERATIO_ZOOM) {
+                        counter.set(0) // Обнуляем счетчик
                         if (isZOOMode) {
                             val dx = event.getX(0) - event.getX(1)
                             val dy = event.getY(0) - event.getY(1)
@@ -227,7 +225,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         val downY = AtomicReference( 0f)
         val isTouch = AtomicBoolean(false)
         binding.sideBarContainer.setOnTouchListener { _, event ->
-            when (event.action) {
+            when(event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     downX.set(event.x)
                     downY.set(event.y)
@@ -303,7 +301,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ НИЖНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // Свайп вниз закрывает нижнюю панель и переводит рециклер в обычный режим
         modesToolbarBinding.clModesToolbar.setOnTouchListener { _, event ->
-            when (event.action) {
+            when(event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     downX.set(event.x)
                     downY.set(event.y)
@@ -315,7 +313,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                         val dX = event.x - downX.get()
                         val dY = event.y - downY.get()
                         if (abs(dY/dX) > 1 && dY > 100) {// Если жест вертикальный, вниз
-                            goToNormalMode ()
+                            goToNormalMode()
                         }
                     }
                 }
@@ -324,9 +322,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         }
         // Клик по кнопке Закрыть закрывает нижнюю панель и переводит экран в обычный режим
         modesToolbarBinding.btnClose.setOnClickListener {
-            adapter.mainBuffer.clear()
-            adapter.moveBuffer.clear()
-            goToNormalMode ()
+            completionSpecialMode()
         }
 
         modesToolbarBinding.btnSelectAll.setOnClickListener {
@@ -345,11 +341,11 @@ class MainFragment : Fragment(), MainAdapterCallback {
             when(specialMode) {
                 SpecialMode.MOVE -> {}
                 SpecialMode.DELETE -> {
-                    lifecycleScope.launch {
-                        deleteRecords(adapter.mainBuffer)
-                    }
+                    deleteRecords(adapter.mainBuffer)
                 }
-                SpecialMode.RESTORE -> {}
+                SpecialMode.RESTORE -> {
+                    restoreRecords(adapter.mainBuffer)
+                }
                 else -> {}
             }
         }
@@ -413,7 +409,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         requestFocusInTouch(topToolbarBinding.btnMenu)
     }
 
-    private fun requestFocusInTouch (view: View) {
+    private fun requestFocusInTouch(view: View) {
         view.isFocusableInTouchMode = true
         view.requestFocus()
         view.isFocusableInTouchMode = false
@@ -435,25 +431,29 @@ class MainFragment : Fragment(), MainAdapterCallback {
             modesToolbarBinding.clModesToolbar.isVisible = false
         } else {
             modesToolbarBinding.clModesToolbar.isVisible = true
-            when (specialMode) {
+            when(specialMode) {
                 SpecialMode.MOVE -> {
                     modesToolbarBinding.btnSelectAll.isVisible = false
                     modesToolbarBinding.btnAction.isVisible = true
                     modesToolbarBinding.btnAction.text = getString(R.string.insert)
+                    modesToolbarBinding.tvModeHint.isVisible = false
                 }
                 SpecialMode.DELETE -> {
                     modesToolbarBinding.btnSelectAll.isVisible = true
                     modesToolbarBinding.btnAction.isVisible = true
                     modesToolbarBinding.btnAction.text = getString(R.string.delete)
+                    modesToolbarBinding.tvModeHint.isVisible = true
                 }
                 SpecialMode.RESTORE -> {
                     modesToolbarBinding.btnSelectAll.isVisible = true
                     modesToolbarBinding.btnAction.isVisible = true
                     modesToolbarBinding.btnAction.text = getString(R.string.restore)
+                    modesToolbarBinding.tvModeHint.isVisible = true
                 }
                 SpecialMode.ARCHIVE -> {
                     modesToolbarBinding.btnSelectAll.isVisible = false
                     modesToolbarBinding.btnAction.isVisible = false
+                    modesToolbarBinding.tvModeHint.isVisible = false
                 }
                 SpecialMode.NORMAL -> {}
             }
@@ -463,7 +463,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
     private fun showIconMode() {
         stopAllModeAnimations()         // Остановить все анимации панели режимов
-        when (specialMode) {
+        when(specialMode) {
             SpecialMode.MOVE -> {
                 modesToolbarBinding.ivBarModes3.isVisible = false
                 modesToolbarBinding.ivBarModes2.setImageResource(R.drawable.ic_move_mode_2)
@@ -524,7 +524,10 @@ class MainFragment : Fragment(), MainAdapterCallback {
         } else {
             if (isSideToolbarFullShow) sideBarFullOpenClose()      // Свернуть бок.панель
             sideToolbarBinding.llSideBar.isVisible = false                  // Убрать бок.панель
-            binding.sideBarFlag.isVisible = true
+            lifecycleScope.launch {
+                delay(150)
+                binding.sideBarFlag.isVisible = true
+            }
         }
     }
 
@@ -559,7 +562,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
     private fun updateNppList(list: ArrayList<ListRecord>) {
         list.forEachIndexed { index, item -> item.npp = index }
-        mainViewModel.updateRecords(list) // Записать изменения в БД
+        mainViewModel.updateRecords(list) {}// Записать изменения в БД
     }
     private fun initializingRecyclerView() {
         recycler.adapter = adapter
@@ -709,7 +712,13 @@ class MainFragment : Fragment(), MainAdapterCallback {
         adapter.isKeyboardON = false            // Если нажат Back, клавиатура точно скрыта
         requestMenuFocus()
         noSleepModeOff()                        // Выключение режима БЕЗ СНА
-        goToParentDir ()                        // Переход к родительской папке
+        goToParentDir()                        // Переход к родительской папке
+    }
+
+    override fun completionSpecialMode() {
+        adapter.mainBuffer.clear()
+        adapter.moveBuffer.clear()
+        goToNormalMode()
     }
 
     // Возврат в режим NORMAL
@@ -733,8 +742,9 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     private fun goToDir(animationController: LayoutAnimationController) {
-        mainViewModel.deletingExpiredRecords()
-        showList(specialMode, idDir, animationController)
+        mainViewModel.deletingExpiredRecords {
+            showList(specialMode, idDir, animationController)
+        }
     }
 
     private fun showList(specialMode: SpecialMode, idDir: Long, animationController: LayoutAnimationController) = lifecycleScope.launch {
@@ -752,8 +762,6 @@ class MainFragment : Fragment(), MainAdapterCallback {
             topToolbarBinding.pathDir.text = nameDir
         }
         adapter.specialMode = specialMode
-        //adapter.mainBuffer.clear()
-        //adapter.moveBuffer.clear()
         adapter.records.clear()
         adapter.records.addAll(records)
         adapter.notifyDataSetChanged()
@@ -786,7 +794,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     override fun updateRecord(record: ListRecord) {
-        mainViewModel.updateRecord(record)
+        mainViewModel.updateRecord(record) {}
     }
 
     override fun showContextMenuFormat(viewHolder: MainViewHolder) {
@@ -901,24 +909,57 @@ class MainFragment : Fragment(), MainAdapterCallback {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.del))
                 .setMessage(mess)
-                .setNeutralButton(getString(R.string.del_negative_btn)) { _, _ -> }
+                .setNeutralButton(getString(R.string.negative_btn)) { _, _ -> }
                 .setPositiveButton(getString(R.string.delete)) { _, _ ->
                     mutableRecords.forEach { it.isDelete = true }
-                    mainViewModel.updateRecords(mutableRecords)
-                    if (specialMode == SpecialMode.NORMAL) {
-                        val position = adapter.records.indexOfFirst { it.id == records[0].id }
-                        adapter.records.removeAt(position)
-                        adapter.notifyItemRemoved(position) // Уведомление об удалении
-                        adapter.notifyItemRangeChanged(position, adapter.records .size - position)
-                    } else {
-                        adapter.mainBuffer.clear()
-                        adapter.moveBuffer.clear()
-                        goToNormalMode()
+                    mainViewModel.updateRecords(mutableRecords) {
+                        if (specialMode == SpecialMode.NORMAL) {
+                            val position = adapter.records.indexOfFirst { it.id == records[0].id }
+                            adapter.records.removeAt(position)
+                            adapter.notifyItemRemoved(position) // Уведомление об удалении
+                            adapter.notifyItemRangeChanged(
+                                position,
+                                adapter.records.size - position
+                            )
+                        } else {
+                            adapter.mainBuffer.clear()
+                            adapter.moveBuffer.clear()
+                            goToNormalMode()
+                        }
                     }
                 }
                 .show()
         }
+    }
 
+    override fun restoreRecords(records: List<ListRecord>) {
+        mainViewModel.selectionSubordinateRecordsToRestore(records) { list ->
+            val mutableRecords = list.toMutableList()
+            val selectedRecords = records.size
+            val subordinateRecords = mutableRecords.size
+            val countArchive = mutableRecords.count { it.isArchive }
+            mutableRecords.addAll(records)
+            var mess = getString(R.string.rest_attempt, selectedRecords.toString())
+            var str = if (subordinateRecords != 0) getString(R.string.rest_subordinate, subordinateRecords.toString()) else ""
+            mess += str
+            str = if (countArchive != 0) getString(R.string.del_archive, countArchive.toString()) else ""
+            mess += "$str."
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.rest))
+                .setMessage(mess)
+                .setNeutralButton(getString(R.string.negative_btn)) { _, _ -> }
+                .setPositiveButton(getString(R.string.restore)) { _, _ ->
+                    mutableRecords.forEach { it.isDelete = false }
+                    mainViewModel.updateRecords(mutableRecords) {
+                        if (specialMode == SpecialMode.RESTORE) {
+                            adapter.mainBuffer.clear()
+                            adapter.moveBuffer.clear()
+                            goToNormalMode()
+                        }
+                    }
+                }
+                .show()
+        }
     }
 
     override fun showNumberOfSelectedRecords() {

@@ -24,7 +24,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MainViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
+class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     private var endDayJob: Job? = null
     private var alarmJob: Job? = null
     private var animationBell: Animation = AnimationUtils.loadAnimation(App.appContext, R.anim.anim_bell)
@@ -96,13 +96,13 @@ class MainViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
         changeTextStyle(item.textStyle)
         changeTextUnder(item.textUnder)
         changeBellType(item)
-        changeBellIcon ()
+        changeBellIcon()
         item.alarmTime?.let { tvTimeBell_2.text = DateFormat.format("dd.M.yy HH:mm", it).toString() }
     }
 
-    private fun changeTextColor (textColor: Int) {
+    private fun changeTextColor(textColor: Int) {
         val context = App.appContext
-        when (textColor) {
+        when(textColor) {
             1 -> {
                 aetRecord.setTextColor(ContextCompat.getColor(context, R.color.text_color_1))
                 aetNote.setTextColor(ContextCompat.getColor(context, R.color.text_color_1))
@@ -122,10 +122,10 @@ class MainViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
         }
     }
 
-    private fun changeTextStyle (textStyle: Int) {
+    private fun changeTextStyle(textStyle: Int) {
         aetRecord.setTypeface(
             null,
-            when (textStyle) {
+            when(textStyle) {
                 1 -> Typeface.BOLD
                 2 -> Typeface.ITALIC
                 3 -> Typeface.BOLD_ITALIC
@@ -143,7 +143,7 @@ class MainViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
         }
     }
 
-    private fun changeBellType (item: ListRecord) {
+    private fun changeBellType(item: ListRecord) {
         alarmJob?.cancel()
         endDayJob?.cancel()
         val alarmTime = item.alarmTime
@@ -177,7 +177,7 @@ class MainViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
         }
     }
 
-    private fun changeBellIcon () {
+    private fun changeBellIcon() {
         when(bellType) {
             1 -> {
                 ivBell.isVisible = true

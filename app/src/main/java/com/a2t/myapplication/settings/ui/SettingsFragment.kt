@@ -96,18 +96,18 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    private fun changeTheme () {
+    private fun changeTheme() {
         installNullCheckTheme()
         settingsViewModel.updateSettings()
         (requireContext().applicationContext as App).switchTheme()
     }
 
     // Установка новых параметров
-    private fun installNewSettings (newSettings: AppSettings) {
+    private fun installNewSettings(newSettings: AppSettings) {
         // Тема
         val newTheme = newSettings.stateTheme
         installNullCheckTheme()
-        when (newTheme) {
+        when(newTheme) {
             App.LIGHT -> binding.ivLightTeme.alpha = 1f
             App.DARK -> binding.ivDarkTeme.alpha = 1f
             else -> binding.ivSystemTeme.alpha = 1f
@@ -121,7 +121,7 @@ class SettingsFragment : Fragment() {
     }
 
     // Обнуляем чек во всех строках
-    private fun installNullCheckTheme () {
+    private fun installNullCheckTheme() {
         binding.ivLightTeme.alpha = 0f
         binding.ivDarkTeme.alpha = 0f
         binding.ivSystemTeme.alpha = 0f

@@ -1,7 +1,5 @@
 package com.a2t.myapplication.main.ui
 
-import android.animation.Animator
-import android.animation.AnimatorInflater
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.KeyEvent
@@ -12,7 +10,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.App
@@ -24,9 +21,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MainAdapter (
+class MainAdapter(
     private val mac: MainAdapterCallback
-) : RecyclerView.Adapter<MainViewHolder> () {
+) : RecyclerView.Adapter<MainViewHolder>() {
 
     val records = ArrayList<ListRecord>()
     val moveBuffer = ArrayList<ListRecord>()    // Буфер для режима MOVE(только перенос записей)
@@ -35,9 +32,6 @@ class MainAdapter (
     var isKeyboardON = false
     var currentHolder: MainViewHolder? = null
     var currentHolderPosition = -1
-    private val flipAnimator1: Animator = AnimatorInflater.loadAnimator(App.appContext, R.animator.flip_1)
-    private val flipAnimator2: Animator = AnimatorInflater.loadAnimator(App.appContext, R.animator.flip_2)
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_main, parent, false)
@@ -47,7 +41,6 @@ class MainAdapter (
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val item = records[position]
-        val bufferItem = getBufferItemById(item.id)
         holder.bind(item)
         holder.llAction.isVisible = true
         if (specialMode == SpecialMode.NORMAL) {
@@ -57,16 +50,10 @@ class MainAdapter (
             holder.checkbox.isClickable = false
             holder.checkbox.isEnabled = false
         }
-        holder.llForeground.setOnClickListener {
-            if (item.isDir) {
-                isKeyboardON = false
-                mac.goToChildDir(item.id)
-            } else {
-                if (specialMode == SpecialMode.NORMAL && !item.isEdit) startEditMode(item, holder)
-            }
-        }
-        when (specialMode) {
+        when(specialMode) {
+            //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Режим NORMAL $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             SpecialMode.NORMAL -> {
+                holder.ivAction.isVisible = true
                 holder.ivAction.setImageResource(R.drawable.ic_finger)
                 if (item.isNew) {
                     holder.checkbox.isClickable = false
@@ -103,6 +90,14 @@ class MainAdapter (
                     mac.updateRecord(item)
                 }
                 // ############################################## РЕАКЦИЯ ОБЪЕКТОВ FOREGROUND ###################################################
+                holder.llForeground.setOnClickListener {
+                    if (item.isDir) {
+                        isKeyboardON = false
+                        mac.goToChildDir(item.id)
+                    } else {
+                        if (specialMode == SpecialMode.NORMAL && !item.isEdit) startEditMode(item, holder)
+                    }
+                }
                 // Открытие меню форматирования текста
                 holder.llForeground.setOnLongClickListener{
                     currentHolder = holder
@@ -167,6 +162,7 @@ class MainAdapter (
                     false
                 }
             }
+            //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Режим MOVE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             SpecialMode.MOVE -> {
                 holder.ivAction.setImageResource(R.drawable.ic_menu)
                 /*if (bufferItem != null) {
@@ -176,6 +172,14 @@ class MainAdapter (
                         else -> {}
                     }
                 }*/
+
+                holder.llForeground.setOnClickListener {
+                    mac.requestMenuFocus()
+                    if (item.isDir) {
+                        isKeyboardON = false
+                        mac.goToChildDir(item.id)
+                    }
+                }
 
                 // Открытие меню форматирования текста
                 holder.ivAction.setOnClickListener{
@@ -187,17 +191,20 @@ class MainAdapter (
 
 
             }
-
+            //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Режим DELETE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             SpecialMode.DELETE -> {
                 holder.ivAction.setImageResource(R.drawable.ic_basket_white)
                 if (mainBuffer.any { it.id == item.id }) {
                     holder.ivAction.setImageResource(R.drawable.ic_del_mode)
                 }
 
+                holder.llForeground.setOnClickListener {
+                    mac.requestMenuFocus()
+                }
+
                 // Выбор/отмена записи для удаления
                 holder.ivAction.setOnClickListener{
-                    if (mainBuffer.any { it.id == item.id }) {
-                        mainBuffer.removeAll { it.id == item.id }
+                    if (mainBuffer.removeAll { it.id == item.id }) {
                         holder.ivAction.setImageResource(R.drawable.ic_basket_white)
                     } else {
                         mainBuffer.add(item)
@@ -205,61 +212,56 @@ class MainAdapter (
                     }
                     mac.showNumberOfSelectedRecords()
                 }
-
-
             }
-
+            //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Режим RESTORE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             SpecialMode.RESTORE -> {
-
                 holder.ivAction.setImageResource(R.drawable.ic_basket_white)
-                if (bufferItem != null) {
-                    flipPicture(holder.ivAction, R.drawable.ic_rest_mode)
+                if (mainBuffer.any { it.id == item.id }) {
+                    holder.ivAction.setImageResource(R.drawable.ic_rest_mode)
                 }
 
+                holder.llForeground.setOnClickListener {
+                    mac.requestMenuFocus()
+                }
 
-
-
+                // Выбор/отмена записи для восстановления
+                holder.ivAction.setOnClickListener{
+                    if (mainBuffer.removeAll { it.id == item.id }) {
+                        holder.ivAction.setImageResource(R.drawable.ic_basket_white)
+                    } else {
+                        mainBuffer.add(item)
+                        holder.ivAction.setImageResource(R.drawable.ic_rest_mode)
+                    }
+                    mac.showNumberOfSelectedRecords()
+                }
             }
+            //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Режим ARCHIVE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             SpecialMode.ARCHIVE -> {
                 if (item.isDir) {
                     holder.ivAction.isVisible = true
                     holder.ivAction.setImageResource(R.drawable.ic_archive_trans)
-                    if (item.isArchive) flipPicture(holder.ivAction, R.drawable.ic_archive_red)
+                    if (item.isArchive) holder.ivAction.setImageResource(R.drawable.ic_archive_red)
                 } else {
                     holder.ivAction.isVisible = false
                 }
 
-
-
-            }
-        }
-    }
-
-    // Анимация переворота иконки вокруг Y
-    private fun flipPicture(view: ImageView, newIcon: Int) {
-        try {
-            view.cameraDistance = 15000f
-            flipAnimator1.setTarget(view)
-            flipAnimator1.addListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator) {}
-                override fun onAnimationEnd(animation: Animator) {
-                    // Сменить картинку
-                    view.setImageResource(newIcon)
-                    flipAnimator2.setTarget(view)
-                    flipAnimator2.start()
+                holder.llForeground.setOnClickListener {
+                    mac.requestMenuFocus()
+                    if (item.isDir) {
+                        isKeyboardON = false
+                        mac.goToChildDir(item.id)
+                    }
                 }
 
-                override fun onAnimationCancel(animation: Animator) {}
-                override fun onAnimationRepeat(animation: Animator) {}
-            })
-            flipAnimator1.start()
-        } catch (e: Exception) {
-            view.setImageResource(newIcon)
+                // Архивирование/разархивирование
+                holder.ivAction.setOnClickListener{
+                    item.isArchive = !item.isArchive
+                    mac.updateRecord(item)
+                    val res = if (item.isArchive) R.drawable.ic_archive_red else R.drawable.ic_archive_trans
+                    holder.ivAction.setImageResource(res)
+                }
+            }
         }
-    }
-
-    private fun getBufferItemById (idToFind: Long): ListRecord? {
-        return mainBuffer.find { it.id == idToFind }
     }
 
     // Старт режима редактирования
@@ -369,9 +371,9 @@ class MainAdapter (
         item.isChecked = holder.checkbox.isChecked
         item.lastEditTime = System.currentTimeMillis()
         holder.bind(item)
+        mac.correctingPositionOfRecordByCheck(holder)
         mac.updateRecord(item)  // Сохранение в БД
-        // Если включен режим сортировки по меткам, перемещаем строку в нужную группу
-        mac.correctingPositionOfRecordByCheck (holder)
+
     }
 
     override fun getItemCount() = records.size
