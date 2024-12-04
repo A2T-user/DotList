@@ -21,15 +21,11 @@ class MainRepositoryImpl(
     }
     // Обновление записи
     override fun updateRecord(record: ListRecord) {
-        CoroutineScope(Dispatchers.IO).launch {
             appDatabase.mainRecordDao().updateRecord(recordDBConverter.map(record))
-        }
     }
     // Обновление записей
     override fun updateRecords(records: List<ListRecord>) {
-        CoroutineScope(Dispatchers.IO).launch {
             appDatabase.mainRecordDao().updateRecords(records.map { record -> recordDBConverter.map(record) })
-        }
     }
 
 
@@ -98,10 +94,18 @@ class MainRepositoryImpl(
         val records = appDatabase.mainRecordDao().selectionSubordinateRecordsToDelete(idDir)
         return records.map { record -> recordDBConverter.map(record) }
     }
+    // Возвращает список подчиненных записей для восстановления
+    override fun selectionSubordinateRecordsToRestore(idDir: Long): List<ListRecord> {
+        val records = appDatabase.mainRecordDao().selectionSubordinateRecordsToRestore(idDir)
+        return records.map { record -> recordDBConverter.map(record) }
+    }
 
     // Удаление записей с итекшим сроком хранения
     override fun deletingExpiredRecords() {
-        val time = System.currentTimeMillis() - App.appSettings.restorePeriod * 24 * 60 * 60 * 1000
-        appDatabase.mainRecordDao().deletingExpiredRecords(time)
+        CoroutineScope(Dispatchers.IO).launch {
+            val time =
+                System.currentTimeMillis() - App.appSettings.restorePeriod * 24 * 60 * 60 * 1000
+            appDatabase.mainRecordDao().deletingExpiredRecords(time)
+        }
     }
 }

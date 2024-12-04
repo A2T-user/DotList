@@ -51,6 +51,10 @@ class MainInteractorImpl(
     override fun selectionSubordinateRecordsToDelete(idDir: Long): List<ListRecord> {
         return mainRepository.selectionSubordinateRecordsToDelete(idDir)
     }
+    // Возвращает список подчиненных записей для восстановления
+    override fun selectionSubordinateRecordsToRestore(idDir: Long): List<ListRecord> {
+        return mainRepository.selectionSubordinateRecordsToRestore(idDir)
+    }
 
     // Удаление записей с итекшим сроком хранения
     override fun deletingExpiredRecords() {

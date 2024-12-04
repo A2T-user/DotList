@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "list_table")
-class ListRecordEntity (
+class ListRecordEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,           // id записи
     val idDir: Long,        // id папки, в которой находися эта запись

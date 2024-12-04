@@ -11,33 +11,45 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainViewModel (
+class MainViewModel(
     private val mainInteractor: MainInteractor
 ) : ViewModel() {
     val moveBuffer = ArrayList<ListRecord>()    // Буфер для режима MOVE(только перенос записей)
     val mainBuffer = ArrayList<ListRecord>()    // Буфер для всех остальных специальных режимов
 
-    // Обновление записи
-    fun updateRecord(record: ListRecord) {
-        mainInteractor.updateRecord(record)
-    }
-    // Обновление записей
-    fun updateRecords(records: List<ListRecord>) {
-        mainInteractor.updateRecords(records)
-    }
     // Добавление новой записи и получение ее id
     fun insertRecord(record: ListRecord, callback: (Long) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val id = mainInteractor.insertRecord(record)
-            callback(id)
+            withContext(Dispatchers.Main) {
+                callback(id)
+            }
         }
 
+    }
+    // Обновление записи
+    fun updateRecord(record: ListRecord, callback: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mainInteractor.updateRecord(record)
+            withContext(Dispatchers.Main) {
+                callback()
+            }
+        }
+    }
+    // Обновление записей
+    fun updateRecords(records: List<ListRecord>, callback: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mainInteractor.updateRecords(records)
+            withContext(Dispatchers.Main) {
+                callback()
+            }
+        }
     }
 
     suspend fun getRecords(specialMode: SpecialMode, idDir: Long, callback: (List<ListRecord>) -> Unit) {
         viewModelScope.launch {
             var records = listOf<ListRecord>()
-            when (specialMode) {
+            when(specialMode) {
                 SpecialMode.NORMAL, SpecialMode.MOVE, SpecialMode.DELETE -> {
                     records = if (App.appSettings.sortingChecks) {
                         getRecordsForNormalMoveDeleteModesByCheck(idDir)
@@ -76,7 +88,7 @@ class MainViewModel (
         }
     }
 
-    private fun getNewRecord (idDir: Long, records: List<ListRecord>, startEdit: Boolean): ListRecord {
+    private fun getNewRecord(idDir: Long, records: List<ListRecord>, startEdit: Boolean): ListRecord {
         return ListRecord(
             0,
             idDir,
@@ -101,9 +113,9 @@ class MainViewModel (
         )
     }
 
-    private fun getMaxNpp (records: List<ListRecord>): Int {
+    private fun getMaxNpp(records: List<ListRecord>): Int {
         var maxNpp = 0
-        for (rec: ListRecord in records) {
+        for(rec: ListRecord in records) {
             if (rec.npp > maxNpp) maxNpp = rec.npp
         }
         return maxNpp
@@ -127,17 +139,21 @@ class MainViewModel (
     }
 
     // Возвращает список имен папок с одним элементом - именем папки с id = idDir
-    fun getNameDir (idDir: Long, callback: (List<String>) -> Unit) {
+    fun getNameDir(idDir: Long, callback: (List<String>) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val names = mainInteractor.getNameDir(idDir)
-            callback(names)
+            withContext(Dispatchers.Main) {
+                callback(names)
+            }
         }
     }
     // Возвращает список id родительских папок с одним элементом - id родительской папки для папки с id = idDir
     fun getParentDir(idDir: Long, callback: (List<Long>) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val ids = mainInteractor.getParentDir(idDir)
-            callback(ids)
+            withContext(Dispatchers.Main) {
+                callback(ids)
+            }
         }
     }
 
@@ -151,7 +167,6 @@ class MainViewModel (
             }
         }
     }
-
     private fun getSubordinateRecordsToDelet(records: List<ListRecord>, mutableRecords: MutableList<ListRecord>) {
         records.forEach { record ->
             if (record.isDir) {
@@ -161,9 +176,35 @@ class MainViewModel (
             }
         }
     }
+    // Возвращает список подчиненных записей для восстановления
+    fun selectionSubordinateRecordsToRestore(records: List<ListRecord>, callback: (List<ListRecord>) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val mutableRecords = mutableListOf<ListRecord>()
+            getSubordinateRecordsToRestore(records, mutableRecords)
+            withContext(Dispatchers.Main) {
+                callback(mutableRecords)
+            }
+        }
+    }
+
+    private fun getSubordinateRecordsToRestore(records: List<ListRecord>, mutableRecords: MutableList<ListRecord>) {
+        records.forEach { record ->
+            if (record.isDir) {
+                val selectionRecords = mainInteractor.selectionSubordinateRecordsToRestore(record.id)
+                mutableRecords.addAll(selectionRecords)
+                getSubordinateRecordsToRestore(selectionRecords, mutableRecords)
+            }
+        }
+    }
+
 
     // Удаление записей с итекшим сроком хранения
-    fun deletingExpiredRecords() {
-        mainInteractor.deletingExpiredRecords()
+    fun deletingExpiredRecords(callback: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mainInteractor.deletingExpiredRecords()
+            withContext(Dispatchers.Main) {
+                callback()
+            }
+        }
     }
 }

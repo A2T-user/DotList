@@ -42,6 +42,7 @@
     <string name="side_bar_archive_mode">Управление Архивом</string>
 
     <!-- ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ -->
+    <string name="mode_hint">Этот режим действует только в текущей папке</string>
     <string name="select_all">Выбрать все</string>
     <string name="insert">Вставить</string>
     <string name="delete">Удалить</string>
@@ -73,6 +74,10 @@
     <string name="del_attempt">Попытка удалить записей: %1$s</string>
     <string name="del_subordinate">.\nТакже будет удалено вложенных записей: %1$s</string>
     <string name="del_archive">,\nвключая архивных папок: %1$s.</string>
-    <string name="del_negative_btn">Отмена</string>
+    <string name="negative_btn">Отмена</string>
+
+    <string name="rest">Восстановление</string>
+    <string name="rest_attempt">Попытка восстановить записей: %1$s</string>
+    <string name="rest_subordinate">.\nТакже будет восстановлено вложенных записей: %1$s</string>
 
 </resources>

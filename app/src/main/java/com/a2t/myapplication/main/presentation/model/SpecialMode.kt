@@ -8,7 +8,7 @@ enum class SpecialMode: Special {
     ARCHIVE;
 
     override fun getModeName(): String =
-        when (this) {
+        when(this) {
             NORMAL -> "NORMAL"
             MOVE -> "MOVE"
             DELETE -> "DELETE"
@@ -17,7 +17,7 @@ enum class SpecialMode: Special {
         }
 
     override fun getModeByName(name: String): SpecialMode =
-        when (name) {
+        when(name) {
             "MOVE" -> MOVE
             "DELETE" -> DELETE
             "RESTORE" -> RESTORE
@@ -29,5 +29,5 @@ enum class SpecialMode: Special {
 interface Special {
 
     fun getModeName(): String
-    fun getModeByName (name: String): SpecialMode
+    fun getModeByName(name: String): SpecialMode
 }

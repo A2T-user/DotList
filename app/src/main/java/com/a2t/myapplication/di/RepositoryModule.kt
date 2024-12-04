@@ -13,6 +13,6 @@ val repositoryModule = module {
     }
 
     single<MainRepository> {
-        MainRepositoryImpl(appDatabase = get(), recordDBConverter = get ())
+        MainRepositoryImpl(appDatabase = get(), recordDBConverter = get())
     }
 }
