@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.view.isVisible
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.App
 import com.a2t.myapplication.R
@@ -30,7 +31,8 @@ class MainAdapter(
     val mainBuffer = ArrayList<ListRecord>()    // Буфер для всех остальных специальных режимов
     var specialMode = SpecialMode.NORMAL
     var isKeyboardON = false
-    var currentHolder: MainViewHolder? = null
+    var currentHolderLiveData = MutableLiveData<MainViewHolder?>(null)
+    var currentItem: ListRecord? = null
     var currentHolderPosition = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
@@ -42,6 +44,14 @@ class MainAdapter(
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val item = records[position]
         holder.bind(item)
+        currentHolderLiveData.observeForever { currentHolder ->
+            if (currentHolder?.id == holder.id) {
+                holder.ivAction.setBackgroundResource(R.drawable.rect_fon_red)
+            } else {
+                holder.ivAction.setBackgroundResource(R.drawable.rect_fon_blue)
+            }
+        }
+
         holder.llAction.isVisible = true
         if (specialMode == SpecialMode.NORMAL) {
             holder.checkbox.isClickable = true
@@ -100,7 +110,7 @@ class MainAdapter(
                 }
                 // Открытие меню форматирования текста
                 holder.llForeground.setOnLongClickListener{
-                    currentHolder = holder
+                    currentHolderLiveData.postValue(holder)
                     currentHolderPosition = position
                     if (!item.isNew) mac.showContextMenuFormat(holder)    // Не для новой строки
                     true
@@ -165,13 +175,12 @@ class MainAdapter(
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Режим MOVE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             SpecialMode.MOVE -> {
                 holder.ivAction.setImageResource(R.drawable.ic_menu)
-                /*if (bufferItem != null) {
-                    when(bufferItem.action){
-                        1 -> flipPicture(holder.ivAction, R.drawable.ic_cut_red)
-                        2 -> flipPicture(holder.ivAction, R.drawable.ic_copy_red)
-                        else -> {}
-                    }
-                }*/
+                if (mainBuffer.any { it.id == item.id }) {
+                    holder.ivAction.setImageResource(R.drawable.ic_copy_red)
+                }
+                if (moveBuffer.any { it.id == item.id }) {
+                    holder.ivAction.setImageResource(R.drawable.ic_cut_red)
+                }
 
                 holder.llForeground.setOnClickListener {
                     mac.requestMenuFocus()
@@ -181,9 +190,10 @@ class MainAdapter(
                     }
                 }
 
-                // Открытие меню форматирования текста
+                // Открытие меню Вырезать/Копировать
                 holder.ivAction.setOnClickListener{
-                    currentHolder = holder
+                    currentHolderLiveData.postValue(holder)
+                    currentItem = item
                     currentHolderPosition = position
                     mac.showContextMenuMove(holder)    // Не для новой строки
                 }

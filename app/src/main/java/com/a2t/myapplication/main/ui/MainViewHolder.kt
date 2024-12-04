@@ -30,7 +30,7 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     private var animationBell: Animation = AnimationUtils.loadAnimation(App.appContext, R.anim.anim_bell)
     var id: Long = 0
     var bellType = 0        // Тип иконки напоминания (0-скрыта, 1-белый, 2-красный, 3-анимация)
-    //foreground
+    // foreground
     val llForeground: LinearLayout = itemView.findViewById(R.id.ll_foreground)
     val clCheckbox: ConstraintLayout = itemView.findViewById(R.id.cl_checkbox)
     val checkbox: CheckBox = itemView.findViewById(R.id.checkbox)
@@ -44,12 +44,14 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     val llBell_2: LinearLayout = itemView.findViewById(R.id.ll_bell_2)
     private val ivBell_2: ImageView = itemView.findViewById(R.id.iv_bell_2)
     private val tvTimeBell_2: TextView = itemView.findViewById(R.id.tv_time_bell_2)
-    //background
+    // background
     val llBackground: LinearLayout = itemView.findViewById(R.id.ll_background)
     val ivBtnDel: ImageView = itemView.findViewById(R.id.iv_btn_del)
     val ivBtnEdit: ImageView = itemView.findViewById(R.id.iv_btn_edit)
     val ivBtnBell: ImageView = itemView.findViewById(R.id.iv_btn_bell)
     val ivBtnDir: ImageView = itemView.findViewById(R.id.iv_btn_dir)
+    // Слой для выделения записей с checkbox = true
+    val vLayerCheck: View = itemView.findViewById(R.id.v_layer_check)
 
     fun bind(item: ListRecord) {
         id = item.id
@@ -79,6 +81,11 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             ivDirIcon.visibility = View.INVISIBLE
         }
         checkbox.isChecked = item.isChecked
+        if (item.isChecked) {
+            vLayerCheck.visibility = View.VISIBLE
+        } else {
+            vLayerCheck.visibility = View.INVISIBLE
+        }
         if (item.isChecked && App.appSettings.crossedOutOn) {
             aetRecord.paintFlags = aetRecord.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG           // Зачеркнуть
         } else {

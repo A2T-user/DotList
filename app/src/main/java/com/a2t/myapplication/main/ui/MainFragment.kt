@@ -355,10 +355,12 @@ class MainFragment : Fragment(), MainAdapterCallback {
         contextMenuFormatBinding.llContextMenuFormat.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
             if (!hasFocus) {
                 v?.isVisible = false
+                adapter.currentHolderLiveData.postValue(null)
             }
         }
-        // $$$$$$$$$$$$$$$$$$ КНОПКИ КОНТЕКСТНОГО МЕНЮ ФОРМАТ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         contextMenuFormatBinding.btnTextColor1.setOnClickListener {
+
+
 
         }
 
@@ -369,7 +371,69 @@ class MainFragment : Fragment(), MainAdapterCallback {
         contextMenuMoveBinding.llContextMenuMove.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
             if (!hasFocus) {
                 v?.isVisible = false
+                adapter.currentHolderLiveData.postValue(null)
             }
+        }
+        // Кнопка ВЫРЕЗАТЬ
+        contextMenuMoveBinding.btnCut.setOnClickListener {
+            val item = adapter.currentItem
+            adapter.mainBuffer.removeAll { it.id == item?.id }
+            adapter.moveBuffer.removeAll { it.id == item?.id }
+            if (item != null) {
+                adapter.moveBuffer.add(item)
+                adapter.notifyItemChanged(adapter.currentHolderPosition)
+            }
+            showNumberOfSelectedRecords()
+        }
+        contextMenuMoveBinding.btnCut.setOnLongClickListener {
+            adapter.records.forEachIndexed { index, item ->
+                adapter.mainBuffer.removeAll { it.id == item.id }
+                adapter.moveBuffer.removeAll { it.id == item.id }
+                adapter.moveBuffer.add(item)
+                adapter.notifyItemChanged(index)
+            }
+            showNumberOfSelectedRecords()
+            true
+        }
+        // Кнопка КОПИРОВАТЬ
+        contextMenuMoveBinding.btnCopy.setOnClickListener {
+            val item = adapter.currentItem
+            adapter.mainBuffer.removeAll { it.id == item?.id }
+            adapter.moveBuffer.removeAll { it.id == item?.id }
+            if (item != null) {
+                adapter.mainBuffer.add(item)
+                adapter.notifyItemChanged(adapter.currentHolderPosition)
+                showNumberOfSelectedRecords()
+            }
+        }
+        contextMenuMoveBinding.btnCopy.setOnLongClickListener {
+            adapter.records.forEachIndexed { index, item ->
+                adapter.mainBuffer.removeAll { it.id == item.id }
+                adapter.moveBuffer.removeAll { it.id == item.id }
+                adapter.mainBuffer.add(item)
+                adapter.notifyItemChanged(index)
+            }
+            showNumberOfSelectedRecords()
+            true
+        }
+        // Кнопка ОТМЕНА
+        contextMenuMoveBinding.btnBack.setOnClickListener {
+            val item = adapter.currentItem
+            adapter.mainBuffer.removeAll { it.id == item?.id }
+            adapter.moveBuffer.removeAll { it.id == item?.id }
+            if (adapter.currentHolderPosition > 0) {
+                adapter.notifyItemChanged(adapter.currentHolderPosition)
+            }
+            showNumberOfSelectedRecords()
+        }
+        contextMenuMoveBinding.btnBack.setOnLongClickListener {
+            adapter.records.forEachIndexed { index, item ->
+                adapter.mainBuffer.removeAll { it.id == item.id }
+                adapter.moveBuffer.removeAll { it.id == item.id }
+                adapter.notifyItemChanged(index)
+            }
+            showNumberOfSelectedRecords()
+            true
         }
     }
 
