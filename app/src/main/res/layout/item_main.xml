@@ -120,7 +120,7 @@
                 android:id="@+id/iv_action"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rect_fon"
+                android:background="@drawable/rect_fon_blue"
                 android:paddingHorizontal="2dp"
                 android:paddingVertical="4dp"
                 tools:ignore= "ContentDescription"
@@ -136,6 +136,15 @@
         android:layout_height="1dp"
         android:background="@color/white"
         android:layout_gravity="bottom"/>
+
+    <!-- Слой для выделения записей с checkbox = true -->
+    <View
+        android:id="@+id/v_layer_check"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/colorMainText"
+        android:alpha="0.15"
+        android:visibility="invisible"/>
 
     <!-- Время напомиания -->
     <LinearLayout
