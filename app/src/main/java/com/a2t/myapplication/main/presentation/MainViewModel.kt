@@ -16,6 +16,8 @@ class MainViewModel(
 ) : ViewModel() {
     val moveBuffer = ArrayList<ListRecord>()    // Буфер для режима MOVE(только перенос записей)
     val mainBuffer = ArrayList<ListRecord>()    // Буфер для всех остальных специальных режимов
+    var idDir = 0L
+    var specialMode = SpecialMode.NORMAL
 
     // Добавление новой записи и получение ее id
     fun insertRecord(record: ListRecord, callback: (Long) -> Unit) {
@@ -46,31 +48,31 @@ class MainViewModel(
         }
     }
 
-    suspend fun getRecords(specialMode: SpecialMode, idDir: Long, callback: (List<ListRecord>) -> Unit) {
+    suspend fun getRecords(callback: (List<ListRecord>) -> Unit) {
         viewModelScope.launch {
             var records = listOf<ListRecord>()
             when(specialMode) {
                 SpecialMode.NORMAL, SpecialMode.MOVE, SpecialMode.DELETE -> {
                     records = if (App.appSettings.sortingChecks) {
-                        getRecordsForNormalMoveDeleteModesByCheck(idDir)
+                        getRecordsForNormalMoveDeleteModesByCheck()
                     } else {
-                        getRecordsForNormalMoveDeleteModes(idDir)
+                        getRecordsForNormalMoveDeleteModes()
                     }
                 }
 
                 SpecialMode.RESTORE -> {
                     records = if (App.appSettings.sortingChecks) {
-                        getRecordsForRestoreArchiveModesByCheck(idDir, 1)
+                        getRecordsForRestoreArchiveModesByCheck(1)
                     } else {
-                        getRecordsForRestoreArchiveModes(idDir, 1)
+                        getRecordsForRestoreArchiveModes(1)
                     }
                 }
 
                 SpecialMode.ARCHIVE -> {
                     records = if (App.appSettings.sortingChecks) {
-                        getRecordsForRestoreArchiveModesByCheck(idDir, 0)
+                        getRecordsForRestoreArchiveModesByCheck(0)
                     } else {
-                        getRecordsForRestoreArchiveModes(idDir, 0)
+                        getRecordsForRestoreArchiveModes(0)
                     }
                 }
             }
@@ -78,7 +80,6 @@ class MainViewModel(
             if (specialMode == SpecialMode.NORMAL) {
                 mutableRecords.add(
                     getNewRecord(
-                        idDir,
                         mutableRecords,
                         mutableRecords.isEmpty() && App.appSettings.editEmptyDir
                     )
@@ -88,7 +89,7 @@ class MainViewModel(
         }
     }
 
-    private fun getNewRecord(idDir: Long, records: List<ListRecord>, startEdit: Boolean): ListRecord {
+    private fun getNewRecord(records: List<ListRecord>, startEdit: Boolean): ListRecord {
         return ListRecord(
             0,
             idDir,
@@ -122,35 +123,35 @@ class MainViewModel(
     }
 
     // Возвращает список записей для режимов NORMAL, MOVE, DELETE
-    private suspend fun getRecordsForNormalMoveDeleteModes(idDir: Long) = withContext(Dispatchers.IO) {
+    private suspend fun getRecordsForNormalMoveDeleteModes() = withContext(Dispatchers.IO) {
         mainInteractor.getRecordsForNormalMoveDeleteModes(idDir)
     }
     // Возвращает список записей для режимов NORMAL, MOVE, DELETE с сортировкой по isChecked
-    private suspend fun getRecordsForNormalMoveDeleteModesByCheck(idDir: Long) = withContext(Dispatchers.IO) {
+    private suspend fun getRecordsForNormalMoveDeleteModesByCheck() = withContext(Dispatchers.IO) {
         mainInteractor.getRecordsForNormalMoveDeleteModesByCheck(idDir)
     }
     // Возвращает список записей для режимов RESTORE(isDelete = 1), ARCHIVE(isDelete = 0)
-    private suspend fun getRecordsForRestoreArchiveModes(idDir: Long, isDelete: Int) = withContext(Dispatchers.IO) {
+    private suspend fun getRecordsForRestoreArchiveModes(isDelete: Int) = withContext(Dispatchers.IO) {
         mainInteractor.getRecordsForRestoreArchiveModes(idDir, isDelete)
     }
     // Возвращает список записей для режимов RESTORE(isDelete = 1), ARCHIVE(isDelete = 0) с сортировкой по isChecked
-    private suspend fun getRecordsForRestoreArchiveModesByCheck(idDir: Long, isDelete: Int) = withContext(Dispatchers.IO) {
+    private suspend fun getRecordsForRestoreArchiveModesByCheck(isDelete: Int) = withContext(Dispatchers.IO) {
         mainInteractor.getRecordsForRestoreArchiveModesByCheck(idDir, isDelete)
     }
 
     // Возвращает список имен папок с одним элементом - именем папки с id = idDir
-    fun getNameDir(idDir: Long, callback: (List<String>) -> Unit) {
+    fun getNameDir(id: Long, callback: (List<String>) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            val names = mainInteractor.getNameDir(idDir)
+            val names = mainInteractor.getNameDir(id)
             withContext(Dispatchers.Main) {
                 callback(names)
             }
         }
     }
     // Возвращает список id родительских папок с одним элементом - id родительской папки для папки с id = idDir
-    fun getParentDir(idDir: Long, callback: (List<Long>) -> Unit) {
+    fun getParentDir(id: Long, callback: (List<Long>) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            val ids = mainInteractor.getParentDir(idDir)
+            val ids = mainInteractor.getParentDir(id)
             withContext(Dispatchers.Main) {
                 callback(ids)
             }
