@@ -355,7 +355,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         contextMenuFormatBinding.llContextMenuFormat.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
             if (!hasFocus) {
                 v?.isVisible = false
-                adapter.currentHolderLiveData.postValue(null)
+                adapter.currentHolderIdLiveData.postValue(0)
             }
         }
         contextMenuFormatBinding.btnTextColor1.setOnClickListener {
@@ -371,7 +371,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         contextMenuMoveBinding.llContextMenuMove.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
             if (!hasFocus) {
                 v?.isVisible = false
-                adapter.currentHolderLiveData.postValue(null)
+                adapter.currentHolderIdLiveData.postValue(0)
             }
         }
         // Кнопка ВЫРЕЗАТЬ
