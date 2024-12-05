@@ -36,12 +36,12 @@ class RootActivity : AppCompatActivity() {
             override fun handleOnBackPressed() {
                 val currentFragment = navHostFragment.childFragmentManager.fragments.firstOrNull()
                 if (currentFragment is MainFragment) {
-                    when(currentFragment.specialMode) {
+                    when(currentFragment.getSpecialMode()) {
                         SpecialMode.DELETE, SpecialMode.RESTORE -> {
                             currentFragment.completionSpecialMode()
                         }
                         else -> {
-                            if (currentFragment.idDir > 0) {
+                            if (currentFragment.getIdCurrentDir() > 0) {
                                 currentFragment.mainBackPressed()
                             } else {                                    // Выход по двойному нажатию Back
                                 Toast.makeText(this@RootActivity, R.string.text_exit, Toast.LENGTH_SHORT).show() // Сообщение

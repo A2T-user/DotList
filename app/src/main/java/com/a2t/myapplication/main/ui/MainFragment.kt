@@ -57,8 +57,6 @@ const val EYE_ANIMATION_DELEY = 5000L
 // на NUMBER_OF_OPERATIO_ZOOM срабатываний
 const val NUMBER_OF_OPERATIO_ZOOM = 5
 const val STEP_ZOOM = 0.5f                                     // Шаг изменения высоты шрифта
-const val ID_DIR = "id_dir"
-const val SPECIAL_MODE = "special_mode"
 
 class MainFragment : Fragment(), MainAdapterCallback {
     private val mainViewModel by viewModel<MainViewModel>()
@@ -67,9 +65,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     private lateinit var recycler: RecyclerView
     private var mIth: ItemTouchHelper? = null
     private var mIthScb: ItemTouchHelper.Callback? = null
-    var idDir = 0L
     private var nameDir = "R:"
-    var specialMode = SpecialMode.NORMAL
     private lateinit var binding: FragmentMainBinding
     private lateinit var topToolbarBinding: ToolbarTopBinding
     private lateinit var smallToolbarBinding: ToolbarSmallBinding
@@ -114,11 +110,6 @@ class MainFragment : Fragment(), MainAdapterCallback {
         contextMenuMoveBinding = binding.contextMenuMove
         modesToolbarBinding = binding.modesToolbar
 
-        // Восстановление параметров при рестарте
-        if (savedInstanceState != null) {
-            idDir = savedInstanceState.getLong(ID_DIR, 0)
-            specialMode = specialMode.getModeByName(savedInstanceState.getString(SPECIAL_MODE, "NORMAL"))
-        }
         return binding.root
     }
     @SuppressLint("ClickableViewAccessibility")
@@ -205,7 +196,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         }
 
         topToolbarBinding.pathDir.setOnClickListener {
-            if (clickDebounce()) fullPathDir(idDir)
+            if (clickDebounce()) fullPathDir(getIdCurrentDir())
         }
 
         // НЕ СПЯЩИЙ РЕЖИМ
@@ -257,7 +248,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         // Кнопка режима Переноса
         sideToolbarBinding.llSideBarMoveMode.setOnClickListener {
             requestFocusInTouch(view)
-            specialMode = SpecialMode.MOVE
+            mainViewModel.specialMode = SpecialMode.MOVE
             enableSpecialMode()
             goToDir(animOpenNewDir)
         }
@@ -265,7 +256,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         // Кнопка режима Удаления
         sideToolbarBinding.llSideBarDelMode.setOnClickListener {
             requestFocusInTouch(view)
-            specialMode = SpecialMode.DELETE
+            mainViewModel.specialMode = SpecialMode.DELETE
             enableSpecialMode()
             goToDir(animOpenNewDir)
         }
@@ -273,7 +264,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         // Кнопка режима Восстановления
         sideToolbarBinding.llSideBarRestMode.setOnClickListener {
             requestFocusInTouch(view)
-            specialMode = SpecialMode.RESTORE
+            mainViewModel.specialMode = SpecialMode.RESTORE
             enableSpecialMode()
             goToDir(animOpenNewDir)
         }
@@ -281,15 +272,15 @@ class MainFragment : Fragment(), MainAdapterCallback {
         // Кнопка режима Архив
         sideToolbarBinding.llSideBarArchiveMode.setOnClickListener {
             requestFocusInTouch(view)
-            specialMode = SpecialMode.ARCHIVE
+            mainViewModel.specialMode = SpecialMode.ARCHIVE
             enableSpecialMode()
             goToDir(animOpenNewDir)
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         smallToolbarBinding.llRootDir.setOnClickListener {
-            if (idDir != 0L) {
-                idDir = 0L
+            if (getIdCurrentDir() != 0L) {
+                mainViewModel.idDir = 0L
                 goToDir(animOpenParentDir)
             }
         }
@@ -309,7 +300,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                         val dX = event.x - downX.get()
                         val dY = event.y - downY.get()
                         if (abs(dY/dX) > 1 && dY > 100) {// Если жест вертикальный, вниз
-                            goToNormalMode()
+                            completionSpecialMode()
                         }
                     }
                 }
@@ -322,7 +313,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         }
 
         modesToolbarBinding.btnSelectAll.setOnClickListener {
-            if (specialMode == SpecialMode.DELETE || specialMode == SpecialMode.RESTORE) {
+            if (getSpecialMode() == SpecialMode.DELETE || getSpecialMode() == SpecialMode.RESTORE) {
                 adapter.records.forEachIndexed { index, rec ->
                     if (!rec.isNew && getMainBuffer().all { it.id != rec.id }) {
                         getMainBuffer().add(rec)
@@ -334,8 +325,10 @@ class MainFragment : Fragment(), MainAdapterCallback {
         }
 
         modesToolbarBinding.btnAction.setOnClickListener {
-            when(specialMode) {
-                SpecialMode.MOVE -> {}
+            when(getSpecialMode()) {
+                SpecialMode.MOVE -> {
+
+                }
                 SpecialMode.DELETE -> {
                     deleteRecords(getMainBuffer())
                 }
@@ -378,8 +371,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
             if (item != null) {
                 getMoveBuffer().add(item)
                 adapter.notifyItemChanged(adapter.currentHolderPosition)
+                showNumberOfSelectedRecords()
             }
-            showNumberOfSelectedRecords()
         }
         contextMenuMoveBinding.btnCut.setOnLongClickListener {
             adapter.records.forEachIndexed { index, item ->
@@ -419,8 +412,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
             getMoveBuffer().removeAll { it.id == item?.id }
             if (adapter.currentHolderPosition > 0) {
                 adapter.notifyItemChanged(adapter.currentHolderPosition)
+                showNumberOfSelectedRecords()
             }
-            showNumberOfSelectedRecords()
         }
         contextMenuMoveBinding.btnBack.setOnLongClickListener {
             adapter.records.forEachIndexed { index, item ->
@@ -479,7 +472,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     // Открытие специального режима
     private fun enableSpecialMode() {
         noSleepModeOff()           // Выключение режима БЕЗ СНА
-        topToolbarBinding.imageEye.isVisible = specialMode == SpecialMode.NORMAL
+        topToolbarBinding.imageEye.isVisible = getSpecialMode() == SpecialMode.NORMAL
         showSpecialModeToolbar()
         showNumberOfSelectedRecords()
     }
@@ -487,43 +480,39 @@ class MainFragment : Fragment(), MainAdapterCallback {
     // Показать панель инструментов специального режима
     private fun showSpecialModeToolbar() {
         stopAllModeAnimations()         // Остановить все анимации
-        if (specialMode == SpecialMode.NORMAL) {
-            modesToolbarBinding.clModesToolbar.isVisible = false
-        } else {
-            modesToolbarBinding.clModesToolbar.isVisible = true
-            when(specialMode) {
-                SpecialMode.MOVE -> {
-                    modesToolbarBinding.btnSelectAll.isVisible = false
-                    modesToolbarBinding.btnAction.isVisible = true
-                    modesToolbarBinding.btnAction.text = getString(R.string.insert)
-                    modesToolbarBinding.tvModeHint.isVisible = false
-                }
-                SpecialMode.DELETE -> {
-                    modesToolbarBinding.btnSelectAll.isVisible = true
-                    modesToolbarBinding.btnAction.isVisible = true
-                    modesToolbarBinding.btnAction.text = getString(R.string.delete)
-                    modesToolbarBinding.tvModeHint.isVisible = true
-                }
-                SpecialMode.RESTORE -> {
-                    modesToolbarBinding.btnSelectAll.isVisible = true
-                    modesToolbarBinding.btnAction.isVisible = true
-                    modesToolbarBinding.btnAction.text = getString(R.string.restore)
-                    modesToolbarBinding.tvModeHint.isVisible = true
-                }
-                SpecialMode.ARCHIVE -> {
-                    modesToolbarBinding.btnSelectAll.isVisible = false
-                    modesToolbarBinding.btnAction.isVisible = false
-                    modesToolbarBinding.tvModeHint.isVisible = false
-                }
-                SpecialMode.NORMAL -> {}
+        modesToolbarBinding.clModesToolbar.isVisible = getSpecialMode() != SpecialMode.NORMAL
+        when(getSpecialMode()) {
+            SpecialMode.MOVE -> {
+                modesToolbarBinding.btnSelectAll.isVisible = false
+                modesToolbarBinding.btnAction.isVisible = true
+                modesToolbarBinding.btnAction.text = getString(R.string.insert)
+                modesToolbarBinding.tvModeHint.isVisible = false
             }
-            showIconMode()
+            SpecialMode.DELETE -> {
+                modesToolbarBinding.btnSelectAll.isVisible = true
+                modesToolbarBinding.btnAction.isVisible = true
+                modesToolbarBinding.btnAction.text = getString(R.string.delete)
+                modesToolbarBinding.tvModeHint.isVisible = true
+            }
+            SpecialMode.RESTORE -> {
+                modesToolbarBinding.btnSelectAll.isVisible = true
+                modesToolbarBinding.btnAction.isVisible = true
+                modesToolbarBinding.btnAction.text = getString(R.string.restore)
+                modesToolbarBinding.tvModeHint.isVisible = true
+            }
+            SpecialMode.ARCHIVE -> {
+                modesToolbarBinding.btnSelectAll.isVisible = false
+                modesToolbarBinding.btnAction.isVisible = false
+                modesToolbarBinding.tvModeHint.isVisible = false
+            }
+            SpecialMode.NORMAL -> {}
         }
+        showIconMode()
+
     }
 
     private fun showIconMode() {
-        stopAllModeAnimations()         // Остановить все анимации панели режимов
-        when(specialMode) {
+        when(getSpecialMode()) {
             SpecialMode.MOVE -> {
                 modesToolbarBinding.ivBarModes3.isVisible = false
                 modesToolbarBinding.ivBarModes2.setImageResource(R.drawable.ic_move_mode_2)
@@ -658,7 +647,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
             }
             // Разрешить Swipe
             override fun isItemViewSwipeEnabled(): Boolean {
-                return specialMode == SpecialMode.NORMAL            // Swipe будет только в нормальном режиме
+                return getSpecialMode() == SpecialMode.NORMAL            // Swipe будет только в нормальном режиме
             }
             // Сделать свайп грубее
             override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
@@ -680,7 +669,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 val moveX = foregroundView.x
                 val distX: Float
                 if (item != null) {
-                    if (!item.isNew  && specialMode == SpecialMode.NORMAL) {
+                    if (!item.isNew  && getSpecialMode() == SpecialMode.NORMAL) {
                         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                             distX = if (isCurrentlyActive) {
                                 if (abs(moveX.toDouble()) < 0.5 * widthScreen) {
@@ -784,51 +773,51 @@ class MainFragment : Fragment(), MainAdapterCallback {
     // Возврат в режим NORMAL
     private fun goToNormalMode() {
         requestMenuFocus()
-        specialMode = SpecialMode.NORMAL
+        mainViewModel.specialMode = SpecialMode.NORMAL
         enableSpecialMode()
         goToDir(animOpenNewDir)
     }
 
     private fun goToParentDir() {
-        mainViewModel.getParentDir(idDir) { ids ->
-            idDir = ids[0]
+        mainViewModel.getParentDir(getIdCurrentDir()) { ids ->
+            mainViewModel.idDir = ids[0]
             goToDir(animOpenParentDir)
         }
     }
 
     override fun goToChildDir(id: Long) {
-        idDir = id
+        mainViewModel.idDir = id
         goToDir(animOpenChildDir)
     }
 
     private fun goToDir(animationController: LayoutAnimationController) {
+        binding.progressBar.isVisible = true
         mainViewModel.deletingExpiredRecords {
-            showList(specialMode, idDir, animationController)
+            showList(animationController)
         }
     }
 
-    private fun showList(specialMode: SpecialMode, idDir: Long, animationController: LayoutAnimationController) = lifecycleScope.launch {
-        mainViewModel.getRecords(specialMode, idDir) { records ->
+    private fun showList(animationController: LayoutAnimationController) = lifecycleScope.launch {
+        mainViewModel.getRecords { records ->
             fillingRecycler(records, animationController)
             updatFieldsOfSmallToolbar()
+            binding.progressBar.isVisible = false
         }
 
     }
 
     private fun fillingRecycler(records: List<ListRecord>, animationController: LayoutAnimationController) {
         recycler.layoutAnimation = animationController
-        mainViewModel.getNameDir(idDir) { names ->
+        mainViewModel.getNameDir(getIdCurrentDir()) { names ->
             nameDir = if (names.isEmpty()) "R:" else names[0]
             topToolbarBinding.pathDir.text = nameDir
         }
-        adapter.specialMode = specialMode
+        adapter.specialMode = getSpecialMode()
         adapter.records.clear()
         adapter.records.addAll(records)
         adapter.notifyDataSetChanged()
         recycler.scheduleLayoutAnimation()      // Анимация обновления строк рециклера
     }
-
-    override fun getIdCurrentDir(): Long = idDir
 
     override fun insertNewRecord(item: ListRecord) {
         mainViewModel.insertRecord(item) { id ->
@@ -901,17 +890,11 @@ class MainFragment : Fragment(), MainAdapterCallback {
         adapter.records.forEach {
             if (it.isDir) countDir++ else countLine++
         }
-        if (specialMode == SpecialMode.NORMAL) countLine--
+        if (getSpecialMode() == SpecialMode.NORMAL) countLine--
         val sum = (countDir + countLine).toString()
         smallToolbarBinding.tvSumLine.text = countLine.toString()
         smallToolbarBinding.tvSumDir.text = countDir.toString()
         smallToolbarBinding.tvSumSum.text = sum
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putLong(ID_DIR, idDir)
-        outState.putString(SPECIAL_MODE, specialMode.getModeName())
     }
 
     private fun fullPathDir(idDir: Long) {
@@ -969,7 +952,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 .setPositiveButton(getString(R.string.delete)) { _, _ ->
                     mutableRecords.forEach { it.isDelete = true }
                     mainViewModel.updateRecords(mutableRecords) {
-                        if (specialMode == SpecialMode.NORMAL) {
+                        if (getSpecialMode() == SpecialMode.NORMAL) {
                             val position = adapter.records.indexOfFirst { it.id == records[0].id }
                             adapter.records.removeAt(position)
                             adapter.notifyItemRemoved(position) // Уведомление об удалении
@@ -1007,7 +990,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 .setPositiveButton(getString(R.string.restore)) { _, _ ->
                     mutableRecords.forEach { it.isDelete = false }
                     mainViewModel.updateRecords(mutableRecords) {
-                        if (specialMode == SpecialMode.RESTORE) {
+                        if (getSpecialMode() == SpecialMode.RESTORE) {
                             getMainBuffer().clear()
                             getMoveBuffer().clear()
                             goToNormalMode()
@@ -1017,6 +1000,10 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 .show()
         }
     }
+
+    fun getSpecialMode(): SpecialMode = mainViewModel.specialMode
+
+    override fun getIdCurrentDir(): Long = mainViewModel.idDir
 
     override fun getMoveBuffer(): ArrayList<ListRecord> = mainViewModel.moveBuffer
 
