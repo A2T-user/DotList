@@ -28,8 +28,6 @@ class MainAdapter(
 ) : RecyclerView.Adapter<MainViewHolder>() {
 
     val records = ArrayList<ListRecord>()
-    val moveBuffer = ArrayList<ListRecord>()    // Буфер для режима MOVE(только перенос записей)
-    val mainBuffer = ArrayList<ListRecord>()    // Буфер для всех остальных специальных режимов
     var specialMode = SpecialMode.NORMAL
     var isKeyboardON = false
     var currentHolderIdLiveData = MutableLiveData<Long>(0)
@@ -181,10 +179,10 @@ class MainAdapter(
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Режим MOVE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             SpecialMode.MOVE -> {
                 holder.ivAction.setImageResource(R.drawable.ic_menu)
-                if (mainBuffer.any { it.id == item.id }) {
+                if (mac.getMainBuffer().any { it.id == item.id }) {
                     holder.ivAction.setImageResource(R.drawable.ic_copy_red)
                 }
-                if (moveBuffer.any { it.id == item.id }) {
+                if (mac.getMoveBuffer().any { it.id == item.id }) {
                     holder.ivAction.setImageResource(R.drawable.ic_cut_red)
                 }
 
@@ -210,7 +208,7 @@ class MainAdapter(
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Режим DELETE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             SpecialMode.DELETE -> {
                 holder.ivAction.setImageResource(R.drawable.ic_basket_white)
-                if (mainBuffer.any { it.id == item.id }) {
+                if (mac.getMainBuffer().any { it.id == item.id }) {
                     holder.ivAction.setImageResource(R.drawable.ic_del_mode)
                 }
 
@@ -220,10 +218,10 @@ class MainAdapter(
 
                 // Выбор/отмена записи для удаления
                 holder.ivAction.setOnClickListener{
-                    if (mainBuffer.removeAll { it.id == item.id }) {
+                    if (mac.getMainBuffer().removeAll { it.id == item.id }) {
                         holder.ivAction.setImageResource(R.drawable.ic_basket_white)
                     } else {
-                        mainBuffer.add(item)
+                        mac.getMainBuffer().add(item)
                         holder.ivAction.setImageResource(R.drawable.ic_del_mode)
                     }
                     mac.showNumberOfSelectedRecords()
@@ -232,7 +230,7 @@ class MainAdapter(
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Режим RESTORE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             SpecialMode.RESTORE -> {
                 holder.ivAction.setImageResource(R.drawable.ic_basket_white)
-                if (mainBuffer.any { it.id == item.id }) {
+                if (mac.getMainBuffer().any { it.id == item.id }) {
                     holder.ivAction.setImageResource(R.drawable.ic_rest_mode)
                 }
 
@@ -242,10 +240,10 @@ class MainAdapter(
 
                 // Выбор/отмена записи для восстановления
                 holder.ivAction.setOnClickListener{
-                    if (mainBuffer.removeAll { it.id == item.id }) {
+                    if (mac.getMainBuffer().removeAll { it.id == item.id }) {
                         holder.ivAction.setImageResource(R.drawable.ic_basket_white)
                     } else {
-                        mainBuffer.add(item)
+                        mac.getMainBuffer().add(item)
                         holder.ivAction.setImageResource(R.drawable.ic_rest_mode)
                     }
                     mac.showNumberOfSelectedRecords()

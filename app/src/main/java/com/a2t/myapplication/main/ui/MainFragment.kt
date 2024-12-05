@@ -118,10 +118,6 @@ class MainFragment : Fragment(), MainAdapterCallback {
         if (savedInstanceState != null) {
             idDir = savedInstanceState.getLong(ID_DIR, 0)
             specialMode = specialMode.getModeByName(savedInstanceState.getString(SPECIAL_MODE, "NORMAL"))
-            adapter.mainBuffer.clear()
-            adapter.moveBuffer.clear()
-            adapter.mainBuffer.addAll(mainViewModel.mainBuffer)
-            adapter.moveBuffer.addAll(mainViewModel.moveBuffer)
         }
         return binding.root
     }
@@ -328,8 +324,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
         modesToolbarBinding.btnSelectAll.setOnClickListener {
             if (specialMode == SpecialMode.DELETE || specialMode == SpecialMode.RESTORE) {
                 adapter.records.forEachIndexed { index, rec ->
-                    if (!rec.isNew && adapter.mainBuffer.all { it.id != rec.id }) {
-                        adapter.mainBuffer.add(rec)
+                    if (!rec.isNew && getMainBuffer().all { it.id != rec.id }) {
+                        getMainBuffer().add(rec)
                         adapter.notifyItemChanged(index)
                     }
                 }
@@ -341,10 +337,10 @@ class MainFragment : Fragment(), MainAdapterCallback {
             when(specialMode) {
                 SpecialMode.MOVE -> {}
                 SpecialMode.DELETE -> {
-                    deleteRecords(adapter.mainBuffer)
+                    deleteRecords(getMainBuffer())
                 }
                 SpecialMode.RESTORE -> {
-                    restoreRecords(adapter.mainBuffer)
+                    restoreRecords(getMainBuffer())
                 }
                 else -> {}
             }
@@ -377,19 +373,19 @@ class MainFragment : Fragment(), MainAdapterCallback {
         // Кнопка ВЫРЕЗАТЬ
         contextMenuMoveBinding.btnCut.setOnClickListener {
             val item = adapter.currentItem
-            adapter.mainBuffer.removeAll { it.id == item?.id }
-            adapter.moveBuffer.removeAll { it.id == item?.id }
+            getMainBuffer().removeAll { it.id == item?.id }
+            getMoveBuffer().removeAll { it.id == item?.id }
             if (item != null) {
-                adapter.moveBuffer.add(item)
+                getMoveBuffer().add(item)
                 adapter.notifyItemChanged(adapter.currentHolderPosition)
             }
             showNumberOfSelectedRecords()
         }
         contextMenuMoveBinding.btnCut.setOnLongClickListener {
             adapter.records.forEachIndexed { index, item ->
-                adapter.mainBuffer.removeAll { it.id == item.id }
-                adapter.moveBuffer.removeAll { it.id == item.id }
-                adapter.moveBuffer.add(item)
+                getMainBuffer().removeAll { it.id == item.id }
+                getMoveBuffer().removeAll { it.id == item.id }
+                getMoveBuffer().add(item)
                 adapter.notifyItemChanged(index)
             }
             showNumberOfSelectedRecords()
@@ -398,19 +394,19 @@ class MainFragment : Fragment(), MainAdapterCallback {
         // Кнопка КОПИРОВАТЬ
         contextMenuMoveBinding.btnCopy.setOnClickListener {
             val item = adapter.currentItem
-            adapter.mainBuffer.removeAll { it.id == item?.id }
-            adapter.moveBuffer.removeAll { it.id == item?.id }
+            getMainBuffer().removeAll { it.id == item?.id }
+            getMoveBuffer().removeAll { it.id == item?.id }
             if (item != null) {
-                adapter.mainBuffer.add(item)
+                getMainBuffer().add(item)
                 adapter.notifyItemChanged(adapter.currentHolderPosition)
                 showNumberOfSelectedRecords()
             }
         }
         contextMenuMoveBinding.btnCopy.setOnLongClickListener {
             adapter.records.forEachIndexed { index, item ->
-                adapter.mainBuffer.removeAll { it.id == item.id }
-                adapter.moveBuffer.removeAll { it.id == item.id }
-                adapter.mainBuffer.add(item)
+                getMainBuffer().removeAll { it.id == item.id }
+                getMoveBuffer().removeAll { it.id == item.id }
+                getMainBuffer().add(item)
                 adapter.notifyItemChanged(index)
             }
             showNumberOfSelectedRecords()
@@ -419,8 +415,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
         // Кнопка ОТМЕНА
         contextMenuMoveBinding.btnBack.setOnClickListener {
             val item = adapter.currentItem
-            adapter.mainBuffer.removeAll { it.id == item?.id }
-            adapter.moveBuffer.removeAll { it.id == item?.id }
+            getMainBuffer().removeAll { it.id == item?.id }
+            getMoveBuffer().removeAll { it.id == item?.id }
             if (adapter.currentHolderPosition > 0) {
                 adapter.notifyItemChanged(adapter.currentHolderPosition)
             }
@@ -428,8 +424,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
         }
         contextMenuMoveBinding.btnBack.setOnLongClickListener {
             adapter.records.forEachIndexed { index, item ->
-                adapter.mainBuffer.removeAll { it.id == item.id }
-                adapter.moveBuffer.removeAll { it.id == item.id }
+                getMainBuffer().removeAll { it.id == item.id }
+                getMoveBuffer().removeAll { it.id == item.id }
                 adapter.notifyItemChanged(index)
             }
             showNumberOfSelectedRecords()
@@ -780,8 +776,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     override fun completionSpecialMode() {
-        adapter.mainBuffer.clear()
-        adapter.moveBuffer.clear()
+        getMainBuffer().clear()
+        getMoveBuffer().clear()
         goToNormalMode()
     }
 
@@ -916,10 +912,6 @@ class MainFragment : Fragment(), MainAdapterCallback {
         super.onSaveInstanceState(outState)
         outState.putLong(ID_DIR, idDir)
         outState.putString(SPECIAL_MODE, specialMode.getModeName())
-        mainViewModel.mainBuffer.clear()
-        mainViewModel.moveBuffer.clear()
-        mainViewModel.mainBuffer.addAll(adapter.mainBuffer)
-        mainViewModel.moveBuffer.addAll(adapter.moveBuffer)
     }
 
     private fun fullPathDir(idDir: Long) {
@@ -986,8 +978,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
                                 adapter.records.size - position
                             )
                         } else {
-                            adapter.mainBuffer.clear()
-                            adapter.moveBuffer.clear()
+                            getMainBuffer().clear()
+                            getMoveBuffer().clear()
                             goToNormalMode()
                         }
                     }
@@ -1016,8 +1008,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
                     mutableRecords.forEach { it.isDelete = false }
                     mainViewModel.updateRecords(mutableRecords) {
                         if (specialMode == SpecialMode.RESTORE) {
-                            adapter.mainBuffer.clear()
-                            adapter.moveBuffer.clear()
+                            getMainBuffer().clear()
+                            getMoveBuffer().clear()
                             goToNormalMode()
                         }
                     }
@@ -1026,8 +1018,12 @@ class MainFragment : Fragment(), MainAdapterCallback {
         }
     }
 
+    override fun getMoveBuffer(): ArrayList<ListRecord> = mainViewModel.moveBuffer
+
+    override fun getMainBuffer(): ArrayList<ListRecord> = mainViewModel.mainBuffer
+
     override fun showNumberOfSelectedRecords() {
-        val number = adapter.mainBuffer.size + adapter.moveBuffer.size
+        val number = getMainBuffer().size + getMoveBuffer().size
         modesToolbarBinding.countRecords.text = number.toString()
         modesToolbarBinding.countRecords.isVisible = number > 0
     }
