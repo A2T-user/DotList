@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.App
 import com.a2t.myapplication.R
@@ -25,6 +26,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    var observer: Observer<Long>? = null
     private var endDayJob: Job? = null
     private var alarmJob: Job? = null
     private var animationBell: Animation = AnimationUtils.loadAnimation(App.appContext, R.anim.anim_bell)

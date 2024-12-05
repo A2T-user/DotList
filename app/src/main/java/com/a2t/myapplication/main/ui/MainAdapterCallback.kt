@@ -19,4 +19,6 @@ interface MainAdapterCallback {
     fun restoreRecords(records: List<ListRecord>)
     fun showNumberOfSelectedRecords()
     fun completionSpecialMode()
+    fun getMoveBuffer(): ArrayList<ListRecord>
+    fun getMainBuffer(): ArrayList<ListRecord>
 }

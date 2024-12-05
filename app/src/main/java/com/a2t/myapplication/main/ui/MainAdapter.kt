@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.view.isVisible
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.App
 import com.a2t.myapplication.R
@@ -27,11 +28,9 @@ class MainAdapter(
 ) : RecyclerView.Adapter<MainViewHolder>() {
 
     val records = ArrayList<ListRecord>()
-    val moveBuffer = ArrayList<ListRecord>()    // Буфер для режима MOVE(только перенос записей)
-    val mainBuffer = ArrayList<ListRecord>()    // Буфер для всех остальных специальных режимов
     var specialMode = SpecialMode.NORMAL
     var isKeyboardON = false
-    var currentHolderLiveData = MutableLiveData<MainViewHolder?>(null)
+    var currentHolderIdLiveData = MutableLiveData<Long>(0)
     var currentItem: ListRecord? = null
     var currentHolderPosition = -1
 
@@ -44,12 +43,17 @@ class MainAdapter(
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val item = records[position]
         holder.bind(item)
-        currentHolderLiveData.observeForever { currentHolder ->
-            if (currentHolder?.id == holder.id) {
-                holder.ivAction.setBackgroundResource(R.drawable.rect_fon_red)
-            } else {
-                holder.ivAction.setBackgroundResource(R.drawable.rect_fon_blue)
+        if (specialMode == SpecialMode.NORMAL || specialMode == SpecialMode.MOVE) {
+            holder.observer = Observer { currentHolderId ->
+                if (currentHolderId == holder.id) {
+                    holder.ivAction.setBackgroundResource(R.drawable.rect_fon_red)
+                } else {
+                    holder.ivAction.setBackgroundResource(R.drawable.rect_fon_blue)
+                }
             }
+            currentHolderIdLiveData.observeForever(holder.observer!!)
+        } else {
+            holder.observer = null
         }
 
         holder.llAction.isVisible = true
@@ -101,6 +105,7 @@ class MainAdapter(
                 }
                 // ############################################## РЕАКЦИЯ ОБЪЕКТОВ FOREGROUND ###################################################
                 holder.llForeground.setOnClickListener {
+                    mac.requestMenuFocus()
                     if (item.isDir) {
                         isKeyboardON = false
                         mac.goToChildDir(item.id)
@@ -110,12 +115,11 @@ class MainAdapter(
                 }
                 // Открытие меню форматирования текста
                 holder.llForeground.setOnLongClickListener{
-                    currentHolderLiveData.postValue(holder)
+                    currentHolderIdLiveData.postValue(item.id)
                     currentHolderPosition = position
                     if (!item.isNew) mac.showContextMenuFormat(holder)    // Не для новой строки
                     true
                 }
-
 
                 // Изменения в CheckBox
                 holder.checkbox.setOnClickListener {
@@ -175,10 +179,10 @@ class MainAdapter(
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Режим MOVE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             SpecialMode.MOVE -> {
                 holder.ivAction.setImageResource(R.drawable.ic_menu)
-                if (mainBuffer.any { it.id == item.id }) {
+                if (mac.getMainBuffer().any { it.id == item.id }) {
                     holder.ivAction.setImageResource(R.drawable.ic_copy_red)
                 }
-                if (moveBuffer.any { it.id == item.id }) {
+                if (mac.getMoveBuffer().any { it.id == item.id }) {
                     holder.ivAction.setImageResource(R.drawable.ic_cut_red)
                 }
 
@@ -192,7 +196,7 @@ class MainAdapter(
 
                 // Открытие меню Вырезать/Копировать
                 holder.ivAction.setOnClickListener{
-                    currentHolderLiveData.postValue(holder)
+                    currentHolderIdLiveData.postValue(item.id)
                     currentItem = item
                     currentHolderPosition = position
                     mac.showContextMenuMove(holder)    // Не для новой строки
@@ -204,7 +208,7 @@ class MainAdapter(
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Режим DELETE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             SpecialMode.DELETE -> {
                 holder.ivAction.setImageResource(R.drawable.ic_basket_white)
-                if (mainBuffer.any { it.id == item.id }) {
+                if (mac.getMainBuffer().any { it.id == item.id }) {
                     holder.ivAction.setImageResource(R.drawable.ic_del_mode)
                 }
 
@@ -214,10 +218,10 @@ class MainAdapter(
 
                 // Выбор/отмена записи для удаления
                 holder.ivAction.setOnClickListener{
-                    if (mainBuffer.removeAll { it.id == item.id }) {
+                    if (mac.getMainBuffer().removeAll { it.id == item.id }) {
                         holder.ivAction.setImageResource(R.drawable.ic_basket_white)
                     } else {
-                        mainBuffer.add(item)
+                        mac.getMainBuffer().add(item)
                         holder.ivAction.setImageResource(R.drawable.ic_del_mode)
                     }
                     mac.showNumberOfSelectedRecords()
@@ -226,7 +230,7 @@ class MainAdapter(
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Режим RESTORE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             SpecialMode.RESTORE -> {
                 holder.ivAction.setImageResource(R.drawable.ic_basket_white)
-                if (mainBuffer.any { it.id == item.id }) {
+                if (mac.getMainBuffer().any { it.id == item.id }) {
                     holder.ivAction.setImageResource(R.drawable.ic_rest_mode)
                 }
 
@@ -236,10 +240,10 @@ class MainAdapter(
 
                 // Выбор/отмена записи для восстановления
                 holder.ivAction.setOnClickListener{
-                    if (mainBuffer.removeAll { it.id == item.id }) {
+                    if (mac.getMainBuffer().removeAll { it.id == item.id }) {
                         holder.ivAction.setImageResource(R.drawable.ic_basket_white)
                     } else {
-                        mainBuffer.add(item)
+                        mac.getMainBuffer().add(item)
                         holder.ivAction.setImageResource(R.drawable.ic_rest_mode)
                     }
                     mac.showNumberOfSelectedRecords()
@@ -384,6 +388,14 @@ class MainAdapter(
         mac.correctingPositionOfRecordByCheck(holder)
         mac.updateRecord(item)  // Сохранение в БД
 
+    }
+
+    override fun onViewRecycled(holder: MainViewHolder) {
+        super.onViewRecycled(holder)
+        holder.observer?.let { observer ->
+            currentHolderIdLiveData.removeObserver(observer)
+            holder.observer = null // Обнулите ссылку на наблюдателя
+        }
     }
 
     override fun getItemCount() = records.size
