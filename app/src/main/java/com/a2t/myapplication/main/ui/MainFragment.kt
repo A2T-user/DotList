@@ -327,13 +327,40 @@ class MainFragment : Fragment(), MainAdapterCallback {
         modesToolbarBinding.btnAction.setOnClickListener {
             when(getSpecialMode()) {
                 SpecialMode.MOVE -> {
+                    if (getMainBuffer().size + getMoveBuffer().size > 0) {
+                        val pasteIds = mutableListOf<Long>()
+                        getMainBuffer().forEach { if (it.isDir) pasteIds.add(it.id) }
+                        getMoveBuffer().forEach { if (it.isDir) pasteIds.add(it.id) }
+                        mainViewModel.pasteRecords(getIdCurrentDir(), pasteIds,
+                            {
+                                showRecursionError()
+                            },
+                            {
+                                pasteRecords()
+                            }
+                        )
 
+
+
+
+
+                    } else {
+                        Toast.makeText(requireContext(), getString(R.string.nothing_selected),Toast.LENGTH_SHORT).show()
+                    }
                 }
                 SpecialMode.DELETE -> {
-                    deleteRecords(getMainBuffer())
+                    if (getMainBuffer().size > 0) {
+                        deleteRecords(getMainBuffer())
+                    } else {
+                        Toast.makeText(requireContext(), getString(R.string.nothing_selected),Toast.LENGTH_SHORT).show()
+                    }
                 }
                 SpecialMode.RESTORE -> {
-                    restoreRecords(getMainBuffer())
+                    if (getMainBuffer().size > 0) {
+                        restoreRecords(getMainBuffer())
+                    } else {
+                        Toast.makeText(requireContext(), getString(R.string.nothing_selected),Toast.LENGTH_SHORT).show()
+                    }
                 }
                 else -> {}
             }
@@ -373,6 +400,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 adapter.notifyItemChanged(adapter.currentHolderPosition)
                 showNumberOfSelectedRecords()
             }
+            requestFocusInTouch(view)
         }
         contextMenuMoveBinding.btnCut.setOnLongClickListener {
             adapter.records.forEachIndexed { index, item ->
@@ -382,6 +410,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 adapter.notifyItemChanged(index)
             }
             showNumberOfSelectedRecords()
+            requestFocusInTouch(view)
             true
         }
         // Кнопка КОПИРОВАТЬ
@@ -394,6 +423,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 adapter.notifyItemChanged(adapter.currentHolderPosition)
                 showNumberOfSelectedRecords()
             }
+            requestFocusInTouch(view)
         }
         contextMenuMoveBinding.btnCopy.setOnLongClickListener {
             adapter.records.forEachIndexed { index, item ->
@@ -403,6 +433,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 adapter.notifyItemChanged(index)
             }
             showNumberOfSelectedRecords()
+            requestFocusInTouch(view)
             true
         }
         // Кнопка ОТМЕНА
@@ -414,6 +445,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 adapter.notifyItemChanged(adapter.currentHolderPosition)
                 showNumberOfSelectedRecords()
             }
+            requestFocusInTouch(view)
         }
         contextMenuMoveBinding.btnBack.setOnLongClickListener {
             adapter.records.forEachIndexed { index, item ->
@@ -422,6 +454,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 adapter.notifyItemChanged(index)
             }
             showNumberOfSelectedRecords()
+            requestFocusInTouch(view)
             true
         }
     }
@@ -779,7 +812,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     private fun goToParentDir() {
-        mainViewModel.getParentDir(getIdCurrentDir()) { ids ->
+        mainViewModel.getParentDirId(getIdCurrentDir()) { ids ->
             mainViewModel.idDir = ids[0]
             goToDir(animOpenParentDir)
         }
@@ -900,7 +933,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     private fun fullPathDir(idDir: Long) {
         var id = idDir
         if (id > 0) {
-            mainViewModel.getParentDir(id) { ids ->
+            mainViewModel.getParentDirId(id) { ids ->
                 id = ids[0]
                 mainViewModel.getNameDir(id) { names ->
                     val name = if (names.isEmpty()) "R:" else names[0]
@@ -933,6 +966,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         return current
     }
 
+    @SuppressLint("InflateParams")
     override fun deleteRecords(records: List<ListRecord>) {
         mainViewModel.selectionSubordinateRecordsToDelete(records) { list ->
             val mutableRecords = list.toMutableList()
@@ -945,8 +979,9 @@ class MainFragment : Fragment(), MainAdapterCallback {
             mess += str
             str = if (countArchive != 0) getString(R.string.del_archive, countArchive.toString()) else ""
             mess += "$str."
+            val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_title_attention, null)
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getString(R.string.del))
+                .setCustomTitle(dialogView)
                 .setMessage(mess)
                 .setNeutralButton(getString(R.string.negative_btn)) { _, _ -> }
                 .setPositiveButton(getString(R.string.delete)) { _, _ ->
@@ -961,9 +996,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                                 adapter.records.size - position
                             )
                         } else {
-                            getMainBuffer().clear()
-                            getMoveBuffer().clear()
-                            goToNormalMode()
+                            completionSpecialMode()
                         }
                     }
                 }
@@ -971,7 +1004,8 @@ class MainFragment : Fragment(), MainAdapterCallback {
         }
     }
 
-    override fun restoreRecords(records: List<ListRecord>) {
+    @SuppressLint("InflateParams")
+    fun restoreRecords(records: List<ListRecord>) {
         mainViewModel.selectionSubordinateRecordsToRestore(records) { list ->
             val mutableRecords = list.toMutableList()
             val selectedRecords = records.size
@@ -983,22 +1017,41 @@ class MainFragment : Fragment(), MainAdapterCallback {
             mess += str
             str = if (countArchive != 0) getString(R.string.del_archive, countArchive.toString()) else ""
             mess += "$str."
+            val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_title_attention, null)
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getString(R.string.rest))
+                .setCustomTitle(dialogView)
                 .setMessage(mess)
                 .setNeutralButton(getString(R.string.negative_btn)) { _, _ -> }
                 .setPositiveButton(getString(R.string.restore)) { _, _ ->
                     mutableRecords.forEach { it.isDelete = false }
                     mainViewModel.updateRecords(mutableRecords) {
-                        if (getSpecialMode() == SpecialMode.RESTORE) {
-                            getMainBuffer().clear()
-                            getMoveBuffer().clear()
-                            goToNormalMode()
-                        }
+                        if (getSpecialMode() == SpecialMode.RESTORE) completionSpecialMode()
                     }
                 }
                 .show()
         }
+    }
+
+    private fun pasteRecords() {
+        // Перенос записей
+        getMoveBuffer().forEach { it.idDir = getIdCurrentDir() }
+        mainViewModel.updateRecords(getMoveBuffer()) {
+            // Копирование
+            mainViewModel.copyRecords(getMainBuffer()){
+                completionSpecialMode()
+            }
+        }
+    }
+
+    @SuppressLint("InflateParams")
+    private fun showRecursionError() {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_title_error, null)
+        MaterialAlertDialogBuilder(requireContext())
+            .setCustomTitle(dialogView)
+            .setMessage(getString(R.string.recursion_error))
+            .setPositiveButton(getString(R.string.ok)) { _, _ -> }
+            .show()
+        completionSpecialMode()
     }
 
     fun getSpecialMode(): SpecialMode = mainViewModel.specialMode

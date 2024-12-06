@@ -43,8 +43,8 @@ class MainInteractorImpl(
         return mainRepository.getNameDir(idDir)
     }
     // Возвращает список id родительских папок с одним элементом - id родительской папки для папки с id = idDir
-    override fun getParentDir(idDir: Long): List<Long> {
-        return mainRepository.getParentDir(idDir)
+    override fun getParentDirId(idDir: Long): List<Long> {
+        return mainRepository.getParentDirId(idDir)
     }
 
     // Возвращает список подчиненных записей для удаления

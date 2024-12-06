@@ -16,7 +16,6 @@ interface MainAdapterCallback {
     fun showContextMenuMove(viewHolder: MainViewHolder)
     fun updatFieldsOfSmallToolbar()
     fun deleteRecords(records: List<ListRecord>)
-    fun restoreRecords(records: List<ListRecord>)
     fun showNumberOfSelectedRecords()
     fun completionSpecialMode()
     fun getMoveBuffer(): ArrayList<ListRecord>

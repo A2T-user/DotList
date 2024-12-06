@@ -22,7 +22,7 @@ interface MainInteractor {
     // Возвращает список имен папок с одним элементом - именем папки с id = idDir
     fun getNameDir(idDir: Long): List<String>
     // Возвращает список id родительских папок с одним элементом - id родительской папки для папки с id = idDir
-    fun getParentDir(idDir: Long): List<Long>
+    fun getParentDirId(idDir: Long): List<Long>
 
     // Возвращает список подчиненных записей для удаления
     fun selectionSubordinateRecordsToDelete(idDir: Long): List<ListRecord>
