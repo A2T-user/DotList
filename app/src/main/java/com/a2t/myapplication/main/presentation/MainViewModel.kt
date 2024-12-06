@@ -27,7 +27,13 @@ class MainViewModel(
                 callback(id)
             }
         }
-
+    }
+    // Добавление новой записи (для копирования)
+    fun insertRecordToCopy(record: ListRecord, callback: (Long) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val id = mainInteractor.insertRecord(record)
+            callback(id)
+        }
     }
     // Обновление записи
     fun updateRecord(record: ListRecord, callback: () -> Unit) {
@@ -149,31 +155,64 @@ class MainViewModel(
         }
     }
     // Возвращает список id родительских папок с одним элементом - id родительской папки для папки с id = idDir
-    fun getParentDir(id: Long, callback: (List<Long>) -> Unit) {
+    fun getParentDirId(id: Long, callback: (List<Long>) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            val ids = mainInteractor.getParentDir(id)
+            val ids = mainInteractor.getParentDirId(id)
             withContext(Dispatchers.Main) {
                 callback(ids)
             }
         }
     }
+    // Возвращает список id родительских папок для определения рекурсии
+    fun pasteRecords(idCurrentDir: Long, pasteIds: List<Long>, callbackMain: () -> Unit, callbackIo: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val parentDirIds = mutableListOf(idCurrentDir)
+            selectionParentDirIdForRecursion(idCurrentDir, parentDirIds)
+            pasteIds.forEach { pasteId ->
+                // Оцениваем не будет ли рекурсии
+                if (parentDirIds.any { it == pasteId }) {
+                    withContext(Dispatchers.Main) {
+                        callbackMain()
+                    }
+                } else {
+                    callbackIo()
+                }
+            }
+
+        }
+    }
+    private fun selectionParentDirIdForRecursion(idDir: Long, parentDirIds: MutableList<Long>) {
+        val parentIds = mainInteractor.getParentDirId(idDir)
+        if (parentIds.isNotEmpty()) {
+            val parentId = parentIds[0]
+            parentDirIds.add(parentId)
+            selectionParentDirIdForRecursion(parentId, parentDirIds)
+        }
+    }
+
+
+
+
+
+
+
 
     // Возвращает список подчиненных записей для удаления
     fun selectionSubordinateRecordsToDelete(records: List<ListRecord>, callback: (List<ListRecord>) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val mutableRecords = mutableListOf<ListRecord>()
-            getSubordinateRecordsToDelet(records, mutableRecords)
+            getSubordinateRecordsToDelete(records, mutableRecords)
             withContext(Dispatchers.Main) {
                 callback(mutableRecords)
             }
         }
     }
-    private fun getSubordinateRecordsToDelet(records: List<ListRecord>, mutableRecords: MutableList<ListRecord>) {
+    private fun getSubordinateRecordsToDelete(records: List<ListRecord>, mutableRecords: MutableList<ListRecord>) {
         records.forEach { record ->
             if (record.isDir) {
                 val selectionRecords = mainInteractor.selectionSubordinateRecordsToDelete(record.id)
                 mutableRecords.addAll(selectionRecords)
-                getSubordinateRecordsToDelet(selectionRecords, mutableRecords)
+                getSubordinateRecordsToDelete(selectionRecords, mutableRecords)
             }
         }
     }
@@ -187,7 +226,6 @@ class MainViewModel(
             }
         }
     }
-
     private fun getSubordinateRecordsToRestore(records: List<ListRecord>, mutableRecords: MutableList<ListRecord>) {
         records.forEach { record ->
             if (record.isDir) {
@@ -197,7 +235,26 @@ class MainViewModel(
             }
         }
     }
-
+    // Копирование записей
+    fun copyRecords (records: List<ListRecord>, callback: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            copyRecords(records, idDir)
+            withContext(Dispatchers.Main) {
+                callback()
+            }
+        }
+    }
+    private fun copyRecords(records: List<ListRecord>, idDir: Long) {
+        records.forEach { record ->
+            record.idDir = idDir
+            insertRecordToCopy(record){ newId ->
+                if (record.isDir) {
+                    val selectionRecords = mainInteractor.selectionSubordinateRecordsToDelete(record.id)
+                    copyRecords(selectionRecords, newId)
+                }
+            }
+        }
+    }
 
     // Удаление записей с итекшим сроком хранения
     fun deletingExpiredRecords(callback: () -> Unit) {

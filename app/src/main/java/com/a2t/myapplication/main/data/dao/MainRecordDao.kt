@@ -44,7 +44,7 @@ interface MainRecordDao {
 
     // Возвращает список id родительских папок с одним элементом - id родительской папки для папки с id = idDir
     @Query("SELECT idDir FROM list_table WHERE id = :idDir")
-    fun getParentDir(idDir: Long): List<Long>
+    fun getParentDirId(idDir: Long): List<Long>
 
     // Возвращает список подчиненных записей для удаления
     @Query("SELECT * FROM list_table WHERE idDir = :idDir AND isDelete = 0")
@@ -53,12 +53,11 @@ interface MainRecordDao {
     // Возвращает список подчиненных записей для восстановления
     @Query("SELECT * FROM list_table WHERE idDir = :idDir AND isDelete = 1")
     fun selectionSubordinateRecordsToRestore(idDir: Long): List<ListRecordEntity>
-
+    // Удаление записей с итекшим сроком хранения
     @Query("DELETE FROM list_table WHERE isDelete = 1 AND lastEditTime < :time")
     fun deletingExpiredRecords(time: Long)
 
-    /*@Query("SELECT trackId FROM favorite_table")
-    fun getTracksId(): List<Int>*/
+
 }
 // true = 1
 // false = 0

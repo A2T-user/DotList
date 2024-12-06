@@ -47,6 +47,9 @@
     <string name="insert">Вставить</string>
     <string name="delete">Удалить</string>
     <string name="restore">Восстановить</string>
+    <string name="nothing_selected">Не выбрано ни одной записи</string>
+    <string name="recursion_error">Операция отклонена!\nПопытка поместить папку саму в себя или во вложенную в нее папку приводит к рекурсии.</string>
+    <string name="ok">OK</string>
 
     <!-- НАСТРОЙКИ -->
     <string name="settings">НАСТРОЙКИ</string>
@@ -70,13 +73,11 @@
 
     <string name="text_exit">Нажмите еще раз, чтобы выйти</string>
 
-    <string name="del">Удаление</string>
     <string name="del_attempt">Попытка удалить записей: %1$s</string>
     <string name="del_subordinate">.\nТакже будет удалено вложенных записей: %1$s</string>
     <string name="del_archive">,\nвключая архивных папок: %1$s.</string>
     <string name="negative_btn">Отмена</string>
 
-    <string name="rest">Восстановление</string>
     <string name="rest_attempt">Попытка восстановить записей: %1$s</string>
     <string name="rest_subordinate">.\nТакже будет восстановлено вложенных записей: %1$s</string>
 
