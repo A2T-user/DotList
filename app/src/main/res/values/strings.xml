@@ -41,6 +41,8 @@
     <string name="side_bar_move_mode">Перенос/копирование\nзаписей</string>
     <string name="side_bar_archive_mode">Управление Архивом</string>
 
+    <string name="del_mark_text">Будут удалены метки всех записей текущей папки</string>
+
     <!-- ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ -->
     <string name="mode_hint">Этот режим действует только в текущей папке</string>
     <string name="select_all">Выбрать все</string>
