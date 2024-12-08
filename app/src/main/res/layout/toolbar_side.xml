@@ -176,6 +176,7 @@
         <LinearLayout
             android:id="@+id/llSideBarArchiveMode"
             tools:ignore="UseCompoundDrawables"
+            android:layout_marginBottom="6dp"
             style="@style/LLSideBarStyle">
 
             <ImageView

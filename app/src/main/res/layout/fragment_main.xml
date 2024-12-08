@@ -23,22 +23,23 @@
             android:layout_weight="1">
 
             <!-- РЕЦИКЛЕР -->
+
+
+            <!-- МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clickable="true"
-                android:focusable="true"
                 android:clipToPadding="false"
+                android:focusable="true"
                 android:paddingHorizontal="1dp"
                 android:paddingTop="1dp"
                 android:paddingBottom="200dp"
                 android:scrollbars="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-
-            <!-- МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
-                <include
+            <include
                     android:id="@+id/smallToolbar"
                     layout="@layout/toolbar_small"
                     android:layout_width="wrap_content"
@@ -90,14 +91,6 @@
         android:animateLayoutChanges="true"
         android:orientation="horizontal">
 
-        <View
-            android:id="@+id/sideBarFlag"
-            android:layout_width="5dp"
-            android:layout_height="150dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginVertical="15dp"
-            android:background="@drawable/side_bar_flag"/>
-
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -111,6 +104,15 @@
                 android:visibility="gone"/>
 
         </ScrollView>
+
+        <View
+            android:id="@+id/sideBarFlag"
+            android:layout_width="5dp"
+            android:layout_height="150dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginVertical="15dp"
+            android:background="@drawable/side_bar_flag"/>
+
     </LinearLayout>
 
     <ProgressBar

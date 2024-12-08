@@ -179,7 +179,9 @@ class MainFragment : Fragment(), MainAdapterCallback {
                             // Изменить размер шрифта в поле имя папки
                             topToolbarBinding.pathDir.setTextSize(TypedValue.COMPLEX_UNIT_SP, 0.75f * sizeGrandText)
                             // Перерисовать recyclerView
-                            adapter.notifyDataSetChanged()
+                            adapter.records.forEachIndexed { index, listRecord ->
+                                adapter.notifyItemChanged(index)
+                            }
                         }
                     }
                 }
@@ -202,8 +204,12 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
         // НЕ СПЯЩИЙ РЕЖИМ
         topToolbarBinding.imageEye.setOnClickListener {
-            requestMenuFocus()                   // Присвоение фокуса
-            if (isNoSleepMode) noSleepModeOff() else noSleepModeON()
+            requestMenuFocus()
+            if (isNoSleepMode) {
+                noSleepModeOff()
+            } else {
+                noSleepModeON()
+            }
 
         }
 
@@ -536,14 +542,12 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
     // Выключение режима БЕЗ СНА
     private fun noSleepModeOff() {
-        if (isNoSleepMode) {
-            isNoSleepMode = false
-            (requireActivity() as RootActivity).switchNoSleepMode(false)       // В активити выключаем keepScreenOn
-            topToolbarBinding.imageEye.setImageResource(R.drawable.ic_eye_closed)   // Сменить иконку
-            topToolbarBinding.imageEye.startAnimation(animationEye)                 // Анимация иконки
-            eyeJob.cancel()                                                         // Отменить маргание глаза
-            (requireActivity() as RootActivity).showHintToast(getString(R.string.no_seep_mode_off), Toast.LENGTH_SHORT)
-        }
+        isNoSleepMode = false
+        (requireActivity() as RootActivity).switchNoSleepMode(false)       // В активити выключаем keepScreenOn
+        topToolbarBinding.imageEye.setImageResource(R.drawable.ic_eye_closed)   // Сменить иконку
+        topToolbarBinding.imageEye.startAnimation(animationEye)                 // Анимация иконки
+        eyeJob.cancel()                                                         // Отменить маргание глаза
+        (requireActivity() as RootActivity).showHintToast(getString(R.string.no_seep_mode_off), Toast.LENGTH_SHORT)
     }
     // Анимация глаза
     private suspend fun eyeAnimation() {
@@ -661,7 +665,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     // Показать/скрыть боковую панель
     private fun sideBarShowOrHide(show: Boolean) {
         if (show) {
-            binding.sideBarFlag.isVisible = false                           // Убрать ярлык боковой панели
+            binding.sideBarFlag.isVisible = false
             sideToolbarBinding.llSideBar.isVisible = true                   // Вывести бок.панель
             sideToolbarBinding.ivSideBarOpen.requestFocus()                 // и перевести фокус на нее
             sideToolbarBinding.ivSideBarOpen.animate().rotation(0f)   // Кнопку Развернуть панель в исх.положение
@@ -669,10 +673,11 @@ class MainFragment : Fragment(), MainAdapterCallback {
             if (isSideToolbarFullShow) sideBarFullOpenClose()      // Свернуть бок.панель
             sideToolbarBinding.llSideBar.isVisible = false                  // Убрать бок.панель
             lifecycleScope.launch {
-                delay(150)
+                delay(50)
                 binding.sideBarFlag.isVisible = true
             }
         }
+
     }
 
     // Разворачивание/сворачивание боковой панели
