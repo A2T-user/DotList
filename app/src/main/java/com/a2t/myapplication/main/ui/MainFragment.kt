@@ -145,6 +145,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         // Изменение высоты шрифта
         val counter = AtomicInteger() // Счетчик срабатываний Zoom
         recycler.setOnTouchListener{ _: View?, event: MotionEvent ->
+            requestMenuFocus()
             when(event.action and MotionEvent.ACTION_MASK) {
                 MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
                     isZOOMode = false
@@ -308,7 +309,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
             return@setOnTouchListener isTouch.get()
         }
         // Клик по кнопке Закрыть закрывает нижнюю панель и переводит экран в обычный режим
-        modesToolbarBinding.btnClose.setOnClickListener {
+        modesToolbarBinding.btnCloseToolbar.setOnClickListener {
             completionSpecialMode()
         }
 
@@ -374,14 +375,75 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 adapter.currentHolderIdLiveData.postValue(0)
             }
         }
+
         contextMenuFormatBinding.btnTextColor1.setOnClickListener {
-
-
-
+            changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, 1, null, null)
+        }
+        contextMenuFormatBinding.btnTextColor1.setOnLongClickListener {
+            changingTextFormatAllRecords(adapter.records, 1, null, null)
+            true
         }
 
+        contextMenuFormatBinding.btnTextColor2.setOnClickListener {
+            changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, 2, null, null)
+        }
+        contextMenuFormatBinding.btnTextColor2.setOnLongClickListener {
+            changingTextFormatAllRecords(adapter.records, 2, null, null)
+            true
+        }
 
+        contextMenuFormatBinding.btnTextColor3.setOnClickListener {
+            changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, 3, null, null)
+        }
+        contextMenuFormatBinding.btnTextColor3.setOnLongClickListener {
+            changingTextFormatAllRecords(adapter.records, 3, null, null)
+            true
+        }
 
+        contextMenuFormatBinding.btnTextStyleB.setOnClickListener {
+            changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, null, 1, null)
+        }
+        contextMenuFormatBinding.btnTextStyleB.setOnLongClickListener {
+            changingTextFormatAllRecords(adapter.records, null, 1, null)
+            true
+        }
+
+        contextMenuFormatBinding.btnTextStyleI.setOnClickListener {
+            changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, null, 2, null)
+        }
+        contextMenuFormatBinding.btnTextStyleI.setOnLongClickListener {
+            changingTextFormatAllRecords(adapter.records, null, 2, null)
+            true
+        }
+
+        contextMenuFormatBinding.btnTextStyleBI.setOnClickListener {
+            changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, null, 3, null)
+        }
+        contextMenuFormatBinding.btnTextStyleBI.setOnLongClickListener {
+            changingTextFormatAllRecords(adapter.records, null, 3, null)
+            true
+        }
+
+        contextMenuFormatBinding.btnTextStyleU.setOnClickListener {
+            changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, null, null, 1)
+        }
+        contextMenuFormatBinding.btnTextStyleU.setOnLongClickListener {
+            changingTextFormatAllRecords(adapter.records, null, null, 1)
+            true
+        }
+
+        contextMenuFormatBinding.btnTextRegular.setOnClickListener {
+            changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, 0, 0, 0)
+        }
+        contextMenuFormatBinding.btnTextRegular.setOnLongClickListener {
+            requestMenuFocus()
+            changingTextFormatAllRecords(adapter.records, 0, 0, 0)
+            true
+        }
+
+        contextMenuFormatBinding.btnCloseMenu.setOnClickListener {
+            requestMenuFocus()
+        }
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ КОНТЕКСТНОЕ МЕНЮ MOVE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // Потеря фокуса контекст.меню приводит к скрытию меню
         contextMenuMoveBinding.llContextMenuMove.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
@@ -1052,6 +1114,20 @@ class MainFragment : Fragment(), MainAdapterCallback {
             .setPositiveButton(getString(R.string.ok)) { _, _ -> }
             .show()
         completionSpecialMode()
+    }
+
+    private fun changingTextFormatRecord(item: ListRecord, position: Int, color: Int?, style: Int?, under: Int?) {
+        if (color != null) item.textColor = color
+        if (style != null) item.textStyle = style
+        if (under != null) item.textUnder = under
+        mainViewModel.updateRecord(item) {}
+        adapter.notifyItemChanged(position)
+    }
+
+    private fun changingTextFormatAllRecords(records: List<ListRecord>, color: Int?, style: Int?, under: Int?) {
+        records.forEachIndexed { index, listRecord ->
+            changingTextFormatRecord(listRecord, index, color, style, under)
+        }
     }
 
     fun getSpecialMode(): SpecialMode = mainViewModel.specialMode

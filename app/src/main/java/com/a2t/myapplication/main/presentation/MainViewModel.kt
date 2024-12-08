@@ -29,7 +29,7 @@ class MainViewModel(
         }
     }
     // Добавление новой записи (для копирования)
-    fun insertRecordToCopy(record: ListRecord, callback: (Long) -> Unit) {
+    private fun insertRecordToCopy(record: ListRecord, callback: (Long) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val id = mainInteractor.insertRecord(record)
             callback(id)

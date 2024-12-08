@@ -116,6 +116,7 @@ class MainAdapter(
                 // Открытие меню форматирования текста
                 holder.llForeground.setOnLongClickListener{
                     currentHolderIdLiveData.postValue(item.id)
+                    currentItem = item
                     currentHolderPosition = position
                     if (!item.isNew) mac.showContextMenuFormat(holder)    // Не для новой строки
                     true
