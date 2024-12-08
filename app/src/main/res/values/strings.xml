@@ -42,6 +42,7 @@
     <string name="side_bar_archive_mode">Управление Архивом</string>
 
     <string name="del_mark_text">Будут удалены метки всех записей текущей папки</string>
+    <string name="no_marks">В текущей папке нет \u2713</string>
 
     <!-- ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ -->
     <string name="mode_hint">Этот режим действует только в текущей папке</string>
