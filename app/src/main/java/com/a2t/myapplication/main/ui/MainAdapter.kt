@@ -30,7 +30,7 @@ class MainAdapter(
     val records = ArrayList<ListRecord>()
     var specialMode = SpecialMode.NORMAL
     var isKeyboardON = false
-    var currentHolderIdLiveData = MutableLiveData<Long>(0)
+    var currentHolderIdLiveData = MutableLiveData(-1L)
     var currentItem: ListRecord? = null
     var currentHolderPosition = -1
 

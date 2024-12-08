@@ -179,7 +179,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                             // Изменить размер шрифта в поле имя папки
                             topToolbarBinding.pathDir.setTextSize(TypedValue.COMPLEX_UNIT_SP, 0.75f * sizeGrandText)
                             // Перерисовать recyclerView
-                            adapter.records.forEachIndexed { index, listRecord ->
+                            adapter.records.forEachIndexed { index, _ ->
                                 adapter.notifyItemChanged(index)
                             }
                         }
@@ -251,6 +251,14 @@ class MainFragment : Fragment(), MainAdapterCallback {
         sideToolbarBinding.tvSideBarOpen.setOnClickListener {
             sideBarFullOpenClose()
         }
+
+        // Кнопка Удалить метки
+        sideToolbarBinding.llSideBarDelMark.setOnClickListener {
+            requestFocusInTouch(view)
+             deleteAllMarks()
+        }
+
+
 
         // Кнопка режима Переноса
         sideToolbarBinding.llSideBarMoveMode.setOnClickListener {
@@ -378,7 +386,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         contextMenuFormatBinding.llContextMenuFormat.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
             if (!hasFocus) {
                 v?.isVisible = false
-                adapter.currentHolderIdLiveData.postValue(0)
+                adapter.currentHolderIdLiveData.postValue(-1)
             }
         }
 
@@ -455,7 +463,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         contextMenuMoveBinding.llContextMenuMove.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
             if (!hasFocus) {
                 v?.isVisible = false
-                adapter.currentHolderIdLiveData.postValue(0)
+                adapter.currentHolderIdLiveData.postValue(-1)
             }
         }
         // Кнопка ВЫРЕЗАТЬ
@@ -906,6 +914,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun fillingRecycler(records: List<ListRecord>, animationController: LayoutAnimationController) {
         recycler.layoutAnimation = animationController
         mainViewModel.getNameDir(getIdCurrentDir()) { names ->
@@ -1132,6 +1141,47 @@ class MainFragment : Fragment(), MainAdapterCallback {
     private fun changingTextFormatAllRecords(records: List<ListRecord>, color: Int?, style: Int?, under: Int?) {
         records.forEachIndexed { index, listRecord ->
             changingTextFormatRecord(listRecord, index, color, style, under)
+        }
+    }
+
+    @SuppressLint("InflateParams")
+    private fun deleteAllMarks() {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_title_attention, null)
+        MaterialAlertDialogBuilder(requireContext())
+            .setCustomTitle(dialogView)
+            .setMessage(getString(R.string.del_mark_text))
+            .setNeutralButton(getString(R.string.back)) { _, _ -> }
+            .setPositiveButton(getString(R.string.delete)) { _, _ ->
+                adapter.records.forEach { it.isChecked = false }
+                val newRecords = adapter.records.sortedWith(compareBy(ListRecord::npp))
+                sortingHoldersAfterChange(newRecords)
+                mainViewModel.updateRecords(adapter.records) {}
+            }
+            .show()
+    }
+
+    private fun sortingHoldersAfterChange(newRecords: List<ListRecord>) {
+        var start: Int
+        var finish: Int
+        val records = adapter.records
+        val l = records.size
+        val newl = newRecords.size
+        if (l == newl) {
+            newRecords.forEachIndexed { index, record ->
+                finish = index
+                val id = record.id
+                start = records.indexOfFirst { it.id == id }
+                // Перемещаем запись в массиве адаптера
+                records.add(finish, records.removeAt(start))
+                // Перемещаем запись на экране
+                adapter.notifyItemMoved(start, finish)
+                // Сообщение адаптеру, что элемент перемещен
+                if (start > finish) {
+                    adapter.notifyItemRangeChanged(finish, start - finish + 1)
+                } else {
+                    adapter.notifyItemRangeChanged(start, finish - start + 1)
+                }
+            }
         }
     }
 
