@@ -43,6 +43,7 @@
         <item name="android:textColor">?attr/colorMainText</item>
         <item name="android:paddingStart">8dp</item>
         <item name="android:paddingEnd">8dp</item>
+        <item name="android:gravity">center</item>
         <item name="android:background">@drawable/btn_rect_fon</item>
     </style>
 

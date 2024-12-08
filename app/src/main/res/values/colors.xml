@@ -7,7 +7,7 @@
     <color name="red_icon">#c80000</color>
     <color name="shadowColor">#14000000</color>                 <!-- Цвет тени -->
     <color name="alphaBlue">#50039BE5</color>
-    <color name="yellow_dir">#fdd76e</color>
+    <color name="yellow_dir">#eabf11</color>                    <!-- fed325 -->
     <color name="blue_icon">#00B1FF</color>
     <color name="color_hint">#7eb5c5</color>
     <color name="edit_text_accent">#50ffffff</color>
@@ -23,7 +23,7 @@
     <color name="dark_color_bar_accent">#4c5a67</color>       <!-- Цвет выделения объектов на панели инструментов -->
 
     <!-- Форматирование строк -->
-    <color name="text_color_1">@color/red_icon</color>
+    <color name="text_color_1">#be0000</color>
     <color name="text_color_2">#deab03</color>
-    <color name="text_color_3">#00be00</color>
+    <color name="text_color_3">#00b400</color>
 </resources>
