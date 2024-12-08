@@ -1146,27 +1146,30 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
     @SuppressLint("InflateParams")
     private fun deleteAllMarks() {
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_title_attention, null)
-        MaterialAlertDialogBuilder(requireContext())
-            .setCustomTitle(dialogView)
-            .setMessage(getString(R.string.del_mark_text))
-            .setNeutralButton(getString(R.string.back)) { _, _ -> }
-            .setPositiveButton(getString(R.string.delete)) { _, _ ->
-                adapter.records.forEach { it.isChecked = false }
-                val newRecords = adapter.records.sortedWith(compareBy(ListRecord::npp))
-                sortingHoldersAfterChange(newRecords)
-                mainViewModel.updateRecords(adapter.records) {}
-            }
-            .show()
+        if (adapter.records.any { it.isChecked }) {
+            val dialogView =
+                LayoutInflater.from(requireContext()).inflate(R.layout.dialog_title_attention, null)
+            MaterialAlertDialogBuilder(requireContext())
+                .setCustomTitle(dialogView)
+                .setMessage(getString(R.string.del_mark_text))
+                .setNeutralButton(getString(R.string.back)) { _, _ -> }
+                .setPositiveButton(getString(R.string.delete)) { _, _ ->
+                    adapter.records.forEach { it.isChecked = false }
+                    val newRecords = adapter.records.sortedWith(compareBy(ListRecord::npp))
+                    sortingHoldersAfterChange(newRecords)
+                    mainViewModel.updateRecords(adapter.records) {}
+                }
+                .show()
+        } else {
+            Toast.makeText(requireContext(), getString(R.string.no_marks), Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun sortingHoldersAfterChange(newRecords: List<ListRecord>) {
         var start: Int
         var finish: Int
         val records = adapter.records
-        val l = records.size
-        val newl = newRecords.size
-        if (l == newl) {
+        if (records.size == newRecords.size) {
             newRecords.forEachIndexed { index, record ->
                 finish = index
                 val id = record.id
