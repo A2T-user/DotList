@@ -252,6 +252,18 @@ class MainFragment : Fragment(), MainAdapterCallback {
             sideBarFullOpenClose()
         }
 
+        // Кнопка Переслать
+        sideToolbarBinding.llSideBarSend.setOnClickListener {
+            mainViewModel.openingModeTextFragment = "SEND"
+            findNavController().navigate(R.id.action_mainFragment_to_textFragment2)
+        }
+
+        // Кнопка Конвертировать
+        sideToolbarBinding.llSideBarConvertText.setOnClickListener {
+            mainViewModel.openingModeTextFragment = "CONVERT"
+            findNavController().navigate(R.id.action_mainFragment_to_textFragment2)
+        }
+
         // Кнопка Удалить метки
         sideToolbarBinding.llSideBarDelMark.setOnClickListener {
             requestFocusInTouch(view)
@@ -580,6 +592,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     private fun enableSpecialMode() {
         noSleepModeOff()           // Выключение режима БЕЗ СНА
         topToolbarBinding.imageEye.isVisible = getSpecialMode() == SpecialMode.NORMAL
+        binding.sideBarContainer.isVisible = getSpecialMode() == SpecialMode.NORMAL
         showSpecialModeToolbar()
         showNumberOfSelectedRecords()
     }
@@ -1169,21 +1182,19 @@ class MainFragment : Fragment(), MainAdapterCallback {
         var start: Int
         var finish: Int
         val records = adapter.records
-        if (records.size == newRecords.size) {
-            newRecords.forEachIndexed { index, record ->
-                finish = index
-                val id = record.id
-                start = records.indexOfFirst { it.id == id }
-                // Перемещаем запись в массиве адаптера
-                records.add(finish, records.removeAt(start))
-                // Перемещаем запись на экране
-                adapter.notifyItemMoved(start, finish)
-                // Сообщение адаптеру, что элемент перемещен
-                if (start > finish) {
-                    adapter.notifyItemRangeChanged(finish, start - finish + 1)
-                } else {
-                    adapter.notifyItemRangeChanged(start, finish - start + 1)
-                }
+        newRecords.forEachIndexed { index, record ->
+            finish = index
+            val id = record.id
+            start = records.indexOfFirst { it.id == id }
+            // Перемещаем запись в массиве адаптера
+            records.add(finish, records.removeAt(start))
+            // Перемещаем запись на экране
+            adapter.notifyItemMoved(start, finish)
+            // Сообщение адаптеру, что элемент перемещен
+            if (start > finish) {
+                adapter.notifyItemRangeChanged(finish, start - finish + 1)
+            } else {
+                adapter.notifyItemRangeChanged(start, finish - start + 1)
             }
         }
     }

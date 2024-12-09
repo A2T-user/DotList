@@ -84,4 +84,10 @@
     <string name="rest_attempt">Попытка восстановить записей: %1$s</string>
     <string name="rest_subordinate">.\nТакже будет восстановлено вложенных записей: %1$s</string>
 
+    <string name="title_conversion">Конвертировать</string>
+    <string name="title_send">Переслать</string>
+    <string name="convert_text_hint">Введите или вставьте текст, который Вы хотите конвертировать в список</string>
+    <string name="convert_text_hint2">Новые строки будут добавлены в <b><u>текущую папку</u></b></string>
+    <string name="btn_send_text">Отправить</string>
+
 </resources>
