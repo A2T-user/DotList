@@ -23,9 +23,6 @@
             android:layout_weight="1">
 
             <!-- РЕЦИКЛЕР -->
-
-
-            <!-- МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"
                 android:layout_width="match_parent"
@@ -37,8 +34,10 @@
                 android:paddingTop="1dp"
                 android:paddingBottom="200dp"
                 android:scrollbars="vertical"
+                android:scrollbarThumbVertical="@color/blue_icon"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
+            <!-- МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
             <include
                     android:id="@+id/smallToolbar"
                     layout="@layout/toolbar_small"
@@ -59,10 +58,19 @@
 
             <include
                 android:id="@+id/modesToolbar"
-                layout="@layout/toolbar_modes" />
+                layout="@layout/toolbar_modes"/>
 
         </LinearLayout>
     </LinearLayout>
+
+    <!-- ГЛАВНОЕ МЕНЮ -->
+    <include
+        android:id="@+id/main_menu"
+        layout="@layout/main_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="25dp"/>
 
     <!-- КОНТЕКСТНОЕ МЕНЮ ФОРМАТ -->
     <include
@@ -70,7 +78,7 @@
         layout="@layout/context_menu_format"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp" />
+        android:layout_marginHorizontal="20dp"/>
 
     <!-- КОНТЕКСТНОЕ МЕНЮ ПЕРЕМЕЩЕНИЕ -->
     <include

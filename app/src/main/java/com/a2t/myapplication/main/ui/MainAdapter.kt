@@ -16,8 +16,8 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.App
 import com.a2t.myapplication.R
-import com.a2t.myapplication.main.domain.model.ListRecord
-import com.a2t.myapplication.main.presentation.model.SpecialMode
+import com.a2t.myapplication.root.domain.model.ListRecord
+import com.a2t.myapplication.root.presentation.model.SpecialMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

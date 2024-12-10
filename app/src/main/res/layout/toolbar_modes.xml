@@ -102,6 +102,7 @@
         app:layout_constraintStart_toStartOf="@+id/bar"
         app:layout_constraintEnd_toStartOf="@+id/btnAction"
         android:layout_marginStart="16dp"
+        android:clickable="true"
         android:foreground="?attr/selectableItemBackground"/>
 
     <TextView
@@ -114,6 +115,7 @@
         app:layout_constraintEnd_toEndOf="@+id/bar"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="8dp"
+        android:clickable="true"
         android:foreground="?attr/selectableItemBackground"/>
 
     <TextView

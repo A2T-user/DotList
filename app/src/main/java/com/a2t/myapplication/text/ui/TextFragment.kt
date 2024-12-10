@@ -12,16 +12,13 @@ import androidx.fragment.app.Fragment
 import com.a2t.myapplication.App
 import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.FragmentTextBinding
-import com.a2t.myapplication.main.domain.model.ListRecord
-import com.a2t.myapplication.main.presentation.MainViewModel
+import com.a2t.myapplication.root.domain.model.ListRecord
 import com.a2t.myapplication.root.presentation.SharedViewModel
 import com.a2t.myapplication.root.presentation.model.TextFragmentMode
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TextFragment : Fragment() {
     private val sharedViewModel: SharedViewModel by activityViewModel()
-    private val mainViewModel by viewModel<MainViewModel>()
     private lateinit var binding: FragmentTextBinding
     private var mode: TextFragmentMode? = null
     private var idCurrentDir: Long = 0
@@ -69,7 +66,7 @@ class TextFragment : Fragment() {
                 if (convertText.isNotEmpty()) {
                     val convertRecords = convertStringToList()
                     if (convertRecords.isNotEmpty()) {
-                        mainViewModel.insertRecords(convertRecords)
+                        sharedViewModel.insertRecords(convertRecords)
                         records.addAll(convertRecords)
                         sharedViewModel.mainRecords.clear()
                         sharedViewModel.mainRecords.addAll(records)

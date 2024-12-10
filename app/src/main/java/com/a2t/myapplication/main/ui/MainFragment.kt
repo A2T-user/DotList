@@ -1,6 +1,8 @@
 package com.a2t.myapplication.main.ui
 
 import android.annotation.SuppressLint
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Bundle
@@ -29,14 +31,14 @@ import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.ContextMenuFormatBinding
 import com.a2t.myapplication.databinding.ContextMenuMoveBinding
 import com.a2t.myapplication.databinding.FragmentMainBinding
+import com.a2t.myapplication.databinding.MainMenuBinding
 import com.a2t.myapplication.databinding.ToolbarModesBinding
 import com.a2t.myapplication.databinding.ToolbarSideBinding
 import com.a2t.myapplication.databinding.ToolbarSmallBinding
 import com.a2t.myapplication.databinding.ToolbarTopBinding
-import com.a2t.myapplication.main.domain.model.ListRecord
-import com.a2t.myapplication.main.presentation.MainViewModel
-import com.a2t.myapplication.main.presentation.model.SpecialMode
+import com.a2t.myapplication.root.domain.model.ListRecord
 import com.a2t.myapplication.root.presentation.SharedViewModel
+import com.a2t.myapplication.root.presentation.model.SpecialMode
 import com.a2t.myapplication.root.presentation.model.TextFragmentMode
 import com.a2t.myapplication.root.ui.RootActivity
 import com.a2t.myapplication.settings.presentation.SettingsViewModel
@@ -62,7 +64,6 @@ const val NUMBER_OF_OPERATIO_ZOOM = 5
 const val STEP_ZOOM = 0.5f                                     // Шаг изменения высоты шрифта
 
 class MainFragment : Fragment(), MainAdapterCallback {
-    private val mainViewModel by viewModel<MainViewModel>()
     private val sharedViewModel: SharedViewModel by activityViewModel()
     private val settingsViewModel by viewModel<SettingsViewModel>()
     private val adapter = MainAdapter(this)
@@ -77,6 +78,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     private lateinit var contextMenuFormatBinding: ContextMenuFormatBinding
     private lateinit var contextMenuMoveBinding: ContextMenuMoveBinding
     private lateinit var modesToolbarBinding: ToolbarModesBinding
+    private lateinit var mainMenuBinding: MainMenuBinding
     private var isZOOMode = false                                  // Режим ZOOM
     private var oldDist = 1f                                       // Расстояние между пальцами начальное
     private var newDist = 0f                                               // конечное, жест ZOOM
@@ -113,6 +115,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         contextMenuFormatBinding = binding.contextMenuFormat
         contextMenuMoveBinding = binding.contextMenuMove
         modesToolbarBinding = binding.modesToolbar
+        mainMenuBinding = binding.mainMenu
 
         return binding.root
     }
@@ -130,6 +133,15 @@ class MainFragment : Fragment(), MainAdapterCallback {
         maxShiftToLeft = widthScreen * K_MAX_SHIFT_LEFT                 // Величина максимального смещения при свайпе в лево
         sizeGrandText = App.appSettings.textSize
         topToolbarBinding.pathDir.textSize = 0.75f * sizeGrandText
+        var version: String
+        try {
+            val pInfo: PackageInfo =
+                requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
+            version = pInfo.versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            version = ""
+        }
+        mainMenuBinding.tvVersion.text = getString(R.string.version, version)
 
         // Анимации
         animationMoveMode = AnimationUtils.loadAnimation(requireContext(), R.anim.arrow_right)
@@ -143,7 +155,6 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
         enableSpecialMode()
         initializingRecyclerView()
-
         goToDir(animOpenNewDir)
 
         // Изменение высоты шрифта
@@ -194,12 +205,12 @@ class MainFragment : Fragment(), MainAdapterCallback {
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ГЛАВНАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
         // Кнопка МЕНЮ
         topToolbarBinding.btnMenu.setOnClickListener {
             requestMenuFocus()                   // Присвоение фокуса
             noSleepModeOff()           // Выключение режима БЕЗ СНА
-            findNavController().navigate(R.id.action_mainFragment_to_settingsFragment2)
+            mainMenuBinding.llMainMenu.isVisible = true
+            mainMenuBinding.llMainMenu.requestFocus()
         }
 
         topToolbarBinding.pathDir.setOnClickListener {
@@ -214,7 +225,23 @@ class MainFragment : Fragment(), MainAdapterCallback {
             } else {
                 noSleepModeON()
             }
+        }
 
+        //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ГЛАВНОЕ МЕНЮ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        // Потеря фокуса закрывает главное меню
+        mainMenuBinding.llMainMenu.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) mainMenuBinding.llMainMenu.isVisible = false
+        }
+
+        mainMenuBinding.tvDescription.setOnClickListener {
+            requestFocusInTouch(mainMenuBinding.tvDescription)
+
+
+        }
+
+        mainMenuBinding.tvSettings.setOnClickListener {
+            requestFocusInTouch(mainMenuBinding.tvSettings)
+            findNavController().navigate(R.id.action_mainFragment_to_settingsFragment2)
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ БОКОВАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -285,7 +312,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         // Кнопка режима Переноса
         sideToolbarBinding.llSideBarMoveMode.setOnClickListener {
             requestFocusInTouch(view)
-            mainViewModel.specialMode = SpecialMode.MOVE
+            sharedViewModel.specialMode = SpecialMode.MOVE
             enableSpecialMode()
             goToDir(animOpenNewDir)
         }
@@ -293,7 +320,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         // Кнопка режима Удаления
         sideToolbarBinding.llSideBarDelMode.setOnClickListener {
             requestFocusInTouch(view)
-            mainViewModel.specialMode = SpecialMode.DELETE
+            sharedViewModel.specialMode = SpecialMode.DELETE
             enableSpecialMode()
             goToDir(animOpenNewDir)
         }
@@ -301,7 +328,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         // Кнопка режима Восстановления
         sideToolbarBinding.llSideBarRestMode.setOnClickListener {
             requestFocusInTouch(view)
-            mainViewModel.specialMode = SpecialMode.RESTORE
+            sharedViewModel.specialMode = SpecialMode.RESTORE
             enableSpecialMode()
             goToDir(animOpenNewDir)
         }
@@ -309,15 +336,16 @@ class MainFragment : Fragment(), MainAdapterCallback {
         // Кнопка режима Архив
         sideToolbarBinding.llSideBarArchiveMode.setOnClickListener {
             requestFocusInTouch(view)
-            mainViewModel.specialMode = SpecialMode.ARCHIVE
+            sharedViewModel.specialMode = SpecialMode.ARCHIVE
             enableSpecialMode()
             goToDir(animOpenNewDir)
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         smallToolbarBinding.llRootDir.setOnClickListener {
+            requestMenuFocus()
             if (getIdCurrentDir() != 0L) {
-                mainViewModel.idDir = 0L
+                sharedViewModel.idDir = 0L
                 goToDir(animOpenParentDir)
             }
         }
@@ -368,7 +396,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                         val pasteIds = mutableListOf<Long>()
                         getMainBuffer().forEach { if (it.isDir) pasteIds.add(it.id) }
                         getMoveBuffer().forEach { if (it.isDir) pasteIds.add(it.id) }
-                        mainViewModel.pasteRecords(getIdCurrentDir(), pasteIds,
+                        sharedViewModel.pasteRecords(getIdCurrentDir(), pasteIds,
                             {
                                 showRecursionError()
                             },
@@ -742,7 +770,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
     private fun updateNppList(list: ArrayList<ListRecord>) {
         list.forEachIndexed { index, item -> item.npp = index }
-        mainViewModel.updateRecords(list) {}// Записать изменения в БД
+        sharedViewModel.updateRecords(list) {}// Записать изменения в БД
     }
     private fun initializingRecyclerView() {
         recycler.adapter = adapter
@@ -904,32 +932,32 @@ class MainFragment : Fragment(), MainAdapterCallback {
     // Возврат в режим NORMAL
     private fun goToNormalMode() {
         requestMenuFocus()
-        mainViewModel.specialMode = SpecialMode.NORMAL
+        sharedViewModel.specialMode = SpecialMode.NORMAL
         enableSpecialMode()
         goToDir(animOpenNewDir)
     }
 
     private fun goToParentDir() {
-        mainViewModel.getParentDirId(getIdCurrentDir()) { ids ->
-            mainViewModel.idDir = ids[0]
+        sharedViewModel.getParentDirId(getIdCurrentDir()) { ids ->
+            sharedViewModel.idDir = ids[0]
             goToDir(animOpenParentDir)
         }
     }
 
     override fun goToChildDir(id: Long) {
-        mainViewModel.idDir = id
+        sharedViewModel.idDir = id
         goToDir(animOpenChildDir)
     }
 
     private fun goToDir(animationController: LayoutAnimationController) {
         binding.progressBar.isVisible = true
-        mainViewModel.deletingExpiredRecords {
+        sharedViewModel.deletingExpiredRecords {
             showList(animationController)
         }
     }
 
     private fun showList(animationController: LayoutAnimationController) = lifecycleScope.launch {
-        mainViewModel.getRecords { records ->
+        sharedViewModel.getRecords { records ->
             fillingRecycler(records, animationController)
             updatFieldsOfSmallToolbar()
             binding.progressBar.isVisible = false
@@ -940,7 +968,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     @SuppressLint("NotifyDataSetChanged")
     private fun fillingRecycler(records: List<ListRecord>, animationController: LayoutAnimationController) {
         recycler.layoutAnimation = animationController
-        mainViewModel.getNameDir(getIdCurrentDir()) { names ->
+        sharedViewModel.getNameDir(getIdCurrentDir()) { names ->
             nameDir = if (names.isEmpty()) "R:" else names[0]
             topToolbarBinding.pathDir.text = nameDir
         }
@@ -952,7 +980,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     override fun insertNewRecord(item: ListRecord) {
-        mainViewModel.insertRecord(item) { id ->
+        sharedViewModel.insertRecord(item) { id ->
             item.id = id
         }
 
@@ -975,7 +1003,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     }
 
     override fun updateRecord(record: ListRecord) {
-        mainViewModel.updateRecord(record) {}
+        sharedViewModel.updateRecord(record) {}
     }
 
     override fun showContextMenuFormat(viewHolder: MainViewHolder) {
@@ -1032,9 +1060,9 @@ class MainFragment : Fragment(), MainAdapterCallback {
     private fun fullPathDir(idDir: Long) {
         var id = idDir
         if (id > 0) {
-            mainViewModel.getParentDirId(id) { ids ->
+            sharedViewModel.getParentDirId(id) { ids ->
                 id = ids[0]
-                mainViewModel.getNameDir(id) { names ->
+                sharedViewModel.getNameDir(id) { names ->
                     val name = if (names.isEmpty()) "R:" else names[0]
                     topToolbarBinding.pathDir.text = buildString {
                         append(name)
@@ -1067,7 +1095,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
     @SuppressLint("InflateParams")
     override fun deleteRecords(records: List<ListRecord>) {
-        mainViewModel.selectionSubordinateRecordsToDelete(records) { list ->
+        sharedViewModel.selectionSubordinateRecordsToDelete(records) { list ->
             val mutableRecords = list.toMutableList()
             val selectedRecords = records.size
             val subordinateRecords = mutableRecords.size
@@ -1085,7 +1113,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 .setNeutralButton(getString(R.string.negative_btn)) { _, _ -> }
                 .setPositiveButton(getString(R.string.delete)) { _, _ ->
                     mutableRecords.forEach { it.isDelete = true }
-                    mainViewModel.updateRecords(mutableRecords) {
+                    sharedViewModel.updateRecords(mutableRecords) {
                         if (getSpecialMode() == SpecialMode.NORMAL) {
                             val position = adapter.records.indexOfFirst { it.id == records[0].id }
                             adapter.records.removeAt(position)
@@ -1105,7 +1133,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
     @SuppressLint("InflateParams")
     fun restoreRecords(records: List<ListRecord>) {
-        mainViewModel.selectionSubordinateRecordsToRestore(records) { list ->
+        sharedViewModel.selectionSubordinateRecordsToRestore(records) { list ->
             val mutableRecords = list.toMutableList()
             val selectedRecords = records.size
             val subordinateRecords = mutableRecords.size
@@ -1123,7 +1151,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                 .setNeutralButton(getString(R.string.negative_btn)) { _, _ -> }
                 .setPositiveButton(getString(R.string.restore)) { _, _ ->
                     mutableRecords.forEach { it.isDelete = false }
-                    mainViewModel.updateRecords(mutableRecords) {
+                    sharedViewModel.updateRecords(mutableRecords) {
                         if (getSpecialMode() == SpecialMode.RESTORE) completionSpecialMode()
                     }
                 }
@@ -1134,9 +1162,9 @@ class MainFragment : Fragment(), MainAdapterCallback {
     private fun pasteRecords() {
         // Перенос записей
         getMoveBuffer().forEach { it.idDir = getIdCurrentDir() }
-        mainViewModel.updateRecords(getMoveBuffer()) {
+        sharedViewModel.updateRecords(getMoveBuffer()) {
             // Копирование
-            mainViewModel.copyRecords(getMainBuffer()){
+            sharedViewModel.copyRecords(getMainBuffer()){
                 completionSpecialMode()
             }
         }
@@ -1156,7 +1184,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
         if (color != null) item.textColor = color
         if (style != null) item.textStyle = style
         if (under != null) item.textUnder = under
-        mainViewModel.updateRecord(item) {}
+        sharedViewModel.updateRecord(item) {}
         adapter.notifyItemChanged(position)
     }
 
@@ -1179,7 +1207,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
                     adapter.records.forEach { it.isChecked = false }
                     val newRecords = adapter.records.sortedWith(compareBy(ListRecord::npp))
                     sortingHoldersAfterChange(newRecords)
-                    mainViewModel.updateRecords(adapter.records) {}
+                    sharedViewModel.updateRecords(adapter.records) {}
                 }
                 .show()
         } else {
@@ -1208,13 +1236,13 @@ class MainFragment : Fragment(), MainAdapterCallback {
         }
     }
 
-    fun getSpecialMode(): SpecialMode = mainViewModel.specialMode
+    fun getSpecialMode(): SpecialMode = sharedViewModel.specialMode
 
-    override fun getIdCurrentDir(): Long = mainViewModel.idDir
+    override fun getIdCurrentDir(): Long = sharedViewModel.idDir
 
-    override fun getMoveBuffer(): ArrayList<ListRecord> = mainViewModel.moveBuffer
+    override fun getMoveBuffer(): ArrayList<ListRecord> = sharedViewModel.moveBuffer
 
-    override fun getMainBuffer(): ArrayList<ListRecord> = mainViewModel.mainBuffer
+    override fun getMainBuffer(): ArrayList<ListRecord> = sharedViewModel.mainBuffer
 
     override fun showNumberOfSelectedRecords() {
         val number = getMainBuffer().size + getMoveBuffer().size
