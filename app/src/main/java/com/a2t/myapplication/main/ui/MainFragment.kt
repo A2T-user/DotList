@@ -36,11 +36,14 @@ import com.a2t.myapplication.databinding.ToolbarTopBinding
 import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.presentation.MainViewModel
 import com.a2t.myapplication.main.presentation.model.SpecialMode
+import com.a2t.myapplication.root.presentation.SharedViewModel
+import com.a2t.myapplication.root.presentation.model.TextFragmentMode
 import com.a2t.myapplication.root.ui.RootActivity
 import com.a2t.myapplication.settings.presentation.SettingsViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Collections
 import java.util.concurrent.atomic.AtomicBoolean
@@ -60,6 +63,7 @@ const val STEP_ZOOM = 0.5f                                     // Шаг изм�
 
 class MainFragment : Fragment(), MainAdapterCallback {
     private val mainViewModel by viewModel<MainViewModel>()
+    private val sharedViewModel: SharedViewModel by activityViewModel()
     private val settingsViewModel by viewModel<SettingsViewModel>()
     private val adapter = MainAdapter(this)
     private lateinit var recycler: RecyclerView
@@ -254,13 +258,19 @@ class MainFragment : Fragment(), MainAdapterCallback {
 
         // Кнопка Переслать
         sideToolbarBinding.llSideBarSend.setOnClickListener {
-            mainViewModel.openingModeTextFragment = "SEND"
+            sharedViewModel.textFragmentMode = TextFragmentMode.SEND
+            sharedViewModel.idCurrentDir = getIdCurrentDir()
+            sharedViewModel.mainRecords.clear()
+            sharedViewModel.mainRecords.addAll(adapter.records)
             findNavController().navigate(R.id.action_mainFragment_to_textFragment2)
         }
 
         // Кнопка Конвертировать
         sideToolbarBinding.llSideBarConvertText.setOnClickListener {
-            mainViewModel.openingModeTextFragment = "CONVERT"
+            sharedViewModel.textFragmentMode = TextFragmentMode.CONVERT
+            sharedViewModel.idCurrentDir = getIdCurrentDir()
+            sharedViewModel.mainRecords.clear()
+            sharedViewModel.mainRecords.addAll(adapter.records)
             findNavController().navigate(R.id.action_mainFragment_to_textFragment2)
         }
 

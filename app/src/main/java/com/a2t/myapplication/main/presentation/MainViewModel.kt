@@ -14,12 +14,10 @@ import kotlinx.coroutines.withContext
 class MainViewModel(
     private val mainInteractor: MainInteractor
 ) : ViewModel() {
-    var mainRecords = ArrayList<ListRecord>()
     val moveBuffer = ArrayList<ListRecord>()    // Буфер для режима MOVE(только перенос записей)
     val mainBuffer = ArrayList<ListRecord>()    // Буфер для всех остальных специальных режимов
     var idDir = 0L
     var specialMode = SpecialMode.NORMAL
-    var openingModeTextFragment: String? = null     // "CONVERT" - для режима конвертации, "SEND" - для режима пересылки
 
     // Добавление новой записи и получение ее id
     fun insertRecord(record: ListRecord, callback: (Long) -> Unit) {
@@ -93,8 +91,6 @@ class MainViewModel(
                     )
                 )
             }
-            mainRecords.clear()
-            mainRecords.addAll(mutableRecords)
             callback(mutableRecords)
         }
     }

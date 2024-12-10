@@ -87,8 +87,7 @@
             style="@style/TVBarModesStyle"
             android:foreground="?attr/selectableItemBackground"
             android:text="@string/title_conversion"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="8dp"
+            android:layout_margin="8dp"
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintEnd_toStartOf="@+id/btnCancel"
             app:layout_constraintStart_toStartOf="parent"
@@ -98,7 +97,7 @@
         <TextView
             android:id="@+id/btnCancel"
             style="@style/TVBarModesStyle"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:foreground="?attr/selectableItemBackground"
             android:text="@string/back"
             app:layout_constraintHorizontal_weight="1"
