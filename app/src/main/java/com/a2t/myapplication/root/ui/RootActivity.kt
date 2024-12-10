@@ -11,7 +11,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.a2t.myapplication.App
 import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.ActivityRootBinding
-import com.a2t.myapplication.main.presentation.model.SpecialMode
+import com.a2t.myapplication.root.presentation.model.SpecialMode
 import com.a2t.myapplication.main.ui.MainFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

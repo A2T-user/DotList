@@ -1,7 +1,7 @@
 package com.a2t.myapplication.main.ui
 
 import androidx.recyclerview.widget.RecyclerView
-import com.a2t.myapplication.main.domain.model.ListRecord
+import com.a2t.myapplication.root.domain.model.ListRecord
 
 interface MainAdapterCallback {
     fun onStartDrag(viewHolder: RecyclerView.ViewHolder)

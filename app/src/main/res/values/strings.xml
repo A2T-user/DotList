@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">\u2022list</string>
+    <string name="version">\u2022list %1$s</string>
     <!-- ГЛАВНАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
     <string name="menu_desc">Главное меню приложения</string>
     <string name="no_seep_mode_on">Включен режим БЕЗ СНА</string>
@@ -94,5 +95,8 @@
     <string name="send_text_empty">Нет текста для отправки</string>
     <string name="convert_text_empty">Нет текста для конвертации</string>
     <string name="mail_service">Выберите почтовый сервис:</string>
+    
+    <string name="description">Описание</string>
+    <string name="set_string">Настройки</string>
 
 </resources>
