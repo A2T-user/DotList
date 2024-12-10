@@ -1150,7 +1150,6 @@ class MainFragment : Fragment(), MainAdapterCallback {
             .setMessage(getString(R.string.recursion_error))
             .setPositiveButton(getString(R.string.ok)) { _, _ -> }
             .show()
-        completionSpecialMode()
     }
 
     private fun changingTextFormatRecord(item: ListRecord, position: Int, color: Int?, style: Int?, under: Int?) {
@@ -1221,5 +1220,12 @@ class MainFragment : Fragment(), MainAdapterCallback {
         val number = getMainBuffer().size + getMoveBuffer().size
         modesToolbarBinding.countRecords.text = number.toString()
         modesToolbarBinding.countRecords.isVisible = number > 0
+    }
+
+    override fun onStart() {
+        super.onStart()
+        sharedViewModel.mainRecords.clear()
+        sharedViewModel.textFragmentMode = null
+        sharedViewModel.idCurrentDir = 0
     }
 }

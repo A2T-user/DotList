@@ -5,6 +5,8 @@ import com.a2t.myapplication.main.domain.model.ListRecord
 interface MainInteractor {
     // Добавление новой записи
     fun insertRecord(record: ListRecord): Long
+    // Добавление новых записей
+    fun insertRecords(records: List<ListRecord>)
     // Обновление записи
     fun updateRecord(record: ListRecord)
     // Обновление записей

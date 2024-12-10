@@ -19,6 +19,14 @@ class MainRepositoryImpl(
     override fun insertRecord(record: ListRecord): Long {
         return appDatabase.mainRecordDao().insertRecord(recordDBConverter.map(record))
     }
+
+    // Добавление новых записей
+    override fun insertRecords(records: List<ListRecord>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            appDatabase.mainRecordDao().insertRecords(records.map { record -> recordDBConverter.map(record) })
+        }
+    }
+
     // Обновление записи
     override fun updateRecord(record: ListRecord) {
             appDatabase.mainRecordDao().updateRecord(recordDBConverter.map(record))

@@ -28,6 +28,10 @@ class MainViewModel(
             }
         }
     }
+    // Добавление новых записей
+    fun insertRecords(records: List<ListRecord>) {
+        mainInteractor.insertRecords(records)
+    }
     // Добавление новой записи (для копирования)
     private fun insertRecordToCopy(record: ListRecord, callback: (Long) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {

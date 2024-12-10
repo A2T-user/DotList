@@ -13,12 +13,15 @@ import com.a2t.myapplication.App
 import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.FragmentTextBinding
 import com.a2t.myapplication.main.domain.model.ListRecord
+import com.a2t.myapplication.main.presentation.MainViewModel
 import com.a2t.myapplication.root.presentation.SharedViewModel
 import com.a2t.myapplication.root.presentation.model.TextFragmentMode
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TextFragment : Fragment() {
     private val sharedViewModel: SharedViewModel by activityViewModel()
+    private val mainViewModel by viewModel<MainViewModel>()
     private lateinit var binding: FragmentTextBinding
     private var mode: TextFragmentMode? = null
     private var idCurrentDir: Long = 0
@@ -62,13 +65,22 @@ class TextFragment : Fragment() {
         // Кнопка Action
         binding.btnAction.setOnClickListener {
             if (mode == TextFragmentMode.CONVERT) {
-
+                val convertText = binding.etText.text.trim { it <= ' ' }
+                if (convertText.isNotEmpty()) {
+                    val convertRecords = convertStringToList()
+                    if (convertRecords.isNotEmpty()) {
+                        mainViewModel.insertRecords(convertRecords)
+                        records.addAll(convertRecords)
+                        sharedViewModel.mainRecords.clear()
+                        sharedViewModel.mainRecords.addAll(records)
+                        requireActivity().supportFragmentManager.popBackStack()
+                    }
+                } else {
+                    Toast.makeText(requireContext(), getString(R.string.convert_text_empty), Toast.LENGTH_SHORT).show()
+                }
             } else {
                 sendList()
             }
-
-
-
         }
     }
 
@@ -113,5 +125,80 @@ class TextFragment : Fragment() {
             startActivity(chooserIntent)
             requireActivity().supportFragmentManager.popBackStack()
         }
+    }
+
+    private fun convertStringToList(): List<ListRecord> {
+        val convertRecords = ArrayList<ListRecord>()
+        val string = binding.etText.text.toString()
+        val maxNpp: Int = records.maxOfOrNull { it.npp } ?: 0
+        if (string.isEmpty()) {
+            Toast.makeText(requireContext(), getString(R.string.convert_text_hint), Toast.LENGTH_SHORT).show()
+        } else {
+            val stringList: Array<String> =
+                string.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() // Разбиваем текст на строки
+            // Обрабатываем каждую троку
+            stringList.forEachIndexed { index, st ->
+                var str = st
+                val record: StringBuilder
+                var note = ""
+                str = str.trim { it <= ' ' } // Отбрасывание начальных и конечных пробелов
+                if (str.isNotEmpty()) {    // Отбрасывание пустых строк
+                    // Определение наличия порядкового номера строки
+                    var s = str.split("\\. ".toRegex(), limit = 2).toTypedArray()
+                    // Отбрасывание порядкового номера
+                    if (s.size > 1) {
+                        if (isTheStringANumber(s[0])) str = s[1]
+                    }
+                    // Разбиение на record и prim
+                    s = str.split(" - ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    val l = s.size
+                    record = StringBuilder(s[0])
+                    if (l > 1) {
+                        note = s[l - 1]
+                        for (i in 1 until l - 1) record.append(" - ").append(s[i])
+                    }
+                    // Добавление нового элемента в convertRecords
+                    convertRecords.add(getNewItem(record.toString(), note, maxNpp, index))
+                }
+
+            }
+        }
+        return convertRecords
+    }
+
+    private fun getNewItem(record: String, note: String, maxNpp: Int, index: Int): ListRecord {
+        return ListRecord(
+            0L,
+            idCurrentDir,
+            isDir = false,
+            maxNpp + 1 + index,
+            isChecked = false,
+            record,
+            note,
+            0,
+            0,
+            0,
+            System.currentTimeMillis(),
+            null,
+            null,
+            isArchive = false,
+            isDelete = false,
+            isFull = false,
+            isAllCheck = false,
+            isNew = false,
+            startEdit = false,
+            isEdit = false
+        )
+    }
+
+    // Определяет может ли быть преобразована строка в INT
+    private fun isTheStringANumber(str: String): Boolean {
+        var result = true
+        try {
+            str.toInt() // Преобразуем строку в число
+        } catch (e: NumberFormatException) {
+            result = false   // Если строка не переобразуеся в число
+        }
+        return result
     }
 }
