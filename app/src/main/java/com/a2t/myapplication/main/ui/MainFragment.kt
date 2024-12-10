@@ -36,11 +36,14 @@ import com.a2t.myapplication.databinding.ToolbarTopBinding
 import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.presentation.MainViewModel
 import com.a2t.myapplication.main.presentation.model.SpecialMode
+import com.a2t.myapplication.root.presentation.SharedViewModel
+import com.a2t.myapplication.root.presentation.model.TextFragmentMode
 import com.a2t.myapplication.root.ui.RootActivity
 import com.a2t.myapplication.settings.presentation.SettingsViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Collections
 import java.util.concurrent.atomic.AtomicBoolean
@@ -60,6 +63,7 @@ const val STEP_ZOOM = 0.5f                                     // Шаг изм�
 
 class MainFragment : Fragment(), MainAdapterCallback {
     private val mainViewModel by viewModel<MainViewModel>()
+    private val sharedViewModel: SharedViewModel by activityViewModel()
     private val settingsViewModel by viewModel<SettingsViewModel>()
     private val adapter = MainAdapter(this)
     private lateinit var recycler: RecyclerView
@@ -250,6 +254,24 @@ class MainFragment : Fragment(), MainAdapterCallback {
         }
         sideToolbarBinding.tvSideBarOpen.setOnClickListener {
             sideBarFullOpenClose()
+        }
+
+        // Кнопка Переслать
+        sideToolbarBinding.llSideBarSend.setOnClickListener {
+            sharedViewModel.textFragmentMode = TextFragmentMode.SEND
+            sharedViewModel.idCurrentDir = getIdCurrentDir()
+            sharedViewModel.mainRecords.clear()
+            sharedViewModel.mainRecords.addAll(adapter.records)
+            findNavController().navigate(R.id.action_mainFragment_to_textFragment2)
+        }
+
+        // Кнопка Конвертировать
+        sideToolbarBinding.llSideBarConvertText.setOnClickListener {
+            sharedViewModel.textFragmentMode = TextFragmentMode.CONVERT
+            sharedViewModel.idCurrentDir = getIdCurrentDir()
+            sharedViewModel.mainRecords.clear()
+            sharedViewModel.mainRecords.addAll(adapter.records)
+            findNavController().navigate(R.id.action_mainFragment_to_textFragment2)
         }
 
         // Кнопка Удалить метки
@@ -580,6 +602,7 @@ class MainFragment : Fragment(), MainAdapterCallback {
     private fun enableSpecialMode() {
         noSleepModeOff()           // Выключение режима БЕЗ СНА
         topToolbarBinding.imageEye.isVisible = getSpecialMode() == SpecialMode.NORMAL
+        binding.sideBarContainer.isVisible = getSpecialMode() == SpecialMode.NORMAL
         showSpecialModeToolbar()
         showNumberOfSelectedRecords()
     }
@@ -1169,21 +1192,19 @@ class MainFragment : Fragment(), MainAdapterCallback {
         var start: Int
         var finish: Int
         val records = adapter.records
-        if (records.size == newRecords.size) {
-            newRecords.forEachIndexed { index, record ->
-                finish = index
-                val id = record.id
-                start = records.indexOfFirst { it.id == id }
-                // Перемещаем запись в массиве адаптера
-                records.add(finish, records.removeAt(start))
-                // Перемещаем запись на экране
-                adapter.notifyItemMoved(start, finish)
-                // Сообщение адаптеру, что элемент перемещен
-                if (start > finish) {
-                    adapter.notifyItemRangeChanged(finish, start - finish + 1)
-                } else {
-                    adapter.notifyItemRangeChanged(start, finish - start + 1)
-                }
+        newRecords.forEachIndexed { index, record ->
+            finish = index
+            val id = record.id
+            start = records.indexOfFirst { it.id == id }
+            // Перемещаем запись в массиве адаптера
+            records.add(finish, records.removeAt(start))
+            // Перемещаем запись на экране
+            adapter.notifyItemMoved(start, finish)
+            // Сообщение адаптеру, что элемент перемещен
+            if (start > finish) {
+                adapter.notifyItemRangeChanged(finish, start - finish + 1)
+            } else {
+                adapter.notifyItemRangeChanged(start, finish - start + 1)
             }
         }
     }

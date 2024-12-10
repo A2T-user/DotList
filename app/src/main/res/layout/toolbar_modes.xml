@@ -93,8 +93,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:visibility="gone"/>
 
-
-
     <TextView
         android:id="@+id/btnSelectAll"
         android:text="@string/select_all"

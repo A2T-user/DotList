@@ -12,10 +12,18 @@
         <action
             android:id="@+id/action_mainFragment_to_settingsFragment2"
             app:destination="@id/settingsFragment2" />
+        <action
+            android:id="@+id/action_mainFragment_to_textFragment2"
+            app:destination="@id/textFragment2" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment2"
         android:name="com.a2t.myapplication.settings.ui.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/textFragment2"
+        android:name="com.a2t.myapplication.text.ui.TextFragment"
+        android:label="fragment_text"
+        tools:layout="@layout/fragment_text"/>
 </navigation>
