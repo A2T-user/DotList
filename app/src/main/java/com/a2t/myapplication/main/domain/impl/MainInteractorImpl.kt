@@ -11,6 +11,11 @@ class MainInteractorImpl(
     override fun insertRecord(record: ListRecord): Long {
         return mainRepository.insertRecord(record)
     }
+    // Добавление новых записей
+    override fun insertRecords(records: List<ListRecord>) {
+        mainRepository.insertRecords(records)
+    }
+
     // Обновление записи
     override fun updateRecord(record: ListRecord) {
         mainRepository.updateRecord(record)

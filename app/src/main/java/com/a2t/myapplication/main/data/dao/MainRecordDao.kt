@@ -12,7 +12,11 @@ interface MainRecordDao {
 
     // Добавление новой записи
     @Insert(entity = ListRecordEntity::class, onConflict = OnConflictStrategy.REPLACE)
-    fun insertRecord(records: ListRecordEntity): Long
+    fun insertRecord(record: ListRecordEntity): Long
+
+    // Добавление новых записей
+    @Insert(entity = ListRecordEntity::class, onConflict = OnConflictStrategy.REPLACE)
+    fun insertRecords(records: List<ListRecordEntity>)
 
     // Обновление записи
     @Update(entity = ListRecordEntity::class, onConflict = OnConflictStrategy.REPLACE)

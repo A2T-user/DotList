@@ -87,11 +87,12 @@
     <string name="title_conversion">Конвертация</string>
     <string name="title_send">Отправка</string>
     <string name="convert_text_hint">Введите или вставьте текст, который Вы хотите конвертировать в список</string>
-    <string name="convert_text_hint2">Новые строки будут добавлены в <font color='#eabf11'><b><u>текущую папку</u>048</b></font></string>
+    <string name="convert_text_hint2">Новые строки будут добавлены в <font color='#eabf11'><b><u>текущую папку</u></b></font></string>
     <string name="btn_send_text">Отправить</string>
     <string name="btn_convert_text">Конвертировать</string>
     <string name="something_went_wrong">Что то пошло не так</string>
     <string name="send_text_empty">Нет текста для отправки</string>
+    <string name="convert_text_empty">Нет текста для конвертации</string>
     <string name="mail_service">Выберите почтовый сервис:</string>
 
 </resources>
