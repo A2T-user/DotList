@@ -36,6 +36,12 @@ import com.a2t.myapplication.databinding.ToolbarModesBinding
 import com.a2t.myapplication.databinding.ToolbarSideBinding
 import com.a2t.myapplication.databinding.ToolbarSmallBinding
 import com.a2t.myapplication.databinding.ToolbarTopBinding
+import com.a2t.myapplication.main.ui.recycler.model.ScrollState
+import com.a2t.myapplication.main.ui.recycler.MainAdapter
+import com.a2t.myapplication.main.ui.recycler.MainAdapterCallback
+import com.a2t.myapplication.main.ui.recycler.MainViewHolder
+import com.a2t.myapplication.main.ui.recycler.MyScrollListener
+import com.a2t.myapplication.main.ui.recycler.OnScrollStateChangedListener
 import com.a2t.myapplication.root.domain.model.ListRecord
 import com.a2t.myapplication.root.presentation.SharedViewModel
 import com.a2t.myapplication.root.presentation.model.SpecialMode
@@ -63,7 +69,7 @@ const val EYE_ANIMATION_DELEY = 5000L
 const val NUMBER_OF_OPERATIO_ZOOM = 5
 const val STEP_ZOOM = 0.5f                                     // Шаг изменения высоты шрифта
 
-class MainFragment : Fragment(), MainAdapterCallback {
+class MainFragment : Fragment(), MainAdapterCallback, OnScrollStateChangedListener {
     private val sharedViewModel: SharedViewModel by activityViewModel()
     private val settingsViewModel by viewModel<SettingsViewModel>()
     private val adapter = MainAdapter(this)
@@ -100,8 +106,10 @@ class MainFragment : Fragment(), MainAdapterCallback {
     private var archiveJob = lifecycleScope.launch {}
     private var eyeJob = lifecycleScope.launch {}
     private var nameJob = lifecycleScope.launch {}
+    private var scrollJob = lifecycleScope.launch {}
     private var isNoSleepMode = false
     private var isClickAllowed = true
+    private var scrollState = ScrollState.STOPPED
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -203,6 +211,18 @@ class MainFragment : Fragment(), MainAdapterCallback {
             }
             isZOOMode
         }
+
+        //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ПРОКРУТКА $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        recycler.addOnScrollListener(MyScrollListener(this))
+
+        binding.llBtnScroll.setOnClickListener {
+            if (scrollState == ScrollState.DOWN) {
+                recycler.smoothScrollToPosition(adapter.itemCount - 1)
+            } else {
+                recycler.smoothScrollToPosition(0)
+            }
+        }
+
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ГЛАВНАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // Кнопка МЕНЮ
@@ -1255,5 +1275,26 @@ class MainFragment : Fragment(), MainAdapterCallback {
         sharedViewModel.mainRecords.clear()
         sharedViewModel.textFragmentMode = null
         sharedViewModel.idCurrentDir = 0
+    }
+
+    override fun onScrollStateChanged(scrollState: ScrollState) {
+        when (scrollState) {
+            ScrollState.DOWN -> {           // Прокрутка вниз
+                this.scrollState = scrollState
+                binding.ivBtnScroll.setImageResource(R.drawable.ic_scroll_down)
+                binding.llBtnScroll.isVisible = true
+            }
+            ScrollState.UP -> {             // Прокрутка вверх
+                this.scrollState = scrollState
+                binding.ivBtnScroll.setImageResource(R.drawable.ic_scroll_up)
+                binding.llBtnScroll.isVisible = true
+            }
+            ScrollState.STOPPED -> {}      // Прокрутка остановлена
+        }
+        scrollJob.cancel()
+        scrollJob = lifecycleScope.launch {
+            delay(1000)
+            binding.llBtnScroll.isVisible = false
+        }
     }
 }

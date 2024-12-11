@@ -1,4 +1,4 @@
-package com.a2t.myapplication.main.ui
+package com.a2t.myapplication.main.ui.recycler
 
 import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.root.domain.model.ListRecord

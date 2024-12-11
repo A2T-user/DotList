@@ -1,4 +1,4 @@
-package com.a2t.myapplication.main.ui
+package com.a2t.myapplication.main.ui.recycler
 
 import android.graphics.Paint
 import android.graphics.Typeface
@@ -17,6 +17,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.App
 import com.a2t.myapplication.R
+import com.a2t.myapplication.main.ui.ActionEditText
 import com.a2t.myapplication.root.utilities.AlarmHelper
 import com.a2t.myapplication.root.domain.model.ListRecord
 import kotlinx.coroutines.CoroutineScope
