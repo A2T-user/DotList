@@ -1049,7 +1049,7 @@ class MainFragment : Fragment(), MainAdapterCallback, OnScrollStateChangedListen
         val location = IntArray(2)
         topToolbarBinding.llTopToolbar.getLocationOnScreen(location)
         val hStatusBar = location[1]            // Высота строки состояния
-        val borderY = heightScreen * 2 / 3      // Граница:
+        val borderY = heightScreen * 3 / 4      // Граница:
                                                 // для холдеров находящихся НАД ней контекст.меню выводится ПОД холдером,
                                                 // для холдеров находящихся ПОД граеницей - НАД холдером
         viewHolder.llForeground.getLocationOnScreen(location)
@@ -1278,6 +1278,7 @@ class MainFragment : Fragment(), MainAdapterCallback, OnScrollStateChangedListen
     }
 
     override fun onScrollStateChanged(scrollState: ScrollState) {
+        requestMenuFocus()                   // Присвоение фокуса
         when (scrollState) {
             ScrollState.DOWN -> {           // Прокрутка вниз
                 this.scrollState = scrollState
