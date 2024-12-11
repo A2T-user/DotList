@@ -37,6 +37,32 @@
                 android:scrollbarThumbVertical="@color/blue_icon"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
+            <LinearLayout
+                android:id="@+id/ll_btn_scroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/shadow_circle"
+                android:paddingStart="2dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="6dp"
+                android:layout_gravity="end|bottom"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="70dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/iv_btn_scroll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/circle_color_bar"
+                    android:src="@drawable/ic_scroll_down"
+                    android:padding="12dp"
+                    android:alpha="0.7"
+                    tools:ignore="contentDescription"/>
+
+            </LinearLayout>
+
             <!-- МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
             <include
                     android:id="@+id/smallToolbar"
