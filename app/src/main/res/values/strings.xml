@@ -86,7 +86,7 @@
     <string name="rest_subordinate">.\nТакже будет восстановлено вложенных записей: %1$s</string>
 
     <string name="title_conversion">Конвертация</string>
-    <string name="title_send">Отправка</string>
+    <string name="title_send">Поделиться</string>
     <string name="convert_text_hint">Введите или вставьте текст, который Вы хотите конвертировать в список</string>
     <string name="convert_text_hint2">Новые строки будут добавлены в <font color='#eabf11'><b><u>текущую папку</u></b></font></string>
     <string name="btn_send_text">Отправить</string>
