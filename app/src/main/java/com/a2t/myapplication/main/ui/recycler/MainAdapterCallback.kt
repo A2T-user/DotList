@@ -20,4 +20,5 @@ interface MainAdapterCallback {
     fun completionSpecialMode()
     fun getMoveBuffer(): ArrayList<ListRecord>
     fun getMainBuffer(): ArrayList<ListRecord>
+    fun passRecordToAlarmFragment (record: ListRecord)
 }

@@ -25,6 +25,9 @@ class SharedViewModel(
     var idCurrentDir: Long = 0
     val mainRecords = ArrayList<ListRecord>()
 
+    // Параметры для AlarmFragment
+    var record: ListRecord? = null
+
     //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  Методы для MainFragment и TextFragment $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     // Добавление новой записи и получение ее id
     fun insertRecord(record: ListRecord, callback: (Long) -> Unit) {

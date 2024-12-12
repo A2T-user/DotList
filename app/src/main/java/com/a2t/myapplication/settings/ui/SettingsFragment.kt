@@ -17,13 +17,13 @@ const val MAX_STORAGE_PERIOD_FOR_DELETED_RECORDS = 7
 class SettingsFragment : Fragment() {
 
     private val settingsViewModel by viewModel<SettingsViewModel>()
-    private lateinit var binding: FragmentSettingsBinding
-
+    private var _binding: FragmentSettingsBinding? = null
+    private val binding get() = _binding!!
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSettingsBinding.inflate(layoutInflater)
+        _binding = FragmentSettingsBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -125,5 +125,10 @@ class SettingsFragment : Fragment() {
         binding.ivLightTeme.alpha = 0f
         binding.ivDarkTeme.alpha = 0f
         binding.ivSystemTeme.alpha = 0f
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

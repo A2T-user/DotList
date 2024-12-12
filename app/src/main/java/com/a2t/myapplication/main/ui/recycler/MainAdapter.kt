@@ -13,9 +13,11 @@ import android.widget.EditText
 import androidx.core.view.isVisible
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.App
 import com.a2t.myapplication.R
+import com.a2t.myapplication.main.ui.MainFragment
 import com.a2t.myapplication.root.domain.model.ListRecord
 import com.a2t.myapplication.root.presentation.model.SpecialMode
 import kotlinx.coroutines.CoroutineScope
@@ -95,6 +97,8 @@ class MainAdapter(
                 }
                 holder.ivBtnBell.setOnClickListener {            // Создать/редактировать напоминание
                     mac.requestMenuFocus()
+                    mac.passRecordToAlarmFragment(item)
+                    findNavController(mac as MainFragment).navigate(R.id.action_mainFragment_to_alarmFragment2)
 
                 }
                 holder.ivBtnDir.setOnClickListener {            // строка <-> папка
