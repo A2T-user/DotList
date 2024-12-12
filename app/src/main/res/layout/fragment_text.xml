@@ -54,7 +54,6 @@
         android:layout_marginHorizontal="6dp"
         android:paddingStart="10dp"
         android:paddingEnd="2dp"
-        android:autoLink="all"
         android:inputType="textMultiLine"
         android:gravity="top|start"
         android:importantForAutofill="no"

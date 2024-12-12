@@ -1,4 +1,4 @@
-package com.a2t.myapplication.root.utilities
+package com.a2t.myapplication.alarm
 
 import android.text.format.DateFormat
 import java.util.Calendar

@@ -23,6 +23,13 @@
             app:exitAnim="@anim/hold"
             app:popEnterAnim="@anim/hold"
             app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_mainFragment_to_alarmFragment2"
+            app:destination="@id/alarmFragment2"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/hold"
+            app:popEnterAnim="@anim/hold"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/settingsFragment2"
@@ -34,4 +41,9 @@
         android:name="com.a2t.myapplication.text.ui.TextFragment"
         android:label="fragment_text"
         tools:layout="@layout/fragment_text"/>
+    <fragment
+        android:id="@+id/alarmFragment2"
+        android:name="com.a2t.myapplication.alarm.ui.AlarmFragment"
+        android:label="fragment_alarm"
+        tools:layout="@layout/fragment_alarm" />
 </navigation>

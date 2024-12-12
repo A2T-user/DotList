@@ -98,5 +98,18 @@
     
     <string name="description">Описание</string>
     <string name="set_string">Настройки</string>
+    
+    <string name="notification">Напоминание</string>
+    <string name="notifi_hint">Введите краткий текст напоминания,\nустановите дату и время</string>
+    <string name="notifi_name_hint">Событие</string>
+    <string name="notifi_date_hint">Дата</string>
+    <string name="notifi_time_hint">Время</string>
+    <string name="notifi_save">Сохранить</string>
+
+    <string name="date_time_err">Время напоминания должно быть болше текущего хотябы на 1\u20132 минуты</string>
+    <string name="now">Сейчас:   %1$s</string>
+    <string name="select_date">Выберите дату</string>
+    <string name="select_time">Выберите время</string>
+
 
 </resources>

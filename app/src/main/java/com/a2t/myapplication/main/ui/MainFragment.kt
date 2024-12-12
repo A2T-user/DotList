@@ -77,7 +77,8 @@ class MainFragment : Fragment(), MainAdapterCallback, OnScrollStateChangedListen
     private var mIth: ItemTouchHelper? = null
     private var mIthScb: ItemTouchHelper.Callback? = null
     private var nameDir = "R:"
-    private lateinit var binding: FragmentMainBinding
+    private var _binding: FragmentMainBinding? = null
+    private val binding get() = _binding!!
     private lateinit var topToolbarBinding: ToolbarTopBinding
     private lateinit var smallToolbarBinding: ToolbarSmallBinding
     private lateinit var sideToolbarBinding: ToolbarSideBinding
@@ -115,7 +116,7 @@ class MainFragment : Fragment(), MainAdapterCallback, OnScrollStateChangedListen
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMainBinding.inflate(layoutInflater)
+        _binding = FragmentMainBinding.inflate(layoutInflater)
         recycler = binding.recycler
         topToolbarBinding = binding.topToolbar
         smallToolbarBinding = binding.smallToolbar
@@ -1264,6 +1265,10 @@ class MainFragment : Fragment(), MainAdapterCallback, OnScrollStateChangedListen
 
     override fun getMainBuffer(): ArrayList<ListRecord> = sharedViewModel.mainBuffer
 
+    override fun passRecordToAlarmFragment(record: ListRecord) {
+        sharedViewModel.record = record
+    }
+
     override fun showNumberOfSelectedRecords() {
         val number = getMainBuffer().size + getMoveBuffer().size
         modesToolbarBinding.countRecords.text = number.toString()
@@ -1297,5 +1302,10 @@ class MainFragment : Fragment(), MainAdapterCallback, OnScrollStateChangedListen
             delay(1000)
             binding.llBtnScroll.isVisible = false
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
