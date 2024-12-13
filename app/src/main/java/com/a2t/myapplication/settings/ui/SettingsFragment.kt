@@ -7,18 +7,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.a2t.myapplication.App
 import com.a2t.myapplication.databinding.FragmentSettingsBinding
-import com.a2t.myapplication.settings.domain.model.AppSettings
-import com.a2t.myapplication.settings.presentation.SettingsViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.a2t.myapplication.settings.ui.model.AppSettings
 
 const val MIN_STORAGE_PERIOD_FOR_DELETED_RECORDS = 1
 const val MAX_STORAGE_PERIOD_FOR_DELETED_RECORDS = 7
 
 class SettingsFragment : Fragment() {
 
-    private val settingsViewModel by viewModel<SettingsViewModel>()
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
+    private val app = requireContext().applicationContext as App
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -29,6 +27,7 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         installNewSettings(App.appSettings)
 
@@ -56,7 +55,7 @@ class SettingsFragment : Fragment() {
                 period++
                 binding.tvRestorePeriod.text = period.toString()
                 App.appSettings.restorePeriod = period
-                settingsViewModel.updateSettings()
+                app.saveSettings() // Сохраняем параметры
             }
         }
 
@@ -66,39 +65,39 @@ class SettingsFragment : Fragment() {
                 period--
                 binding.tvRestorePeriod.text = period.toString()
                 App.appSettings.restorePeriod = period
-                settingsViewModel.updateSettings()
+                app.saveSettings() // Сохраняем параметры
             }
         }
         // Редактирование
         binding.swEditEmptyDir.setOnCheckedChangeListener { _, checked ->
             App.appSettings.editEmptyDir = checked
-            settingsViewModel.updateSettings()
+            app.saveSettings() // Сохраняем параметры
         }
         // Сортировка
         binding.swSortingChecks.setOnCheckedChangeListener { _, checked ->
             App.appSettings.sortingChecks = checked
-            settingsViewModel.updateSettings()
+            app.saveSettings() // Сохраняем параметры
         }
         // Зачеркивание
         binding.swCrossingChecks.setOnCheckedChangeListener { _, checked ->
             App.appSettings.crossedOutOn = checked
-            settingsViewModel.updateSettings()
+            app.saveSettings() // Сохраняем параметры
         }
         // Напоминания
         binding.swNotificationOn.setOnCheckedChangeListener { _, checked ->
             App.appSettings.notificationOn = checked
-            settingsViewModel.updateSettings()
+            app.saveSettings() // Сохраняем параметры
         }
         // Сообщения
         binding.swShowHintToast .setOnCheckedChangeListener { _, checked ->
             App.appSettings.hintToastOn = checked
-            settingsViewModel.updateSettings()
+            app.saveSettings() // Сохраняем параметры
         }
     }
 
     private fun changeTheme() {
         installNullCheckTheme()
-        settingsViewModel.updateSettings()
+        app.saveSettings() // Сохраняем параметры
         (requireContext().applicationContext as App).switchTheme()
     }
 

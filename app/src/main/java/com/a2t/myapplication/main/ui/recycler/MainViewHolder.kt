@@ -27,7 +27,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-    var observer: Observer<Long>? = null
+    var observerId: Observer<Long>? = null
+    var observerTextSize: Observer<Float>? = null
     private var endDayJob: Job? = null
     private var alarmJob: Job? = null
     private var animationBell: Animation = AnimationUtils.loadAnimation(App.appContext, R.anim.anim_bell)
@@ -95,10 +96,17 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             aetRecord.paintFlags = aetRecord.paintFlags and (Paint.STRIKE_THRU_TEXT_FLAG.inv())  // Снять зачеркивание
         }
         tvDateTime.text = if (item.lastEditTime != 0L) AlarmHelper.convertDateTime(item.lastEditTime) else ""
+
+
         //Установка размера шрифта
-        val textSizeRecord = App.appSettings.textSize
-        aetRecord.textSize = textSizeRecord
-        aetNote.textSize = 0.75f * textSizeRecord
+
+        observerTextSize = Observer { size ->
+            aetRecord.textSize = size
+            aetNote.textSize = 0.75f * size
+        }
+
+
+
         aetRecord.setText(item.record)
         aetNote.setText(item.note)
         aetNote.isVisible = item.note.isNotEmpty()
