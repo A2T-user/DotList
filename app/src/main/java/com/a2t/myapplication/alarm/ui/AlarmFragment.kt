@@ -57,10 +57,11 @@ class AlarmFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val textSize = App.appSettings.textSize
-        binding.etText.textSize = textSize
-        binding.tvDate.textSize = textSize
-        binding.tvTime.textSize = textSize
+        App.getTextSizeLiveData().observe(viewLifecycleOwner) { size ->
+            binding.etText.textSize = size
+            binding.tvDate.textSize = size
+            binding.tvTime.textSize = size
+        }
 
         binding.etText.setText(alarmText)
         alarmDate?.let { binding.tvDate.text = DateFormat.format("dd.M.yy", it).toString() }

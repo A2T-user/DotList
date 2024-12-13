@@ -45,17 +45,18 @@ class MainAdapter(
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val item = records[position]
         holder.bind(item)
+        App.getTextSizeLiveData().observeForever(holder.observerTextSize!!)
         if (specialMode == SpecialMode.NORMAL || specialMode == SpecialMode.MOVE) {
-            holder.observer = Observer { currentHolderId ->
+            holder.observerId = Observer { currentHolderId ->
                 if (currentHolderId == holder.id) {
                     holder.ivAction.setBackgroundResource(R.drawable.rect_fon_red)
                 } else {
                     holder.ivAction.setBackgroundResource(R.drawable.rect_fon_blue)
                 }
             }
-            currentHolderIdLiveData.observeForever(holder.observer!!)
+            currentHolderIdLiveData.observeForever(holder.observerId!!)
         } else {
-            holder.observer = null
+            holder.observerId = null
         }
 
         holder.llAction.isVisible = true
@@ -397,9 +398,14 @@ class MainAdapter(
 
     override fun onViewRecycled(holder: MainViewHolder) {
         super.onViewRecycled(holder)
-        holder.observer?.let { observer ->
+        holder.observerId?.let { observer ->
             currentHolderIdLiveData.removeObserver(observer)
-            holder.observer = null // Обнулите ссылку на наблюдателя
+            holder.observerId = null // Обнулите ссылку на наблюдателя
+        }
+        holder.observerTextSize?.let { observer ->
+            App.getTextSizeLiveData().removeObserver(observer)
+            holder.observerTextSize = null
+
         }
     }
 

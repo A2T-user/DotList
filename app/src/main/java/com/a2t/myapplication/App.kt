@@ -3,11 +3,14 @@ package com.a2t.myapplication
 import android.app.Application
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.edit
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.a2t.myapplication.di.dataModule
 import com.a2t.myapplication.di.interactorModule
 import com.a2t.myapplication.di.repositoryModule
 import com.a2t.myapplication.di.viewModelModule
-import com.a2t.myapplication.settings.domain.model.AppSettings
+import com.a2t.myapplication.settings.ui.model.AppSettings
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -27,6 +30,9 @@ class App : Application() {
         const val TEXT_SIZE = "TEXT_SIZE"
         lateinit var appSettings: AppSettings
         lateinit var appContext: Context
+        var textSizeLiveData = MutableLiveData(20f)
+
+        fun getTextSizeLiveData(): LiveData<Float> = textSizeLiveData
     }
 
     override fun onCreate() {
@@ -63,5 +69,25 @@ class App : Application() {
             pref.getBoolean(HINT_TOAST_ON, true),
             pref.getFloat(TEXT_SIZE, 20f)
         )
+        textSizeLiveData.postValue(appSettings.textSize)
+    }
+
+    fun saveSettings () {
+        val pref = getSharedPreferences("list_preferences", Context.MODE_PRIVATE)
+        pref.edit {
+            putString(STATE_THEME, appSettings.stateTheme)
+            putInt(RESTORE_PERIOD, appSettings.restorePeriod)
+            putBoolean(EDIT_EMPTY_DIR, appSettings.editEmptyDir)
+            putBoolean(SORTING_CHECKS, appSettings.sortingChecks)
+            putBoolean(CROSSED_OUT_ON, appSettings.crossedOutOn)
+            putBoolean(NOTIFICATION_ON, appSettings.notificationOn)
+            putBoolean(HINT_TOAST_ON, appSettings.hintToastOn)
+            putFloat(TEXT_SIZE, appSettings.textSize)
+        }
+    }
+
+    fun setTextSizeLiveData (size: Float) {
+        appSettings.textSize = size
+        textSizeLiveData.postValue(size)
     }
 }

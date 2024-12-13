@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -47,12 +46,10 @@ import com.a2t.myapplication.root.presentation.SharedViewModel
 import com.a2t.myapplication.root.presentation.model.SpecialMode
 import com.a2t.myapplication.root.presentation.model.TextFragmentMode
 import com.a2t.myapplication.root.ui.RootActivity
-import com.a2t.myapplication.settings.presentation.SettingsViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Collections
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -71,7 +68,6 @@ const val STEP_ZOOM = 0.5f                                     // Шаг изм�
 
 class MainFragment : Fragment(), MainAdapterCallback, OnScrollStateChangedListener {
     private val sharedViewModel: SharedViewModel by activityViewModel()
-    private val settingsViewModel by viewModel<SettingsViewModel>()
     private val adapter = MainAdapter(this)
     private lateinit var recycler: RecyclerView
     private var mIth: ItemTouchHelper? = null
@@ -132,6 +128,7 @@ class MainFragment : Fragment(), MainAdapterCallback, OnScrollStateChangedListen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val app = requireContext().applicationContext as App
         // Необходимые размеры
         // Определяем ширину экрана, пределы смещения холдера вдоль оси Х вправо и влево
         widthScreen = requireContext().resources.displayMetrics.widthPixels
@@ -140,8 +137,10 @@ class MainFragment : Fragment(), MainAdapterCallback, OnScrollStateChangedListen
         hidhtContextMenu = (56 * dpSize).toInt()                        // Высота контекстного меню в px
         maxShiftToRight = widthScreen * K_MAX_SHIFT_RIGHT               // Величина максимального смещения при свайпе в право
         maxShiftToLeft = widthScreen * K_MAX_SHIFT_LEFT                 // Величина максимального смещения при свайпе в лево
-        sizeGrandText = App.appSettings.textSize
-        topToolbarBinding.pathDir.textSize = 0.75f * sizeGrandText
+        App.getTextSizeLiveData().observe(viewLifecycleOwner) { size ->
+            sizeGrandText = size
+            topToolbarBinding.pathDir.textSize = 0.75f * sizeGrandText
+        }
         var version: String
         try {
             val pInfo: PackageInfo =
@@ -198,14 +197,8 @@ class MainFragment : Fragment(), MainAdapterCallback, OnScrollStateChangedListen
                                 sizeGrandText += STEP_ZOOM
                                 if (sizeGrandText > 27) sizeGrandText = 27f
                             }
-                            App.appSettings.textSize = sizeGrandText
-                            settingsViewModel.updateSettings()      // Сохраняем параметры
-                            // Изменить размер шрифта в поле имя папки
-                            topToolbarBinding.pathDir.setTextSize(TypedValue.COMPLEX_UNIT_SP, 0.75f * sizeGrandText)
-                            // Перерисовать recyclerView
-                            adapter.records.forEachIndexed { index, _ ->
-                                adapter.notifyItemChanged(index)
-                            }
+                            app.setTextSizeLiveData(sizeGrandText)
+                            app.saveSettings()
                         }
                     }
                 }

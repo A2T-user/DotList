@@ -1,4 +1,4 @@
-package com.a2t.myapplication.settings.domain.model
+package com.a2t.myapplication.settings.ui.model
 
 data class AppSettings(
     var stateTheme: String?,
