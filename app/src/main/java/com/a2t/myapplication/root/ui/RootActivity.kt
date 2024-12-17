@@ -2,6 +2,7 @@ package com.a2t.myapplication.root.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class RootActivity : AppCompatActivity() {
+    var idDir: Long? = null
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var binding: ActivityRootBinding
     private lateinit var navController: NavController
@@ -25,7 +27,11 @@ class RootActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        idDir = intent.getLongExtra("IDDIR",0L)
+        Log.e("МОЁ", "onCreate idDir = "+idDir)
         binding = ActivityRootBinding.inflate(layoutInflater)
+
         setContentView(binding.root)
 
         navHostFragment = supportFragmentManager.findFragmentById(R.id.container_view) as NavHostFragment

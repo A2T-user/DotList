@@ -124,6 +124,7 @@ class SharedViewModel(
             0,
             null,
             null,
+            null,
             isArchive = false,
             isDelete = false,
             isFull = false,

@@ -1,5 +1,7 @@
 package com.a2t.myapplication.root.domain.model
 
+import java.util.UUID
+
 data class ListRecord(
     var id: Long,           // id записи
     var idDir: Long,        // id папки, в которой находися эта запись
@@ -14,6 +16,7 @@ data class ListRecord(
     var lastEditTime: Long, // Время последнего редактирования в системном формате (милиСек)
     var alarmTime: Long?,   // Время (в милисекундах) срабатывания напоминания
     var alarmText: String?, // Текст напоминания
+    var alarmId: UUID?,      // id напоминания в WorkManager
     var isArchive: Boolean, // В архиве
     var isDelete: Boolean,  // Помечен, как удаленный
     // Параметры вычисляемые в репозитории

@@ -6,10 +6,12 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.room.Room
 import com.a2t.myapplication.di.dataModule
 import com.a2t.myapplication.di.interactorModule
 import com.a2t.myapplication.di.repositoryModule
 import com.a2t.myapplication.di.viewModelModule
+import com.a2t.myapplication.root.data.db.AppDatabase
 import com.a2t.myapplication.settings.ui.model.AppSettings
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -37,6 +39,10 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        Room.databaseBuilder(applicationContext, AppDatabase::class.java, "database.db")
+            .fallbackToDestructiveMigration()
+            .build()
 
         getSettings()
         switchTheme()

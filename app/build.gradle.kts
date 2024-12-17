@@ -6,11 +6,11 @@ plugins {
 
 android {
     namespace = "com.a2t.myapplication"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.a2t.myapplication"
-        minSdk = 29
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -56,6 +56,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("com.google.firebase:protolite-well-known-types:18.0.0")
+    implementation("androidx.work:work-runtime-ktx:2.10.0")
     ksp("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     testImplementation("junit:junit:4.13.2")

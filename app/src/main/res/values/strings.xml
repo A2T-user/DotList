@@ -110,6 +110,9 @@
     <string name="now">Сейчас:   %1$s</string>
     <string name="select_date">Выберите дату</string>
     <string name="select_time">Выберите время</string>
+    <string name="text_err">Текст напоминания не может быть пустым</string>
+    <string name="notifi_title">Вы просили напомнить:</string>
+    <string name="ban_notifications">Вы не будете получать уведомления с напоминаниями</string>
 
 
 </resources>

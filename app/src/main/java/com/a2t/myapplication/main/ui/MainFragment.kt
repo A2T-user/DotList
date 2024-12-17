@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -145,7 +146,7 @@ class MainFragment : Fragment(), MainAdapterCallback, OnScrollStateChangedListen
         try {
             val pInfo: PackageInfo =
                 requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
-            version = pInfo.versionName
+            version = pInfo.versionName.toString()
         } catch (e: PackageManager.NameNotFoundException) {
             version = ""
         }
@@ -163,8 +164,13 @@ class MainFragment : Fragment(), MainAdapterCallback, OnScrollStateChangedListen
 
         enableSpecialMode()
         initializingRecyclerView()
-        goToDir(animOpenNewDir)
-
+        if ((requireActivity() as RootActivity).idDir == null) {
+            goToDir(animOpenNewDir)
+        } else {
+            goToChildDir((requireActivity() as RootActivity).idDir!!)
+            (requireActivity() as RootActivity).idDir = null
+        }
+        
         // Изменение высоты шрифта
         val counter = AtomicInteger() // Счетчик срабатываний Zoom
         recycler.setOnTouchListener{ _: View?, event: MotionEvent ->
@@ -1000,6 +1006,7 @@ class MainFragment : Fragment(), MainAdapterCallback, OnScrollStateChangedListen
 
     }
 
+    @SuppressLint("NewApi")
     override fun correctingPositionOfRecordByCheck(viewHolder: MainViewHolder) {
         if (App.appSettings.sortingChecks) {
             val fromPosition = adapter.records.indexOfFirst { it.id == viewHolder.id }

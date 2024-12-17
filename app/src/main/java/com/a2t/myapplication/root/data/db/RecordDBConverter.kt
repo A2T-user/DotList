@@ -2,6 +2,7 @@ package com.a2t.myapplication.root.data.db
 
 import com.a2t.myapplication.root.data.db.entity.ListRecordEntity
 import com.a2t.myapplication.root.domain.model.ListRecord
+import java.util.UUID
 
 class RecordDBConverter {
     fun map(r: ListRecord): ListRecordEntity {
@@ -17,6 +18,7 @@ class RecordDBConverter {
             System.currentTimeMillis(),
             r.alarmTime,
             r.alarmText,
+            r.alarmId?.toString(),
             r.isArchive,
             r.isDelete
         )
@@ -36,6 +38,7 @@ class RecordDBConverter {
             r.lastEditTime,
             r.alarmTime,
             r.alarmText,
+            r.alarmId?.let { UUID.fromString(it) },
             r.isArchive,
             r.isDelete,
             isFull = false,

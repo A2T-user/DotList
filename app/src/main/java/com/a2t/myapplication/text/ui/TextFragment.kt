@@ -38,11 +38,14 @@ class TextFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val textSize = App.appSettings.textSize
-        binding.etText.textSize = textSize
-        binding.btnAction.textSize = textSize
-        binding.btnCancel.textSize = textSize
-        binding.tvHint.textSize = 0.6f * textSize
+
+        App.getTextSizeLiveData().observe(viewLifecycleOwner) { size ->
+            binding.etText.textSize = size
+            binding.btnAction.textSize = size
+            binding.btnCancel.textSize = size
+            binding.tvHint.textSize = 0.6f * size
+        }
+
         if (mode != null) {
             if (mode == TextFragmentMode.CONVERT) {
                 showConvertMode()
@@ -176,6 +179,7 @@ class TextFragment : Fragment() {
             0,
             0,
             System.currentTimeMillis(),
+            null,
             null,
             null,
             isArchive = false,

@@ -2,6 +2,7 @@ package com.a2t.myapplication.root.data.db.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.UUID
 
 @Entity(tableName = "list_table")
 class ListRecordEntity(
@@ -17,6 +18,7 @@ class ListRecordEntity(
     val lastEditTime: Long, // Время последнего редактирования в системном формате (милиСек)
     val alarmTime: Long?,   // Время (в милисекундах) срабатывания напоминания
     val alarmText: String?, // Текст напоминания
+    var alarmId: String?,      // id напоминания в WorkManager
     val isArchive: Boolean, // В архиве
     val isDelete: Boolean    // Помечен, как удаленный
 )
