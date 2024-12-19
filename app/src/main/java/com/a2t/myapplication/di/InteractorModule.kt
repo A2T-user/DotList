@@ -1,12 +1,12 @@
 package com.a2t.myapplication.di
 
-import com.a2t.myapplication.root.domain.api.SharedInteractor
-import com.a2t.myapplication.root.domain.impl.SharedInteractorImpl
+import com.a2t.myapplication.main.domain.api.MainInteractor
+import com.a2t.myapplication.main.domain.impl.MainInteractorImpl
 import org.koin.dsl.module
 
 val interactorModule = module {
 
-    single<SharedInteractor> {
-        SharedInteractorImpl(mainRepository = get())
+    single<MainInteractor> {
+        MainInteractorImpl(mainRepository = get())
     }
 }

@@ -16,7 +16,7 @@
         android:theme="@style/Base.Theme.DotListWhite"
         tools:targetApi="31">
         <activity
-            android:name=".root.ui.RootActivity"
+            android:name=".main.ui.activity.MainActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:windowSoftInputMode="stateHidden|adjustPan">
@@ -26,7 +26,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".alarm.receivers.AlarmReceiver" />
     </application>
 
 </manifest>

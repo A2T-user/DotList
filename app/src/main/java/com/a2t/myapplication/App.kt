@@ -11,8 +11,8 @@ import com.a2t.myapplication.di.dataModule
 import com.a2t.myapplication.di.interactorModule
 import com.a2t.myapplication.di.repositoryModule
 import com.a2t.myapplication.di.viewModelModule
-import com.a2t.myapplication.root.data.db.AppDatabase
-import com.a2t.myapplication.settings.ui.model.AppSettings
+import com.a2t.myapplication.main.data.db.AppDatabase
+import com.a2t.myapplication.main.ui.fragments.models.AppSettings
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -28,7 +28,6 @@ class App : Application() {
         const val SORTING_CHECKS = "SORTING_СHECKS"
         const val CROSSED_OUT_ON = "CROSSED_OUT_ON"
         const val NOTIFICATION_ON = "NOTIFICATION_ON"
-        const val HINT_TOAST_ON = "SHOW_HINT_TOAST_ON"
         const val TEXT_SIZE = "TEXT_SIZE"
         lateinit var appSettings: AppSettings
         lateinit var appContext: Context
@@ -63,7 +62,7 @@ class App : Application() {
         )
     }
 
-    fun getSettings () {
+    private fun getSettings () {
         val pref = getSharedPreferences("list_preferences", Context.MODE_PRIVATE)
         appSettings = AppSettings(
             pref.getString(STATE_THEME, SYSTEM),
@@ -72,7 +71,6 @@ class App : Application() {
             pref.getBoolean(SORTING_CHECKS, true),
             pref.getBoolean(CROSSED_OUT_ON, true),
             pref.getBoolean(NOTIFICATION_ON, true),
-            pref.getBoolean(HINT_TOAST_ON, true),
             pref.getFloat(TEXT_SIZE, 20f)
         )
         textSizeLiveData.postValue(appSettings.textSize)
@@ -87,12 +85,11 @@ class App : Application() {
             putBoolean(SORTING_CHECKS, appSettings.sortingChecks)
             putBoolean(CROSSED_OUT_ON, appSettings.crossedOutOn)
             putBoolean(NOTIFICATION_ON, appSettings.notificationOn)
-            putBoolean(HINT_TOAST_ON, appSettings.hintToastOn)
             putFloat(TEXT_SIZE, appSettings.textSize)
         }
     }
 
-    fun setTextSizeLiveData (size: Float) {
+    fun setTextSize (size: Float) {
         appSettings.textSize = size
         textSizeLiveData.postValue(size)
     }
