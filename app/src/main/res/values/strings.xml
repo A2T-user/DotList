@@ -60,6 +60,7 @@
     <string name="dark_theme"><b>Всегда темная тема</b></string>
     <string name="system_theme"><b>Системная тема</b>\n<font size="14">меняется согласно настройкам телефона</font></string>
     <string name="edit"><u>Редактирование</u></string>
+    <string name="text_size">Размер шрифта</string>
     <string name="edit_empty_dir">при открытии пустой папки, запускается редактирование новой строки</string>
     <string name="sort_title"><u>Отметка о выполнении</u></string>
     <string name="sort_text">после установки \u2713, запись перемещается в нижнюю часть списка</string>

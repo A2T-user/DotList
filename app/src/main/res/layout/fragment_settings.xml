@@ -124,44 +124,38 @@
 
                 <TextView
                     style="@style/SettTextStyle"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="match_parent"
                     android:text="@string/restore_period_text"/>
 
-                <LinearLayout
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <SeekBar
+                    android:id="@+id/seekBarRestorePeriod"
+                    style="@style/Widget.AppCompat.SeekBar.Discrete"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:progressTint="@color/blue_icon"
+                    android:thumbTint="@color/blue_icon"
+                    android:max="6"/>
+
+                <TextView
+                    android:id="@+id/tv_restore_period"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:paddingHorizontal="10dp"
                     android:layout_marginEnd="20dp"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/iv_plus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        tools:ignore="contentDescription"
-                        android:src="@drawable/ic_plus"/>
-
-                    <TextView
-                        android:id="@+id/tv_restore_period"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"
-                        android:textSize="20sp"
-                        android:paddingHorizontal="10dp"
-                        android:background="@drawable/rect_blue"/>
-
-                    <ImageView
-                        android:id="@+id/iv_minus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        tools:ignore="contentDescription"
-                        android:src="@drawable/ic_minus"/>
-
-                </LinearLayout>
+                    android:background="@drawable/rect_blue"/>
 
             </LinearLayout>
 
@@ -190,6 +184,43 @@
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/sw_edit_empty_dir"
                 style="@style/SwitchStyle" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_text_size"
+            android:text="@string/text_size"
+            app:drawableStartCompat="@drawable/ic_text_size"
+            style="@style/СhapterStyle"
+            android:textSize="18sp"
+            android:textStyle="normal"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <SeekBar
+                android:id="@+id/seekBarTextSize"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:progressTint="@color/blue_icon"
+                android:thumbTint="@color/blue_icon"
+                android:min="18"
+                android:max="27"/>
+
+            <TextView
+                android:id="@+id/tv_text_size_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginEnd="24dp"
+                tools:text="18"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="normal"/>
 
         </LinearLayout>
 
