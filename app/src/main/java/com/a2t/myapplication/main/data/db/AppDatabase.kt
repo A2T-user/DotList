@@ -2,6 +2,7 @@ package com.a2t.myapplication.main.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.a2t.myapplication.main.data.db.dao.AlarmDao
 import com.a2t.myapplication.main.data.db.dao.MainRecordDao
 import com.a2t.myapplication.main.data.db.entity.ListRecordEntity
 
@@ -9,4 +10,6 @@ import com.a2t.myapplication.main.data.db.entity.ListRecordEntity
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun mainRecordDao(): MainRecordDao
+
+    abstract fun alarmDao(): AlarmDao
 }

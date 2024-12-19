@@ -168,8 +168,8 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         endDayJob?.cancel()
         val alarmTime = item.alarmTime
         val systemTime = System.currentTimeMillis()
-        val endCurrentDay = AlarmHelper.endOfCurrentDay()
         val startCurrentDay = AlarmHelper.startOfCurrentDay()
+        val endCurrentDay = AlarmHelper.endOfCurrentDay()
         if (alarmTime == null) {
             bellType = 0
         } else if (alarmTime > endCurrentDay) {

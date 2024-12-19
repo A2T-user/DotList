@@ -116,4 +116,9 @@ class MainRepositoryImpl(
             appDatabase.mainRecordDao().deletingExpiredRecords(time)
         }
     }
+
+    // Обнуляем устаревшие Alarm-ы
+    override fun deleteOldAlarm(time: Long) {
+        appDatabase.alarmDao().deleteOldAlarm(time)
+    }
 }
