@@ -34,7 +34,6 @@
     <string name="side_bar_send">Переслать список</string>
     <string name="side_bar_convert_text">Конвертировать текст\n в список</string>
     <string name="side_bar_del_mark">Удалить \u0020\u0020\u2713</string>
-    <string name="side_bar_notifications">Управление напоми-\nнаниями</string>
     <string name="side_bar_del_mode">Удалить несколько\nзаписей</string>
     <string name="side_bar_rest_mode">Восстановить\nудаленные записи</string>
     <string name="side_bar_move_mode">Перенос/копирование\nзаписей</string>
@@ -105,16 +104,13 @@
     <string name="notifi_time_hint">Время</string>
     <string name="notifi_save">Сохранить</string>
 
-    <string name="date_time_err">Время напоминания должно быть болше текущего хотябы на 1\u20132 минуты</string>
+    <string name="date_time_err">Время напоминания должно быть болше текущего хотябы на пару минут</string>
     <string name="now">Сейчас:   %1$s</string>
     <string name="select_date">Выберите дату</string>
     <string name="select_time">Выберите время</string>
     <string name="text_err">Текст напоминания не может быть пустым</string>
     <string name="notifi_title">Вы просили напомнить:</string>
     <string name="ban_notifications">Вы не будете получать уведомления с напоминаниями</string>
-
-
-
 
 
 </resources>

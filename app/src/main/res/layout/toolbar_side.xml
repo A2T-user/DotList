@@ -34,9 +34,6 @@
                 android:layout_width="40dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_arrow_left"
-                android:clickable="true"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
                 tools:ignore="ContentDescription" />
 
             <TextView
@@ -96,24 +93,6 @@
             <TextView
                 android:id="@+id/tvSideBarDelMark"
                 android:text="@string/side_bar_del_mark"
-                style="@style/TVSideBarStyle" />
-        </LinearLayout>
-
-
-
-        <LinearLayout
-            android:id="@+id/llSideBarNotifications"
-            tools:ignore="UseCompoundDrawables"
-            style="@style/LLSideBarStyle">
-
-            <ImageView
-                android:src="@drawable/ic_notifications"
-                tools:ignore= "ContentDescription"
-                style="@style/IVSideBarStyle" />
-
-            <TextView
-                android:id="@+id/tvSideBarNotifications"
-                android:text="@string/side_bar_notifications"
                 style="@style/TVSideBarStyle" />
         </LinearLayout>
 
