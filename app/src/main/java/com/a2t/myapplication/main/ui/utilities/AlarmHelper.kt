@@ -66,13 +66,18 @@ class AlarmHelper (private val context: Context) {
     }
 
     fun sendNotification(idDir: Long, alarmText: String) {
-        val intent = Intent(context, MainActivity::class.java)                  // Замените на вашу активность
+        val intent = Intent(context, MainActivity::class.java)
         intent.putExtra("IDDIR", idDir)
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
         val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_notifi)                                 // Иконка в строке состояния
-            .setContentTitle(context.getString(R.string.notifi_title))          // Заголовок
+            .setContentTitle(context.getString(R.string.notifi_title))                           // Заголовок
             .setContentText(alarmText)                                          // Сообщение
             .setAutoCancel(true)                                                // Откл-е после касания
             .setColor(Color.RED)

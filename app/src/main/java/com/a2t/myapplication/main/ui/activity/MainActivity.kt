@@ -1,6 +1,7 @@
 package com.a2t.myapplication.main.ui.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Bundle
@@ -175,8 +176,11 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
         onBackPressedDispatcher.addCallback(this, mainBackPressedCallback)
 
+        mainViewModel.idDir = intent.getLongExtra("IDDIR", 0L)
+
         val startDay = AlarmHelper.startOfCurrentDay()
         mainViewModel.deleteOldAlarm(startDay) {
+            binding.progressBar.isVisible = true
             enableSpecialMode()
             initializingRecyclerView()
             goToDir(animOpenNewDir)
@@ -331,8 +335,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             requestFocusInTouch(view)
             deleteAllMarks()
         }
-
-
 
         // Кнопка режима Переноса
         sideToolbarBinding.llSideBarMoveMode.setOnClickListener { view ->
@@ -785,7 +787,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         sideToolbarBinding.tvSideBarSend.isVisible = show                   // Текст кнопки Переслать
         sideToolbarBinding.tvSideBarConvertText.isVisible = show            // Текст кнопки Конвертация
         sideToolbarBinding.tvSideBarDelMark.isVisible = show                // Текст кнопки Удалить метки
-        sideToolbarBinding.tvSideBarNotifications.isVisible = show          // Текст кнопки Напоминания
         sideToolbarBinding.tvSideBarDelMode.isVisible = show                // Текст кнопки Удаление
         sideToolbarBinding.tvSideBarRestMode.isVisible = show               // Текст кнопки Восстановление
         sideToolbarBinding.tvSideBarMoveMode.isVisible = show               // Текст кнопки Перенос
@@ -1338,9 +1339,17 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+
+        mainViewModel.idDir = intent.getLongExtra("IDDIR", 0L)
+        goToNormalMode()
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
+
         _binding = null // Очищаем привязку, чтобы избежать утечек памяти
     }
 }
