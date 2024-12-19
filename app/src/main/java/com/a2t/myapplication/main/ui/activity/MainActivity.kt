@@ -181,10 +181,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             initializingRecyclerView()
             goToDir(animOpenNewDir)
         }
-
         deleteOldAlarm(startDay)
-
-
 
         // Изменение высоты шрифта
         val counter = AtomicInteger() // Счетчик срабатываний Zoom
@@ -1330,7 +1327,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
     }
 
-    private fun deleteOldAlarm (startTime: Long) {
+    private fun deleteOldAlarm(startTime: Long) {
         val time = startTime + 24 * 60 * 60 * 1000
         lifecycleScope.launch {
             delay(time - System.currentTimeMillis())

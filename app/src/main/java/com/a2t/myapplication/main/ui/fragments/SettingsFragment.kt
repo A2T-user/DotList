@@ -4,14 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import com.a2t.myapplication.App
 import com.a2t.myapplication.databinding.FragmentSettingsBinding
 import com.a2t.myapplication.main.ui.activity.MainActivity
 import com.a2t.myapplication.main.ui.fragments.models.AppSettings
-
-const val MIN_STORAGE_PERIOD_FOR_DELETED_RECORDS = 1
-const val MAX_STORAGE_PERIOD_FOR_DELETED_RECORDS = 7
 
 class SettingsFragment : Fragment() {
 
@@ -51,30 +49,42 @@ class SettingsFragment : Fragment() {
             binding.ivSystemTeme.alpha = 1f
         }
         // Период восстановления
-        binding.ivPlus.setOnClickListener {
-            var period = App.appSettings.restorePeriod
-            if (period < MAX_STORAGE_PERIOD_FOR_DELETED_RECORDS) {
-                period++
-                binding.tvRestorePeriod.text = period.toString()
-                App.appSettings.restorePeriod = period
-                app.saveSettings() // Сохраняем параметры
-            }
-        }
+        binding.tvRestorePeriod.text = App.appSettings.restorePeriod.toString()
+        binding.seekBarRestorePeriod.progress = App.appSettings.restorePeriod
 
-        binding.ivMinus.setOnClickListener {
-            var period = App.appSettings.restorePeriod
-            if (period > MIN_STORAGE_PERIOD_FOR_DELETED_RECORDS) {
-                period--
+        binding.seekBarRestorePeriod.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser:  Boolean) {
+                val period = progress + 1
                 binding.tvRestorePeriod.text = period.toString()
                 App.appSettings.restorePeriod = period
-                app.saveSettings() // Сохраняем параметры
+                app.saveSettings()
             }
-        }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
         // Редактирование
         binding.swEditEmptyDir.setOnCheckedChangeListener { _, checked ->
             App.appSettings.editEmptyDir = checked
             app.saveSettings() // Сохраняем параметры
         }
+        // Размер шрифта
+        binding.seekBarTextSize.progress = App.appSettings.textSize.toInt()
+        App.getTextSizeLiveData().observe(viewLifecycleOwner) { size ->
+            binding.tvTextSize.textSize = size
+            binding.tvTextSizeNumber.text = size.toString()
+        }
+        binding.seekBarTextSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser:  Boolean) {
+                app.setTextSize(progress.toFloat())
+                app.saveSettings()
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
         // Сортировка
         binding.swSortingChecks.setOnCheckedChangeListener { _, checked ->
             App.appSettings.sortingChecks = checked
