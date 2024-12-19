@@ -65,4 +65,9 @@ class MainInteractorImpl(
     override fun deletingExpiredRecords() {
         mainRepository.deletingExpiredRecords()
     }
+
+    // Обнуляем устаревшие Alarm-ы
+    override fun deleteOldAlarm(time: Long) {
+        mainRepository.deleteOldAlarm(time)
+    }
 }

@@ -12,56 +12,43 @@ import android.text.format.DateFormat
 import androidx.core.app.NotificationCompat
 import com.a2t.myapplication.R
 import com.a2t.myapplication.main.ui.activity.MainActivity
-import java.util.Calendar
-import java.util.Date
+import java.time.ZonedDateTime
 
 class AlarmHelper (private val context: Context) {
 
-    private val channelId = "dot_list_channel_id"
+    private val channelId = "dot_list_bell_channel_id"
     private val channelName = "DotList"
 
     init {
         createNotificationChannel()
     }
 
-
     companion object {
+
         fun startOfCurrentDay(): Long {
-            return midnight(0)
+            // Получаем текущее время с учетом часового пояса
+            val now = ZonedDateTime.now()
+            // Устанавливаем время на 00:00:00
+            val startOfDay = now.withHour(0).withMinute(0).withSecond(0).withNano(0)
+            // Преобразуем в миллисекунды с начала эпохи (1970-01-01T00:00:00Z)
+            return startOfDay.toInstant().toEpochMilli()
         }
 
         fun endOfCurrentDay(): Long {
-            return midnight(24)
-        }
-
-        fun midnight(hour: Int): Long {
-            val currentDate = Date()
-            val calendar = Calendar.getInstance()
-            calendar.setTime(currentDate)
-            val startOfDayInMillis = calendar.timeInMillis - calendar.timeZone.rawOffset
-            calendar.timeInMillis = startOfDayInMillis
-            calendar[Calendar.HOUR_OF_DAY] = hour
-            calendar[Calendar.MINUTE] = 0
-            calendar[Calendar.SECOND] = 0
-            calendar[Calendar.MILLISECOND] = 0
-
-            return calendar.timeInMillis
+            return startOfCurrentDay() + 24 * 60 * 60 * 1000
         }
 
         // Конвертация времени в милисекундах в дату или время, если дата - сегодня
         fun convertDateTime(timeInMilliseconds: Long): String {
-            if (timeInMilliseconds == 0L) {
-                return ""
-            } else {
-                val date = DateFormat.format("dd.M.yy", timeInMilliseconds).toString()
+            if (timeInMilliseconds == 0L) return ""
 
-                return if (date == DateFormat.format("dd.M.yy", System.currentTimeMillis())
-                        .toString()
-                ) {
-                    DateFormat.format("HH:mm", timeInMilliseconds).toString()
-                } else {
-                    date
-                }
+            val date = DateFormat.format("dd.M.yy", timeInMilliseconds).toString()
+            val currentDate = DateFormat.format("dd.M.yy", System.currentTimeMillis()).toString()
+
+            return if (date == currentDate) {
+                DateFormat.format("HH:mm", timeInMilliseconds).toString()
+            } else {
+                date
             }
         }
     }

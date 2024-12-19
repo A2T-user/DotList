@@ -28,7 +28,6 @@ class MainViewModel(
     // Параметры для AlarmFragment
     var record: ListRecord? = null
 
-    //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  Методы для MainFragment и TextFragment $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     // Добавление новой записи и получение ее id
     fun insertRecord(record: ListRecord, callback: (Long) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -271,5 +270,14 @@ class MainViewModel(
             }
         }
     }
-    //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  Методы для MainFragment  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+    // Обнуляем устаревшие Alarm-ы
+    fun deleteOldAlarm(time: Long, callback: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mainInteractor.deleteOldAlarm(time)
+            withContext(Dispatchers.Main) {
+                callback()
+            }
+        }
+    }
 }

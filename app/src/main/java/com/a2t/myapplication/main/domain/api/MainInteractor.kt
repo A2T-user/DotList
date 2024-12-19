@@ -33,4 +33,7 @@ interface MainInteractor {
 
     // Удаление записей с итекшим сроком хранения
     fun deletingExpiredRecords()
+
+    // Обнуляем устаревшие Alarm-ы
+    fun deleteOldAlarm (time: Long)
 }

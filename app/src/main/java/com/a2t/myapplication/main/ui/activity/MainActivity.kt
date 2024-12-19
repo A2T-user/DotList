@@ -46,6 +46,7 @@ import com.a2t.myapplication.main.presentation.MainViewModel
 import com.a2t.myapplication.main.ui.activity.model.SpecialMode
 import com.a2t.myapplication.main.ui.fragments.models.TextFragmentMode
 import com.a2t.myapplication.main.ui.fragments.TextFragment
+import com.a2t.myapplication.main.ui.utilities.AlarmHelper
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -174,9 +175,16 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
         onBackPressedDispatcher.addCallback(this, mainBackPressedCallback)
 
-        enableSpecialMode()
-        initializingRecyclerView()
-        goToDir(animOpenNewDir)
+        val startDay = AlarmHelper.startOfCurrentDay()
+        mainViewModel.deleteOldAlarm(startDay) {
+            enableSpecialMode()
+            initializingRecyclerView()
+            goToDir(animOpenNewDir)
+        }
+
+        deleteOldAlarm(startDay)
+
+
 
         // Изменение высоты шрифта
         val counter = AtomicInteger() // Счетчик срабатываний Zoom
@@ -973,14 +981,14 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         goToDir(animOpenChildDir)
     }
 
-    private fun goToDir(animationController: LayoutAnimationController) {
+    private fun goToDir(animationController: LayoutAnimationController?) {
         binding.progressBar.isVisible = true
         mainViewModel.deletingExpiredRecords {
             showList(animationController)
         }
     }
 
-    private fun showList(animationController: LayoutAnimationController) = lifecycleScope.launch {
+    private fun showList(animationController: LayoutAnimationController?) = lifecycleScope.launch {
         mainViewModel.getRecords { records ->
             fillingRecycler(records, animationController)
             updatFieldsOfSmallToolbar()
@@ -990,7 +998,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun fillingRecycler(records: List<ListRecord>, animationController: LayoutAnimationController) {
+    private fun fillingRecycler(records: List<ListRecord>, animationController: LayoutAnimationController?) {
         recycler.layoutAnimation = animationController
         mainViewModel.getNameDir(getIdCurrentDir()) { names ->
             nameDir = if (names.isEmpty()) "R:" else names[0]
@@ -1322,6 +1330,16 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
     }
 
+    private fun deleteOldAlarm (startTime: Long) {
+        val time = startTime + 24 * 60 * 60 * 1000
+        lifecycleScope.launch {
+            delay(time - System.currentTimeMillis())
+            mainViewModel.deleteOldAlarm(time) {
+                goToDir(null)
+                deleteOldAlarm(time)
+            }
+        }
+    }
 
 
     override fun onDestroy() {
