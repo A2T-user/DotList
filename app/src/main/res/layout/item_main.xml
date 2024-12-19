@@ -146,13 +146,13 @@
         android:alpha="0.15"
         android:visibility="invisible"/>
 
-    <!-- Время напомиания -->
+    <!-- Время напомиания полное-->
     <LinearLayout
-        android:id="@+id/ll_bell_2"
+        android:id="@+id/ll_bell_full"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="center"
         android:paddingHorizontal="10dp"
         android:paddingVertical="3dp"
         android:background="@drawable/btn_round"
@@ -160,7 +160,7 @@
 
         <!-- Индикатор напоминания -->
         <ImageView
-            android:id="@+id/iv_bell_2"
+            android:id="@+id/iv_bell_full"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="2dp"
@@ -170,11 +170,11 @@
 
         <!-- Дата/время напомиания -->
         <TextView
-            android:id="@+id/tv_time_bell_2"
+            android:id="@+id/tv_time_bell_full"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
-            android:textColor="?attr/colorMainText"
+            android:textColor="@color/white"
             android:textSize="16sp"
             tools:text="03.11.24 14:07"/>
 

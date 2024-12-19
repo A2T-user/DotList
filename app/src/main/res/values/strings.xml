@@ -3,8 +3,6 @@
     <string name="version">\u2022list %1$s</string>
     <!-- ГЛАВНАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
     <string name="menu_desc">Главное меню приложения</string>
-    <string name="no_seep_mode_on">Включен режим БЕЗ СНА</string>
-    <string name="no_seep_mode_off">Режим БЕЗ СНА выключен</string>
 
     <!-- МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
     <string name="root_dir">R:</string>
@@ -70,7 +68,6 @@
     <string name="restore_period_text">срок хранения удаленной записи (1–7 дней). По истечении этого срока ее восстановление становится не возможным.</string>
     <string name="notifications"><u>Напоминания</u></string>
     <string name="show_notification">выдавть уведомление при наступлении времени напоминания</string>
-    <string name="show_hint_toast">Показывать пояснительные сообщения</string>
 
     <string name="record_hint">Новая строка</string>
     <string name="note_hint">1</string>
@@ -95,13 +92,14 @@
     <string name="send_text_empty">Нет текста для отправки</string>
     <string name="convert_text_empty">Нет текста для конвертации</string>
     <string name="mail_service">Выберите почтовый сервис:</string>
-    
-    <string name="description">Описание</string>
+    <string name="dir_empty">Пересылать нечго.\nПапка пуста!</string>
+
+    <string name="description">Описание приложения</string>
     <string name="set_string">Настройки</string>
-    
+
     <string name="notification">Напоминание</string>
     <string name="notifi_hint">Введите краткий текст напоминания,\nустановите дату и время</string>
-    <string name="notifi_name_hint">Событие</string>
+    <string name="notifi_name_hint">Текст напоминания</string>
     <string name="notifi_date_hint">Дата</string>
     <string name="notifi_time_hint">Время</string>
     <string name="notifi_save">Сохранить</string>
@@ -110,6 +108,12 @@
     <string name="now">Сейчас:   %1$s</string>
     <string name="select_date">Выберите дату</string>
     <string name="select_time">Выберите время</string>
+    <string name="text_err">Текст напоминания не может быть пустым</string>
+    <string name="notifi_title">Вы просили напомнить:</string>
+    <string name="ban_notifications">Вы не будете получать уведомления с напоминаниями</string>
+
+
+
 
 
 </resources>
