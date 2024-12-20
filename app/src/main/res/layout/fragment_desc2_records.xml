@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".description.ui.fragments.RecordsFragment2">
+
+    <!-- Заголовок -->
+    <TextView
+        android:text="@string/desc_records_title"
+        style="@style/DescTitleText" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/yellow_dir" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbarThumbVertical="@color/blue_icon">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="4dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:text="@string/desc_records_text1"
+                style="@style/RegularText" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"
+                android:layout_marginTop="4dp" />
+
+            <include
+                android:id="@+id/record"
+                layout="@layout/item_main"/>
+
+            <TextView
+                android:text="@string/desc_records_text2"
+                android:layout_marginTop="4dp"
+                style="@style/RegularText" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <CheckBox
+                    android:id="@+id/checkbox2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/CheckBox_Style" />
+
+                <TextView
+                    android:text="@string/desc_records_text3"
+                    style="@style/RegularText" />
+
+            </LinearLayout>
+
+            <TextView
+                android:text="@string/desc_records_text4"
+                android:layout_marginTop="4dp"
+                style="@style/RegularText" />
+
+            <TextView
+                android:text="@string/desc_records_text5"
+                app:drawableStartCompat="@drawable/ic_dir_empty"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp"
+                style="@style/RegularText"/>
+
+            <TextView
+                android:text="@string/desc_records_text6"
+                app:drawableStartCompat="@drawable/ic_dir_full"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp"
+                style="@style/RegularText"/>
+
+            <TextView
+                android:text="@string/desc_records_text7"
+                app:drawableStartCompat="@drawable/ic_dir_check"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                style="@style/RegularText"/>
+
+            <TextView
+                android:text="@string/desc_records_text8"
+                android:layout_marginTop="4dp"
+                style="@style/RegularText" />
+
+            <TextView
+                android:text="@string/desc_records_text9"
+                app:drawableStartCompat="@drawable/ic_bell_white"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                style="@style/RegularText"/>
+
+            <TextView
+                android:text="@string/desc_records_text10"
+                app:drawableStartCompat="@drawable/ic_bell_red"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                style="@style/RegularText"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="6dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/iv_bell_red"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="contentDescription"
+                    android:src="@drawable/ic_bell_alarm"/>
+
+                <TextView
+                    android:text="@string/desc_records_text11"
+                    style="@style/RegularText" />
+
+            </LinearLayout>
+
+            <TextView
+                android:text="@string/desc_records_text12"
+                style="@style/RegularText" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="2dp"
+                android:paddingHorizontal="6dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rect_fon_blue"
+                    android:paddingHorizontal="2dp"
+                    android:paddingVertical="4dp"
+                    tools:ignore= "ContentDescription"
+                    android:src="@drawable/ic_finger"/>
+
+                <TextView
+                    android:text="@string/desc_records_text13"
+                    style="@style/RegularText" />
+
+            </LinearLayout>
+
+            <TextView
+                android:text="@string/desc_records_text14"
+                style="@style/RegularText" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="2dp"
+                android:paddingHorizontal="6dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    style="@style/BackgroundBtnStyle"
+                    android:layout_weight="0"
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:src="@drawable/ic_del_white"
+                    tools:ignore="contentDescription" />
+
+                <TextView
+                    android:text="@string/desc_records_text15"
+                    style="@style/RegularText" />
+
+            </LinearLayout>
+
+            <TextView
+                android:text="@string/desc_records_text16"
+                style="@style/RegularText" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="2dp"
+                android:paddingHorizontal="6dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    style="@style/BackgroundBtnStyle"
+                    android:layout_weight="0"
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:src="@drawable/ic_bell_plus"
+                    tools:ignore="contentDescription" />
+
+                <TextView
+                    android:text="@string/desc_records_text17"
+                    style="@style/RegularText" />
+
+            </LinearLayout>
+
+            <TextView
+                android:text="@string/desc_records_text18"
+                style="@style/RegularText" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="2dp"
+                android:paddingHorizontal="6dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    style="@style/BackgroundBtnStyle"
+                    android:layout_weight="0"
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:src="@drawable/ic_bell_edit"
+                    tools:ignore="contentDescription" />
+
+                <TextView
+                    android:text="@string/desc_records_text19"
+                    style="@style/RegularText" />
+
+            </LinearLayout>
+
+            <TextView
+                android:text="@string/desc_records_text20"
+                style="@style/RegularText" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="2dp"
+                android:paddingHorizontal="6dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    style="@style/BackgroundBtnStyle"
+                    android:layout_weight="0"
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:src="@drawable/ic_dir_on"
+                    tools:ignore="contentDescription" />
+
+                <TextView
+                    android:text="@string/desc_records_text21"
+                    style="@style/RegularText" />
+
+            </LinearLayout>
+
+            <TextView
+                android:text="@string/desc_records_text22"
+                style="@style/RegularText" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="2dp"
+                android:paddingHorizontal="6dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    style="@style/BackgroundBtnStyle"
+                    android:layout_weight="0"
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:src="@drawable/ic_dir_off"
+                    tools:ignore="contentDescription" />
+
+                <TextView
+                    android:text="@string/desc_records_text23"
+                    style="@style/RegularText" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="2dp"
+                android:paddingHorizontal="6dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    style="@style/BackgroundBtnStyle"
+                    android:layout_weight="0"
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:src="@drawable/ic_edit"
+                    tools:ignore="contentDescription" />
+
+                <TextView
+                    android:text="@string/desc_records_text24"
+                    style="@style/RegularText" />
+
+            </LinearLayout>
+
+            <TextView
+                android:text="@string/desc_records_text25"
+                android:layout_marginTop="4dp"
+                style="@style/RegularText" />
+
+            <include layout="@layout/context_menu_format"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:visibility="visible"/>
+
+            <TextView
+                android:text="@string/desc_records_text26"
+                style="@style/RegularText" />
+
+
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

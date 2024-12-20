@@ -138,15 +138,17 @@
         android:layout_gravity="bottom"/>
 
     <!-- Слой для выделения записей с checkbox = true -->
+
+    <!-- Время напомиания полное-->
+
     <View
         android:id="@+id/v_layer_check"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorMainText"
         android:alpha="0.15"
-        android:visibility="invisible"/>
+        android:background="?attr/colorMainText"
+        android:visibility="invisible" />
 
-    <!-- Время напомиания полное-->
     <LinearLayout
         android:id="@+id/ll_bell_full"
         android:layout_width="wrap_content"

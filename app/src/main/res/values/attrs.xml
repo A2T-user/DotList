@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="colorBackground"/>
-    <attr name="colorYellowIcon"/>
-    <attr name="colorShadow"/>
-    <attr name="colorMainText"/>
-    <attr name="colorBarText"/>
-    <attr name="colorBar"/>
-    <attr name="colorEye"/>
-    <attr name="colorBarAccent"/>
-    <attr name="enableEditText"/>
-    <attr name="colorIcon"/>
+    <attr name="colorBackground" />
+    <attr name="colorYellowIcon" />
+    <attr name="colorShadow" />
+    <attr name="colorMainText" />
+    <attr name="colorBarText" />
+    <attr name="colorBar" />
+    <attr name="colorEye" />
+    <attr name="colorBarAccent" />
+    <attr name="enableEditText" />
+    <attr name="colorIcon" />
+    <declare-styleable name="FullscreenAttrs">
+        <attr name="fullscreenBackgroundColor" format="color" />
+        <attr name="fullscreenTextColor" format="color" />
+    </declare-styleable>
 </resources>
