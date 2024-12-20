@@ -1,5 +1,6 @@
 package com.a2t.myapplication.main.ui.fragments
 
+import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -10,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.FragmentMainMenuBinding
+import com.a2t.myapplication.description.ui.DescriptionActivity
 import com.a2t.myapplication.main.ui.activity.MainActivity
 
 class MainMenuFragment: Fragment() {
@@ -39,7 +41,8 @@ class MainMenuFragment: Fragment() {
 
         binding.tvDescription.setOnClickListener { v ->
             requestFocusInTouch(v)
-            // Открыть описание
+            val intent = Intent(requireContext(), DescriptionActivity::class.java)
+            startActivity(intent)
         }
 
         binding.tvSettings.setOnClickListener { v ->

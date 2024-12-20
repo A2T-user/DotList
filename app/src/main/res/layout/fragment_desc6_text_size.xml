@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".description.ui.fragments.TextSizeFragment6">
+
+    <!-- Заголовок -->
+    <TextView
+        android:text="@string/desc_size_title"
+        style="@style/DescTitleText" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/yellow_dir" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbarThumbVertical="@color/blue_icon">
+
+
+
+
+
+    </ScrollView>
+
+
+</LinearLayout>

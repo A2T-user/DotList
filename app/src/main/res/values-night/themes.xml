@@ -1,9 +1,13 @@
 <resources>
+
     <style name="Base.Theme.DotListWhite" parent="Base.Theme.DotList">
         <item name="android:colorBackground">@color/dark_background</item>
-        <item name="colorBar">@color/dark_color_bar</item>                         <!-- Фон панелей-->
-        <item name="colorBackground">?attr/android:colorBackground</item>           <!-- Фон основной-->
-        <item name="colorMainText">@color/white</item>                              <!-- Цвет основного текста-->
+        <item name="colorBar">@color/dark_color_bar
+        </item>                         <!-- Фон панелей-->
+        <item name="colorBackground">?attr/android:colorBackground
+        </item>           <!-- Фон основной-->
+        <item name="colorMainText">@color/white
+        </item>                              <!-- Цвет основного текста-->
         <item name="colorEye">@color/light_color_bar</item>
         <item name="colorBarAccent">@color/dark_color_bar_accent</item>
         <item name="enableEditText">@color/edit_text_accent</item>

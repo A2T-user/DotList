@@ -1,18 +1,21 @@
 <resources>
+
     <style name="Base.Theme.DotList" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimaryDark">@color/black</item>
-        <item name="colorBarText">@color/white</item>                              <!-- Цвет основного текста-->
+        <item name="colorBarText">@color/white</item>                  <!-- Цвет основного текста-->
         <item name="colorShadow">@color/shadowColor</item>
-        <item name="colorYellowIcon">@color/yellow_dir</item>                  <!-- Желтый цвет иконок -->
+        <item name="colorYellowIcon">@color/yellow_dir</item>          <!-- Желтый цвет иконок -->
     </style>
+
     <style name="Base.Theme.DotListWhite" parent="Base.Theme.DotList">
         <item name="android:colorBackground">@color/light_background</item>
-        <item name="colorBar">@color/light_color_bar</item>                         <!-- Фон панелей-->
-        <item name="colorBackground">?attr/android:colorBackground</item>           <!-- Фон основной-->
-        <item name="colorMainText">@color/black</item>                              <!-- Цвет основного текста-->
+        <item name="colorBar">@color/light_color_bar</item>                     <!-- Фон панелей-->
+        <item name="colorBackground">?attr/android:colorBackground</item>       <!-- Фон основной-->
+        <item name="colorMainText">@color/black</item>                          <!-- Цвет основного текста-->
         <item name="colorEye">@color/dark_color_bar</item>
         <item name="colorBarAccent">@color/light_color_bar_accent</item>
         <item name="enableEditText">@color/white</item>
         <item name="colorIcon">@color/blue_icon</item>
     </style>
+
 </resources>

@@ -55,7 +55,7 @@ class AlarmHelper (private val context: Context) {
 
     private fun createNotificationChannel() {
         val uri = Uri.parse("android.resource://" + context.packageName + "/" + R.raw.bell)
-        val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT).apply {
+        val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH).apply {
             setSound(uri, AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)

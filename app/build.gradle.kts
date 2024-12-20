@@ -58,6 +58,7 @@ dependencies {
     implementation("com.google.firebase:protolite-well-known-types:18.0.0")
     implementation("androidx.work:work-runtime-ktx:2.10.0")
     implementation("androidx.activity:activity-ktx:1.9.3")
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
     ksp("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     testImplementation("junit:junit:4.13.2")
