@@ -17,10 +17,10 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.App
 import com.a2t.myapplication.R
-import com.a2t.myapplication.main.ui.fragments.AlarmFragment
-import com.a2t.myapplication.main.ui.activity.MainActivity
 import com.a2t.myapplication.main.domain.model.ListRecord
+import com.a2t.myapplication.main.ui.activity.MainActivity
 import com.a2t.myapplication.main.ui.activity.model.SpecialMode
+import com.a2t.myapplication.main.ui.fragments.AlarmFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -33,12 +33,10 @@ class MainAdapter(
 
     private var jobBellFull = Job() as Job
     private var jobDebounce = Job() as Job
-    private var isClickAllowed = true
     val records = ArrayList<ListRecord>()
     var specialMode = SpecialMode.NORMAL
     var isKeyboardON = false
     var currentHolderIdLiveData = MutableLiveData(-1L)
-    private var showBellFullIdLiveData = MutableLiveData(-1L)
     var currentItem: ListRecord? = null
     var currentHolderPosition = -1
 
@@ -52,7 +50,6 @@ class MainAdapter(
         val item = records[position]
         holder.bind(item)
         App.getTextSizeLiveData().observeForever(holder.observerTextSize!!)
-        showBellFullIdLiveData.observeForever(holder.observerBellFull!!)
         if (specialMode == SpecialMode.NORMAL || specialMode == SpecialMode.MOVE) {
             holder.observerId = Observer { currentHolderId ->
                 if (currentHolderId == holder.id) {
@@ -74,26 +71,16 @@ class MainAdapter(
             holder.checkbox.isClickable = false
             holder.checkbox.isEnabled = false
         }
-        // Клик по колокольчику показывает время напоминания
-        holder.ivBell.setOnClickListener {
-            if (clickDebounce()) {
-                showBellFullIdLiveData.postValue(item.id)
-                jobBellFull = CoroutineScope(Dispatchers.Main).launch {
-                    delay(5000)
-                    showBellFullIdLiveData.postValue(-1)
-                }
+
+        // Касание колокольчика показывает время установки напоминания
+        holder.ivBell.setOnTouchListener { _: View?, event: MotionEvent ->
+            mac.requestMenuFocus()
+            when (event.action and MotionEvent.ACTION_MASK) {
+                MotionEvent.ACTION_DOWN -> holder.llBellFull.isVisible = true                           // Выводит на экран сообщение о напоминании
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> holder.llBellFull.isVisible = false // Скрывает сообщение о напоминании
+                else -> {}
             }
-        }
-        // Лонгклик по колокольчику показывает время всех напоминаний в текущей папке
-        holder.ivBell.setOnLongClickListener {
-            if (clickDebounce()) {
-                showBellFullIdLiveData.postValue(0)
-                jobBellFull = CoroutineScope(Dispatchers.Main).launch {
-                    delay(5000)
-                    showBellFullIdLiveData.postValue(-1)
-                }
-            }
-            true
+            holder.llBellFull.isVisible
         }
 
         when(specialMode) {
@@ -145,7 +132,7 @@ class MainAdapter(
                         isKeyboardON = false
                         mac.goToChildDir(item.id)
                     } else {
-                        if (/*specialMode == SpecialMode.NORMAL &&*/ !item.isEdit) startEditMode(item, holder)
+                        if (!item.isEdit) startEditMode(item, holder)
                     }
                 }
                 // Открытие меню форматирования текста
@@ -166,7 +153,7 @@ class MainAdapter(
 
                 // Перетаскивание
                 holder.llAction.setOnTouchListener { _: View?, event: MotionEvent ->
-                    if (specialMode == SpecialMode.NORMAL && event.action == MotionEvent.ACTION_DOWN) {
+                    if (event.action == MotionEvent.ACTION_DOWN) {
                         mac.onStartDrag(holder)
                     }
                     false
@@ -431,10 +418,6 @@ class MainAdapter(
             App.getTextSizeLiveData().removeObserver(observer)
             holder.observerTextSize = null
         }
-        holder.observerBellFull?.let { observer ->
-            showBellFullIdLiveData.removeObserver(observer)
-            holder.observerBellFull = null
-        }
         jobDebounce.cancel()
         jobBellFull.cancel()
     }
@@ -443,18 +426,6 @@ class MainAdapter(
         currentHolderIdLiveData.postValue(item.id)
         currentItem = item
         currentHolderPosition = position
-    }
-
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            jobDebounce = CoroutineScope(Dispatchers.Main).launch {
-                delay(5100)
-                isClickAllowed = true
-            }
-        }
-        return current
     }
 
     override fun getItemCount() = records.size
