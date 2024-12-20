@@ -29,7 +29,6 @@ import kotlinx.coroutines.launch
 class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     var observerId: Observer<Long>? = null
     var observerTextSize: Observer<Float>? = null
-    var observerBellFull: Observer<Long>? = null
     private var endDayJob: Job? = null
     private var alarmJob: Job? = null
     private var animationBell: Animation = AnimationUtils.loadAnimation(App.appContext, R.anim.anim_bell)
@@ -46,7 +45,7 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     val ivBell: ImageView = itemView.findViewById(R.id.iv_bell)
     val llAction: LinearLayout = itemView.findViewById(R.id.ll_action)
     val ivAction: ImageView = itemView.findViewById(R.id.iv_action)
-    private val llBellFull: LinearLayout = itemView.findViewById(R.id.ll_bell_full)
+    val llBellFull: LinearLayout = itemView.findViewById(R.id.ll_bell_full)
     private val ivBellFull: ImageView = itemView.findViewById(R.id.iv_bell_full)
     private val tvTimeBellFull: TextView = itemView.findViewById(R.id.tv_time_bell_full)
     // background
@@ -104,11 +103,6 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             aetNote.textSize = 0.75f * size
         }
 
-        // Показывать полное время напоминания
-        observerBellFull = Observer { id ->
-            if (item.alarmTime != null) llBellFull.isVisible = id == 0L || id == item.id
-        }
-
         aetRecord.setText(item.record)
         aetNote.setText(item.note)
         aetNote.isVisible = item.note.isNotEmpty()
@@ -117,7 +111,11 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         changeTextUnder(item.textUnder)
         changeBellType(item)
         changeBellIcon()
-        item.alarmTime?.let { tvTimeBellFull.text = DateFormat.format("EEE dd.M.yy HH:mm", it).toString() }
+        item.alarmTime?.let {
+            tvTimeBellFull.text = DateFormat.format("EEE dd.M.yy HH:mm", it)
+            .toString()
+            .replaceFirstChar { char -> char.uppercase() }
+        }
     }
 
     private fun changeTextColor(textColor: Int) {

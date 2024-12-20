@@ -156,6 +156,7 @@
         android:paddingHorizontal="10dp"
         android:paddingVertical="3dp"
         android:background="@drawable/btn_round"
+        android:focusableInTouchMode="true"
         android:visibility="gone">
 
         <!-- Индикатор напоминания -->
