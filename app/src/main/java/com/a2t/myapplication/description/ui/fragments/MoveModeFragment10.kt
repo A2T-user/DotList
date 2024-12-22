@@ -5,20 +5,49 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import androidx.core.view.isVisible
+import com.a2t.myapplication.R
+import com.a2t.myapplication.databinding.ContextMenuMoveBinding
 import com.a2t.myapplication.databinding.FragmentDesc10MoveModeBinding
+import com.a2t.myapplication.databinding.ToolbarModesBinding
 
 class MoveModeFragment10 : Fragment() {
     private var _binding: FragmentDesc10MoveModeBinding? = null
     private val binding get() = _binding!!
+    private lateinit var modesBinding: ToolbarModesBinding
+    private lateinit var contextMenu: ContextMenuMoveBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentDesc10MoveModeBinding.inflate(layoutInflater)
-
+        modesBinding = binding.tbModes
+        contextMenu = binding.cmMove
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Панель режимов
+        modesBinding.clModesToolbar.isVisible = true
+        val animationMoveMode = AnimationUtils.loadAnimation(requireContext(), R.anim.arrow_right)
+        modesBinding.btnSelectAll.isVisible = false
+        modesBinding.btnAction.isVisible = true
+        modesBinding.btnAction.text = getString(R.string.insert)
+        modesBinding.tvModeHint.isVisible = false
+        modesBinding.ivBarModes3.isVisible = false
+        modesBinding.ivBarModes2.setImageResource(R.drawable.ic_move_mode_2)
+        modesBinding.ivBarModes1.setImageResource(R.drawable.ic_move_mode_1)
+        modesBinding.ivBarModes1.startAnimation(animationMoveMode)               // Анимация
+        modesBinding.countRecords.isVisible = true
+        modesBinding.countRecords.text = "8"
+
+        // Контекстное меню
+         contextMenu.llContextMenuMove.isVisible = true
+
     }
 
     override fun onDestroyView() {

@@ -10,22 +10,96 @@
     <TextView
         android:text="@string/desc_nav_title"
         style="@style/DescTitleText" />
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/yellow_dir" />
+    <View style="@style/DevirerView" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scrollbarThumbVertical="@color/blue_icon">
+    <ScrollView style="@style/DescScroll">
 
+        <LinearLayout style="@style/LLScrollContainer">
 
+            <TextView
+                android:text="@string/desc_nav_text1"
+                style="@style/RegularText" />
 
+            <include
+                android:id="@+id/tb_small"
+                layout="@layout/toolbar_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginVertical="6dp"/>
 
+            <TextView
+                android:text="@string/desc_nav_text2"
+                style="@style/RegularText" />
 
+            <LinearLayout style="@style/LLLineContainer">
+
+                <TextView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:gravity="center"
+                    android:background="@drawable/ic_full_dir"
+                    android:text="@string/root_dir"
+                    android:textColor="@color/red_icon"
+                    android:textSize="14sp"
+                    android:layout_marginEnd="4dp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:text="@string/desc_nav_text3"
+                    style="@style/RegularText" />
+
+            </LinearLayout>
+
+            <TextView
+                android:text="@string/desc_nav_text4"
+                style="@style/RegularText" />
+
+            <LinearLayout style="@style/LLLineContainer">
+
+                <TextView
+                    style="@style/SmallBarText"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:paddingBottom="2dp"
+                    android:textColor="?attr/colorYellowIcon"
+                    android:text="@string/ic_strings" />
+
+                <TextView
+                    android:text="@string/desc_nav_text5"
+                    style="@style/RegularText" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/LLLineContainer">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    tools:ignore="contentDescription"
+                    android:src="@drawable/ic_count_dir"/>
+
+                <TextView
+                    android:text="@string/desc_nav_text6"
+                    style="@style/RegularText" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/LLLineContainer">
+
+                <TextView
+                    style="@style/SmallBarText"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:textColor="?attr/colorYellowIcon"
+                    android:text="@string/symb_sum" />
+
+                <TextView
+                    android:text="@string/desc_nav_text7"
+                    style="@style/RegularText" />
+
+            </LinearLayout>
+        </LinearLayout>
     </ScrollView>
-
-
 </LinearLayout>

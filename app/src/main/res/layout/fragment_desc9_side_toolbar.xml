@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".description.ui.fragments.SideToolbarFragment9">
 
@@ -10,22 +11,129 @@
     <TextView
         android:text="@string/desc_side_tb_title"
         style="@style/DescTitleText" />
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/yellow_dir" />
+    <View style="@style/DevirerView" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scrollbarThumbVertical="@color/blue_icon">
+    <ScrollView style="@style/DescScroll">
 
+        <LinearLayout style="@style/LLScrollContainer">
 
+            <TextView
+                android:text="@string/desc_side_tb_text1"
+                style="@style/RegularText" />
 
+            <TextView
+                style="@style/RegularText"
+                android:layout_marginTop="4dp"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                android:text="@string/desc_side_tb_text2"
+                app:drawableStartCompat="@drawable/ic_arrow_left" />
 
+            <LinearLayout style="@style/LLLineContainer">
 
+                <ImageView
+                    android:src="@drawable/ic_send"
+                    tools:ignore= "ContentDescription"
+                    style="@style/IVSideBarStyle" />
+
+                <TextView
+                    style="@style/RegularText"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/desc_side_tb_text3" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/LLLineContainer">
+
+                <ImageView
+                    android:src="@drawable/ic_convert_text"
+                    tools:ignore= "ContentDescription"
+                    style="@style/IVSideBarStyle" />
+
+                <TextView
+                    style="@style/RegularText"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/desc_side_tb_text4" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/LLLineContainer">
+
+                <ImageView
+                    android:src="@drawable/ic_del_mark"
+                    tools:ignore= "ContentDescription"
+                    style="@style/IVSideBarStyle" />
+
+                <TextView
+                    style="@style/RegularText"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/desc_side_tb_text5" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/LLLineContainer">
+
+                <ImageView
+                    android:src="@drawable/ic_move_mode"
+                    tools:ignore= "ContentDescription"
+                    style="@style/IVSideBarStyle" />
+
+                <TextView
+                    style="@style/RegularText"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/desc_side_tb_text6" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/LLLineContainer">
+
+                <ImageView
+                    android:src="@drawable/ic_del_mode_yell"
+                    tools:ignore= "ContentDescription"
+                    style="@style/IVSideBarStyle" />
+
+                <TextView
+                    style="@style/RegularText"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/desc_side_tb_text7" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/LLLineContainer">
+
+                <ImageView
+                    android:src="@drawable/ic_rest_mode_yell"
+                    tools:ignore= "ContentDescription"
+                    style="@style/IVSideBarStyle" />
+
+                <TextView
+                    style="@style/RegularText"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/desc_side_tb_text8" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/LLLineContainer">
+
+                <ImageView
+                    android:src="@drawable/ic_archive_mode"
+                    tools:ignore= "ContentDescription"
+                    style="@style/IVSideBarStyle" />
+
+                <TextView
+                    style="@style/RegularText"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/desc_side_tb_text9" />
+
+            </LinearLayout>
+
+        </LinearLayout>
     </ScrollView>
-
-
 </LinearLayout>

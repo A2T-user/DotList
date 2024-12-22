@@ -34,6 +34,7 @@ import com.a2t.myapplication.databinding.ToolbarModesBinding
 import com.a2t.myapplication.databinding.ToolbarSideBinding
 import com.a2t.myapplication.databinding.ToolbarSmallBinding
 import com.a2t.myapplication.databinding.ToolbarTopBinding
+import com.a2t.myapplication.description.ui.DescriptionActivity
 import com.a2t.myapplication.main.ui.ActionEditText
 import com.a2t.myapplication.main.ui.fragments.MainMenuFragment
 import com.a2t.myapplication.main.ui.activity.recycler.MainAdapter
@@ -67,6 +68,7 @@ const val EYE_ANIMATION_DELEY = 5000L
 // на NUMBER_OF_OPERATIO_ZOOM срабатываний
 const val NUMBER_OF_OPERATIO_ZOOM = 5
 const val STEP_ZOOM = 0.5f                                     // Шаг изменения размера шрифта
+const val CURRENT_TAB = "current_tab"
 
 class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChangedListener {
     lateinit var mainBackPressedCallback: OnBackPressedCallback
@@ -402,6 +404,19 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         // Клик по кнопке Закрыть закрывает нижнюю панель и переводит экран в обычный режим
         modesToolbarBinding.btnCloseToolbar.setOnClickListener {
             completionSpecialMode()
+        }
+
+        // Клик по кнопке ? открыват Описание на нужной вклвдке
+        modesToolbarBinding.btnHelp.setOnClickListener {
+            val currentTab = when(adapter.specialMode) {
+                SpecialMode.MOVE -> 10
+                SpecialMode.DELETE -> 11
+                SpecialMode.RESTORE -> 12
+                SpecialMode.ARCHIVE -> 13
+                else -> 0
+            }
+
+            if (currentTab != 0) openDescriptionActivity(currentTab)
         }
 
         modesToolbarBinding.btnSelectAll.setOnClickListener {
@@ -1337,6 +1352,12 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 deleteOldAlarm(time)
             }
         }
+    }
+
+    private fun openDescriptionActivity(currentTab: Int) {
+        val intent = Intent(this, DescriptionActivity::class.java)
+        intent.putExtra(CURRENT_TAB, currentTab)
+        startActivity(intent)
     }
 
     override fun onNewIntent(intent: Intent) {

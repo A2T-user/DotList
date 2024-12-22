@@ -10,21 +10,18 @@
     <TextView
         android:text="@string/desc_general_title"
         style="@style/DescTitleText" />
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/yellow_dir" />
+    <View style="@style/DevirerView" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scrollbarThumbVertical="@color/blue_icon">
+    <ScrollView style="@style/DescScroll">
 
-        <TextView
-            android:text="@string/desc_general_text1"
-            android:layout_marginTop="4dp"
-            style="@style/RegularText" />
+        <LinearLayout style="@style/LLScrollContainer">
+
+            <TextView
+                android:text="@string/desc_general_text1"
+                android:layout_marginTop="4dp"
+                style="@style/RegularText" />
+
+        </LinearLayout>
 
     </ScrollView>
 

@@ -50,7 +50,7 @@
                 android:layout_gravity="end|bottom"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="70dp"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <ImageView
                     android:id="@+id/iv_btn_scroll"

@@ -12,9 +12,11 @@ import androidx.fragment.app.Fragment
 import com.a2t.myapplication.App
 import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.FragmentTextBinding
+import com.a2t.myapplication.description.ui.DescriptionActivity
 import com.a2t.myapplication.main.ui.activity.MainActivity
 import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.presentation.MainViewModel
+import com.a2t.myapplication.main.ui.activity.CURRENT_TAB
 import com.a2t.myapplication.main.ui.fragments.models.TextFragmentMode
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
@@ -44,9 +46,6 @@ class TextFragment : Fragment() {
 
         App.getTextSizeLiveData().observe(viewLifecycleOwner) { size ->
             binding.etText.textSize = size
-            binding.btnAction.textSize = size
-            binding.btnCancel.textSize = size
-            binding.tvHint.textSize = 0.6f * size
         }
 
         if (mode != null) {
@@ -58,6 +57,12 @@ class TextFragment : Fragment() {
         } else {
             Toast.makeText(requireContext(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
             requireActivity().supportFragmentManager.popBackStack()
+        }
+
+        // Кнопка Help
+        binding.btnHelp.setOnClickListener {
+            val currentTab = if (mode == TextFragmentMode.SEND) 15 else 14
+            openDescriptionActivity(currentTab)
         }
 
         // Кнопка Отмена
@@ -214,23 +219,15 @@ class TextFragment : Fragment() {
         return result
     }
 
+    private fun openDescriptionActivity(currentTab: Int) {
+        val intent = Intent(requireContext(), DescriptionActivity::class.java)
+        intent.putExtra(CURRENT_TAB, currentTab)
+        requireActivity().startActivity(intent)
+    }
+
     override fun onStart() {
         super.onStart()
         (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = false
-    }
-
-    override fun onResume() {
-        super.onResume()
-        view?.apply {
-            isFocusable = true
-            isFocusableInTouchMode = true
-            requestFocus()
-            setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    parentFragmentManager.beginTransaction().remove(this@TextFragment).commitAllowingStateLoss() // Закрытие фрагмента
-                }
-            }
-        }
     }
 
     override fun onStop() {

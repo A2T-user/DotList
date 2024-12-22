@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_description_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusableInTouchMode="true"
+    android:background="@drawable/btn_rectangle"
+    android:visibility="gone">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:text="@string/description_content"
+        android:textSize="24sp"
+        android:textColor="@color/blue_icon"
+        android:textStyle="bold"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:scrollbarThumbVertical="@color/blue_icon">
+
+        <LinearLayout
+            android:id="@+id/paragraph_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/desc_general1"
+                style="@style/DescContentTV"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                android:text="@string/desc_general_title" />
+
+            <TextView
+                android:id="@+id/records2"
+                style="@style/DescContentTV"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                android:text="@string/desc_records_title"/>
+
+            <TextView
+                android:id="@+id/lines3"
+                style="@style/DescContentTV"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                android:text="@string/desc_lines_title"/>
+
+            <TextView
+                android:id="@+id/dirs4"
+                style="@style/DescContentTV"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                android:text="@string/desc_dirs_title"/>
+
+            <TextView
+                android:id="@+id/nav5"
+                style="@style/DescContentTV"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                android:text="@string/desc_nav_title"/>
+
+            <TextView
+                android:id="@+id/size6"
+                style="@style/DescContentTV"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                android:text="@string/desc_size_title"/>
+
+            <TextView
+                android:id="@+id/alarms7"
+                style="@style/DescContentTV"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                android:text="@string/desc_alarms_title"/>
+
+            <TextView
+                android:id="@+id/main_tb8"
+                style="@style/DescContentTV"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                android:text="@string/desc_main_tb_title"/>
+
+            <TextView
+                android:id="@+id/side_tb9"
+                style="@style/DescContentTV"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                android:text="@string/desc_side_tb_title"/>
+
+            <TextView
+                android:id="@+id/move_mode10"
+                style="@style/DescContentTV"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                android:text="@string/desc_move_mode_title"/>
+
+            <TextView
+                android:id="@+id/del_mode11"
+                style="@style/DescContentTV"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                android:text="@string/desc_del_mode_title"/>
+
+            <TextView
+                android:id="@+id/rest_mode12"
+                style="@style/DescContentTV"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                android:text="@string/desc_rest_mode_title"/>
+
+            <TextView
+                android:id="@+id/archive13"
+                style="@style/DescContentTV"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                android:text="@string/desc_archive_title"/>
+
+            <TextView
+                android:id="@+id/convert14"
+                style="@style/DescContentTV"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                android:text="@string/desc_convert_title"/>
+
+            <TextView
+                android:id="@+id/send15"
+                style="@style/DescContentTV"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                android:text="@string/desc_send_title"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
