@@ -15,12 +15,13 @@ import com.a2t.myapplication.description.ui.fragments.MoveModeFragment10
 import com.a2t.myapplication.description.ui.fragments.NavFragment5
 import com.a2t.myapplication.description.ui.fragments.RecordsFragment2
 import com.a2t.myapplication.description.ui.fragments.RestoreModeFragment12
+import com.a2t.myapplication.description.ui.fragments.SendFragment15
 import com.a2t.myapplication.description.ui.fragments.SideToolbarFragment9
 import com.a2t.myapplication.description.ui.fragments.TextSizeFragment6
 
 class PagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
 
-    override fun getItemCount(): Int = 14
+    override fun getItemCount(): Int = 15
 
     override fun createFragment(position: Int): Fragment {
         return  when (position + 1) {
@@ -37,7 +38,8 @@ class PagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fr
             11 -> DelModeFragment11()
             12 -> RestoreModeFragment12()
             13 -> ArchiveFragment13()
-            else -> ConvertFragment14()
+            14 -> ConvertFragment14()
+            else -> SendFragment15()
         }
     }
 }

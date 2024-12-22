@@ -10,22 +10,77 @@
     <TextView
         android:text="@string/desc_archive_title"
         style="@style/DescTitleText" />
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/yellow_dir" />
+    <View style="@style/DevirerView" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scrollbarThumbVertical="@color/blue_icon">
+    <ScrollView style="@style/DescScroll">
 
+        <LinearLayout style="@style/LLScrollContainer">
 
+            <TextView
+                style="@style/RegularText"
+                android:text="@string/desc_archive_text1"/>
 
+            <LinearLayout style="@style/LLLineContainer">
 
+                <TextView
+                    style="@style/RegularText"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/desc_archive_text2" />
 
+                <ImageView
+                    android:src="@drawable/ic_archive_mode"
+                    tools:ignore= "ContentDescription"
+                    style="@style/IVSideBarStyle" />
+
+            </LinearLayout>
+
+            <TextView
+                style="@style/RegularText"
+                android:text="@string/desc_archive_text3"/>
+
+            <LinearLayout style="@style/LLLineContainer">
+
+                <TextView
+                    style="@style/RegularText"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/desc_archive_text4" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rect_fon_blue"
+                    android:paddingHorizontal="2dp"
+                    android:paddingVertical="4dp"
+                    android:src="@drawable/ic_archive_red"
+                    tools:ignore="ContentDescription" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/LLLineContainer">
+
+                <TextView
+                    style="@style/RegularText"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/desc_archive_text5" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rect_fon_blue"
+                    android:paddingHorizontal="2dp"
+                    android:paddingVertical="4dp"
+                    android:src="@drawable/ic_archive_trans"
+                    tools:ignore="ContentDescription" />
+
+            </LinearLayout>
+
+            <TextView
+                style="@style/RegularText"
+                android:text="@string/desc_archive_text6"/>
+
+        </LinearLayout>
     </ScrollView>
-
-
 </LinearLayout>

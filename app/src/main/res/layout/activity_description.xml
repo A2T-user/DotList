@@ -12,4 +12,66 @@
         android:layout_height="match_parent"
         android:background="?attr/colorBar"/>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/shadow_circle">
+
+        <ImageView
+            android:id="@+id/go_to_previous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            tools:ignore="contentDescription"
+            android:src="@drawable/ic_arrow_left"/>
+
+        <ImageView
+            android:id="@+id/go_to_desc_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            tools:ignore="contentDescription"
+            android:background="@drawable/shadow_circle"
+            android:src="@drawable/ic_desc_content"/>
+
+        <ImageView
+            android:id="@+id/go_to_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            tools:ignore="contentDescription"
+            android:src="@drawable/ic_arrow_left"
+            android:rotation="180"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:animateLayoutChanges="true">
+
+            <include android:id="@+id/desc_content"
+                layout="@layout/description_content"/>
+
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/fon"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"/>
+
+
+    </LinearLayout>
+
 </FrameLayout>

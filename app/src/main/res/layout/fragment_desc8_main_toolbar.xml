@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".description.ui.fragments.MainToolbarFragment8">
 
@@ -10,22 +11,47 @@
     <TextView
         android:text="@string/desc_main_tb_title"
         style="@style/DescTitleText" />
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/yellow_dir" />
+    <View style="@style/DevirerView" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scrollbarThumbVertical="@color/blue_icon">
+    <ScrollView style="@style/DescScroll">
 
+        <LinearLayout style="@style/LLScrollContainer">
 
+            <TextView
+                android:text="@string/desc_main_tb_text1"
+                style="@style/RegularText" />
 
+            <include
+                android:id="@+id/tb_top"
+                layout="@layout/toolbar_top"/>
 
+            <TextView
+                android:text="@string/desc_main_tb_text2"
+                android:layout_marginTop="4dp"
+                style="@style/RegularText" />
 
+            <TextView
+                android:text="@string/desc_main_tb_text3"
+                app:drawableStartCompat="@drawable/ic_burger"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                style="@style/RegularText"/>
+
+            <TextView
+                android:text="@string/desc_main_tb_text4"
+                style="@style/RegularText" />
+
+            <TextView
+                android:text="@string/desc_main_tb_text5"
+                app:drawableStartCompat="@drawable/ic_eye_closed"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                style="@style/RegularText"/>
+
+            <TextView
+                android:text="@string/desc_main_tb_text6"
+                style="@style/RegularText" />
+
+        </LinearLayout>
     </ScrollView>
-
-
 </LinearLayout>

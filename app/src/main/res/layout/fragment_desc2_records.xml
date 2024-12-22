@@ -12,23 +12,11 @@
         android:text="@string/desc_records_title"
         style="@style/DescTitleText" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/yellow_dir" />
+    <View style="@style/DevirerView" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scrollbarThumbVertical="@color/blue_icon">
+    <ScrollView style="@style/DescScroll">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="4dp"
-            android:paddingBottom="10dp">
+        <LinearLayout style="@style/LLScrollContainer">
 
             <TextView
                 android:text="@string/desc_records_text1"
@@ -49,11 +37,7 @@
                 android:layout_marginTop="4dp"
                 style="@style/RegularText" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+            <LinearLayout style="@style/LLLineContainer">
 
                 <CheckBox
                     android:id="@+id/checkbox2"
@@ -96,9 +80,9 @@
                 style="@style/RegularText"/>
 
             <TextView
-                android:text="@string/desc_records_text8"
+                style="@style/RegularText"
                 android:layout_marginTop="4dp"
-                style="@style/RegularText" />
+                android:text="@string/desc_records_text8" />
 
             <TextView
                 android:text="@string/desc_records_text9"
@@ -114,12 +98,7 @@
                 android:gravity="center_vertical"
                 style="@style/RegularText"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingHorizontal="6dp"
-                android:gravity="center_vertical">
+            <LinearLayout style="@style/LLLineContainer">
 
                 <ImageView
                     android:id="@+id/iv_bell_red"
@@ -138,13 +117,8 @@
                 android:text="@string/desc_records_text12"
                 style="@style/RegularText" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="2dp"
-                android:paddingHorizontal="6dp"
-                android:gravity="center_vertical">
+            <LinearLayout style="@style/LLLineContainer"
+                android:layout_marginTop="2dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -165,13 +139,8 @@
                 android:text="@string/desc_records_text14"
                 style="@style/RegularText" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="2dp"
-                android:paddingHorizontal="6dp"
-                android:gravity="center_vertical">
+            <LinearLayout style="@style/LLLineContainer"
+                android:layout_marginTop="2dp">
 
                 <ImageView
                     style="@style/BackgroundBtnStyle"
@@ -191,13 +160,8 @@
                 android:text="@string/desc_records_text16"
                 style="@style/RegularText" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="2dp"
-                android:paddingHorizontal="6dp"
-                android:gravity="center_vertical">
+            <LinearLayout style="@style/LLLineContainer"
+                android:layout_marginTop="2dp">
 
                 <ImageView
                     style="@style/BackgroundBtnStyle"
@@ -217,13 +181,8 @@
                 android:text="@string/desc_records_text18"
                 style="@style/RegularText" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="2dp"
-                android:paddingHorizontal="6dp"
-                android:gravity="center_vertical">
+            <LinearLayout style="@style/LLLineContainer"
+                android:layout_marginTop="2dp">
 
                 <ImageView
                     style="@style/BackgroundBtnStyle"
@@ -243,13 +202,8 @@
                 android:text="@string/desc_records_text20"
                 style="@style/RegularText" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="2dp"
-                android:paddingHorizontal="6dp"
-                android:gravity="center_vertical">
+            <LinearLayout style="@style/LLLineContainer"
+                android:layout_marginTop="2dp">
 
                 <ImageView
                     style="@style/BackgroundBtnStyle"
@@ -269,13 +223,8 @@
                 android:text="@string/desc_records_text22"
                 style="@style/RegularText" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="2dp"
-                android:paddingHorizontal="6dp"
-                android:gravity="center_vertical">
+            <LinearLayout style="@style/LLLineContainer"
+                android:layout_marginTop="2dp">
 
                 <ImageView
                     style="@style/BackgroundBtnStyle"
@@ -291,13 +240,8 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="2dp"
-                android:paddingHorizontal="6dp"
-                android:gravity="center_vertical">
+            <LinearLayout style="@style/LLLineContainer"
+                android:layout_marginTop="2dp">
 
                 <ImageView
                     style="@style/BackgroundBtnStyle"

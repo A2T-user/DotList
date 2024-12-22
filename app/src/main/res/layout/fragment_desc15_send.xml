@@ -8,7 +8,7 @@
 
     <!-- Заголовок -->
     <TextView
-        android:text="@string/desc_convert_title"
+        android:text="@string/desc_send_title"
         style="@style/DescTitleText" />
     <View style="@style/DevirerView" />
 
@@ -16,16 +16,20 @@
 
         <LinearLayout style="@style/LLScrollContainer">
 
+            <TextView
+                style="@style/RegularText"
+                android:text="@string/desc_send_text1"/>
+
             <LinearLayout style="@style/LLLineContainer">
 
                 <TextView
                     style="@style/RegularText"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:text="@string/desc_convert_text1" />
+                    android:text="@string/desc_send_text2" />
 
                 <ImageView
-                    android:src="@drawable/ic_convert_text"
+                    android:src="@drawable/ic_send"
                     tools:ignore= "ContentDescription"
                     style="@style/IVSideBarStyle" />
 
@@ -33,7 +37,8 @@
 
             <TextView
                 style="@style/RegularText"
-                android:text="@string/desc_convert_text2" />
+                android:text="@string/desc_send_text3"/>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
