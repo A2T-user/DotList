@@ -78,7 +78,6 @@ class SettingsFragment : Fragment() {
         binding.seekBarTextSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser:  Boolean) {
                 app.setTextSize(progress.toFloat())
-                app.saveSettings()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
