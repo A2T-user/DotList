@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">\u2022list</string>
+    <string name="e_mail">dot_list_a2t@mail.ru</string>
     <string name="version">\u2022list %1$s</string>
+    <string name="mail">Выберите почтовый сервис:</string>
     <!-- ГЛАВНАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
     <string name="menu_desc">Главное меню приложения</string>
 
@@ -96,6 +98,8 @@
 
     <string name="description">Описание приложения</string>
     <string name="set_string">Настройки</string>
+    <string name="privacy_policy">Политика конфеденциальности</string>
+    <string name="feedback">Написать в поддержку</string>
 
     <string name="notification">Напоминание</string>
     <string name="notifi_hint">Введите краткий текст напоминания,\nустановите дату и время</string>

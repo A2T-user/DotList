@@ -1,5 +1,5 @@
 <resources>
-    <string name="description_content">ОГЛАВЛЕНИЕ</string>
+    <string name="description_content"><u>ОГЛАВЛЕНИЕ</u></string>
     
     <!-- 1. ОБЩИЕ СВЕДЕНИЯ И ТЕРМИНЫ -->
     <string name="desc_general_title">\u00A71. ОБЩИЕ СВЕДЕНИЯ И ТЕРМИНЫ</string>

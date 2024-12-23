@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:focusableInTouchMode="true"
-    android:background="@drawable/btn_rectangle"
+    android:background="@drawable/floatinf_bar"
     android:visibility="gone">
 
     <TextView
@@ -36,7 +36,7 @@
                 android:id="@+id/desc_general1"
                 style="@style/DescContentTV"
                 app:drawableEndCompat="@drawable/ic_arrow_right"
-                android:text="@string/desc_general_title" />
+                android:text="@string/desc_general_title"/>
 
             <TextView
                 android:id="@+id/records2"
