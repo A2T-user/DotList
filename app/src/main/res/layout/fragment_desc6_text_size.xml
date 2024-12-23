@@ -17,7 +17,7 @@
         <LinearLayout style="@style/LLScrollContainer">
 
             <TextView
-                android:text="@string/desc_records_text8"
+                android:text="@string/desc_size_text1"
                 style="@style/RegularText" />
 
         </LinearLayout>

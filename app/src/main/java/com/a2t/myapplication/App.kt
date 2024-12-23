@@ -2,6 +2,7 @@ package com.a2t.myapplication
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
@@ -17,6 +18,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 class App : Application() {
+    private lateinit var  pref: SharedPreferences
 
     companion object {
         const val LIGHT = "LIGHT"
@@ -32,7 +34,6 @@ class App : Application() {
         lateinit var appSettings: AppSettings
         lateinit var appContext: Context
         var textSizeLiveData = MutableLiveData(20f)
-
         fun getTextSizeLiveData(): LiveData<Float> = textSizeLiveData
     }
 
@@ -42,7 +43,7 @@ class App : Application() {
         Room.databaseBuilder(applicationContext, AppDatabase::class.java, "database.db")
             .fallbackToDestructiveMigration()
             .build()
-
+        pref = getSharedPreferences("list_preferences", Context.MODE_PRIVATE)
         getSettings()
         switchTheme()
         startKoin {
@@ -63,7 +64,6 @@ class App : Application() {
     }
 
     private fun getSettings () {
-        val pref = getSharedPreferences("list_preferences", Context.MODE_PRIVATE)
         appSettings = AppSettings(
             pref.getString(STATE_THEME, SYSTEM),
             pref.getInt(RESTORE_PERIOD, 3),
@@ -77,7 +77,6 @@ class App : Application() {
     }
 
     fun saveSettings () {
-        val pref = getSharedPreferences("list_preferences", Context.MODE_PRIVATE)
         pref.edit {
             putString(STATE_THEME, appSettings.stateTheme)
             putInt(RESTORE_PERIOD, appSettings.restorePeriod)
@@ -85,12 +84,11 @@ class App : Application() {
             putBoolean(SORTING_CHECKS, appSettings.sortingChecks)
             putBoolean(CROSSED_OUT_ON, appSettings.crossedOutOn)
             putBoolean(NOTIFICATION_ON, appSettings.notificationOn)
-            putFloat(TEXT_SIZE, appSettings.textSize)
         }
     }
 
     fun setTextSize (size: Float) {
-        appSettings.textSize = size
+        pref.edit { putFloat(TEXT_SIZE, size) }
         textSizeLiveData.postValue(size)
     }
 }

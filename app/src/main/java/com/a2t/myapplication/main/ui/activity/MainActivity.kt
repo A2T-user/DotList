@@ -222,7 +222,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                                 if (sizeGrandText > 27) sizeGrandText = 27f
                             }
                             app.setTextSize(sizeGrandText)
-                            app.saveSettings()
                         }
                     }
                 }
