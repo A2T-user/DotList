@@ -80,6 +80,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="10dp"
             android:orientation="horizontal"
             android:animateLayoutChanges="true">
 
@@ -109,17 +110,34 @@
 
     <!-- БОКОВАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
     <LinearLayout
-        android:id="@+id/sideBarContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingStart="5dp"
         android:layout_gravity="center_vertical|end"
-        android:gravity="center_vertical|end"
-        android:animateLayoutChanges="true"
         android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/sideBarContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:gravity="center_vertical|end"
+            android:animateLayoutChanges="true"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/sideBarFlag"
+                android:layout_width="5dp"
+                android:layout_height="150dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginVertical="15dp"
+                android:background="@drawable/side_bar_flag"/>
+        </LinearLayout>
 
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:scrollbars="vertical"
             android:scrollbarThumbVertical="@color/blue_icon">
 
@@ -132,16 +150,9 @@
                 android:visibility="gone"/>
 
         </ScrollView>
-
-        <View
-            android:id="@+id/sideBarFlag"
-            android:layout_width="5dp"
-            android:layout_height="150dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginVertical="15dp"
-            android:background="@drawable/side_bar_flag"/>
-
     </LinearLayout>
+
+
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -164,7 +175,8 @@
         android:gravity="center"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="6dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"
         android:animateLayoutChanges="true"/>
 
     <LinearLayout

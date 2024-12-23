@@ -3,6 +3,7 @@ package com.a2t.myapplication.description.ui
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
@@ -12,6 +13,7 @@ import com.a2t.myapplication.databinding.DescriptionContentBinding
 const val CURRENT_TAB = "current_tab"
 
 class DescriptionActivity : AppCompatActivity() {
+    private lateinit var mainBackPressedCallback: OnBackPressedCallback
     private var _binding: ActivityDescriptionBinding? = null
     private val binding get() = _binding!!
     private lateinit var descriptionContentBinding: DescriptionContentBinding
@@ -24,6 +26,15 @@ class DescriptionActivity : AppCompatActivity() {
         _binding = ActivityDescriptionBinding.inflate(layoutInflater)
         descriptionContentBinding = binding.descContent
         setContentView(binding.root)
+
+        // $$$$$$$$$$$$$$$$$$$$$$   Реакция на нажатие системной кнопки BACK   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        mainBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                requestFocusInTouch(descriptionContentBinding.descGeneral1)
+            }
+        }
+        mainBackPressedCallback.isEnabled = false
+        onBackPressedDispatcher.addCallback(this, mainBackPressedCallback)
 
         viewPager = binding.pager
         val adapter = PagerAdapter(this)
@@ -44,11 +55,12 @@ class DescriptionActivity : AppCompatActivity() {
         binding.goToDescContent.setOnClickListener {
             descriptionContentBinding.llDescriptionContent.isVisible = true
             descriptionContentBinding.llDescriptionContent.requestFocus()
+            mainBackPressedCallback.isEnabled = true
         }
 
         descriptionContentBinding.llDescriptionContent.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) descriptionContentBinding.llDescriptionContent.isVisible = false
-
+            mainBackPressedCallback.isEnabled = false
         }
 
         binding.fon.setOnTouchListener { v, _ ->

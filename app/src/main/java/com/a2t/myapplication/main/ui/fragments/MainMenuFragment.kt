@@ -3,6 +3,7 @@ package com.a2t.myapplication.main.ui.fragments
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -52,6 +53,19 @@ class MainMenuFragment: Fragment() {
                 .addToBackStack("settingsFragment").commit()
         }
 
+        binding.tvPrivacyPolicy.setOnClickListener {
+            val uriPP = "https://s89577.see.ru"
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(uriPP))
+            startActivity(browserIntent)
+        }
+
+        binding.tvFeedback.setOnClickListener {
+            val context = requireContext()
+            val email = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"))
+            email.putExtra(Intent.EXTRA_EMAIL, arrayOf(context.resources.getString(R.string.e_mail)))
+            email.putExtra(Intent.EXTRA_SUBJECT, context.resources.getString(R.string.app_name))
+            context.startActivity(Intent.createChooser(email, context.resources.getString(R.string.mail)))
+        }
     }
 
     override fun onStart() {
