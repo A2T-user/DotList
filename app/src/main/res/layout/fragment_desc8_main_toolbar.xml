@@ -13,7 +13,9 @@
         style="@style/DescTitleText" />
     <View style="@style/DevirerView" />
 
-    <ScrollView style="@style/DescScroll">
+    <ScrollView
+        android:id="@+id/scrollView"
+        style="@style/DescScroll">
 
         <LinearLayout style="@style/LLScrollContainer">
 

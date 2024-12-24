@@ -15,15 +15,14 @@
     <!-- Светлая тема -->
     <color name="light_background">#f0f0f0</color>   <!-- a4cded -->
     <color name="light_color_bar">#3a689a</color>          <!-- 697989, 3a689a -->
-    <color name="light_color_bar_accent">#2c5575
-    </color>       <!-- Цвет выделения объектов на панели инструментов -->
+    <color name="light_color_bar_accent">#2c5575</color>
+    <color name="light_color_bar_alpha">#663a689a</color>
 
     <!-- Темная тема -->
-    <color name="dark_background">#3f4953
-    </color>       <!--  052e4d, 0f3857, 194261, 224b6b, 2c5575   -->
+    <color name="dark_background">#3f4953</color>       <!--  052e4d, 0f3857, 194261, 224b6b, 2c5575   -->
     <color name="dark_color_bar">#1a2835</color>          <!-- 697989 -->
-    <color name="dark_color_bar_accent">#4c5a67
-    </color>       <!-- Цвет выделения объектов на панели инструментов -->
+    <color name="dark_color_bar_accent">#4c5a67</color>       <!-- Цвет выделения объектов на панели инструментов -->
+    <color name="dark_color_bar_alpha">#661a2835</color>
 
     <!-- Форматирование строк -->
     <color name="text_color_1">#be0000</color>

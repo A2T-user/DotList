@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.a2t.myapplication.databinding.FragmentDesc4DirsBinding
+import com.a2t.myapplication.description.ui.DescriptionActivity
 
 class DirsFragment4 : Fragment() {
     private var _binding: FragmentDesc4DirsBinding? = null
@@ -19,6 +20,12 @@ class DirsFragment4 : Fragment() {
         _binding = FragmentDesc4DirsBinding.inflate(layoutInflater)
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        (requireActivity() as DescriptionActivity).currentScrollView = binding.scrollView
     }
 
     override fun onDestroyView() {

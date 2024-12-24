@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.FragmentDesc8MainToolbarBinding
 import com.a2t.myapplication.databinding.ToolbarTopBinding
+import com.a2t.myapplication.description.ui.DescriptionActivity
 
 class MainToolbarFragment8 : Fragment() {
     private var _binding: FragmentDesc8MainToolbarBinding? = null
@@ -28,6 +29,7 @@ class MainToolbarFragment8 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (requireActivity() as DescriptionActivity).currentScrollView = binding.scrollView
         toolbarBinding.pathDir.text = getString(R.string.current_dir_name)
     }
 

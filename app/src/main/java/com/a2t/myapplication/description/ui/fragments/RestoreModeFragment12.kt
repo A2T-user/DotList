@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.FragmentDesc12RestModeBinding
 import com.a2t.myapplication.databinding.ToolbarModesBinding
+import com.a2t.myapplication.description.ui.DescriptionActivity
 
 class RestoreModeFragment12 : Fragment() {
     private var _binding: FragmentDesc12RestModeBinding? = null
@@ -29,6 +30,7 @@ class RestoreModeFragment12 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (requireActivity() as DescriptionActivity).currentScrollView = binding.scrollView
         // Панель режимов
         val animationRestoreMode = AnimationUtils.loadAnimation(requireContext(), R.anim.arrow_up)
         modesBinding.clModesToolbar.isVisible = true

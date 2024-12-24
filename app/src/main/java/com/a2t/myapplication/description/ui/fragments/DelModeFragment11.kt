@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.FragmentDesc11DelModeBinding
 import com.a2t.myapplication.databinding.ToolbarModesBinding
+import com.a2t.myapplication.description.ui.DescriptionActivity
 
 class DelModeFragment11 : Fragment() {
     private var _binding: FragmentDesc11DelModeBinding? = null
@@ -29,6 +30,7 @@ class DelModeFragment11 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (requireActivity() as DescriptionActivity).currentScrollView = binding.scrollView
         // Панель режимов
         val animationDeleteMode = AnimationUtils.loadAnimation(requireContext(), R.anim.arrow_down)
         modesBinding.clModesToolbar.isVisible = true
