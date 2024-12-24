@@ -12,5 +12,6 @@
         <item name="colorBarAccent">@color/dark_color_bar_accent</item>
         <item name="enableEditText">@color/edit_text_accent</item>
         <item name="colorIcon">@color/yellow_dir</item>
+        <item name="colorBarAlpha">@color/dark_color_bar_alpha</item>
     </style>
 </resources>

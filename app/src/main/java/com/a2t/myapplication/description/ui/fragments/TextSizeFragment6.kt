@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.a2t.myapplication.databinding.FragmentDesc6TextSizeBinding
+import com.a2t.myapplication.description.ui.DescriptionActivity
 
 class TextSizeFragment6 : Fragment() {
     private var _binding: FragmentDesc6TextSizeBinding? = null
@@ -19,6 +20,12 @@ class TextSizeFragment6 : Fragment() {
         _binding = FragmentDesc6TextSizeBinding.inflate(layoutInflater)
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        (requireActivity() as DescriptionActivity).currentScrollView = binding.scrollView
     }
 
     override fun onDestroyView() {

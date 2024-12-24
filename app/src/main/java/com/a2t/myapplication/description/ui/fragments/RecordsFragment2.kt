@@ -15,6 +15,7 @@ import com.a2t.myapplication.App
 import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.FragmentDesc2RecordsBinding
 import com.a2t.myapplication.databinding.ItemMainBinding
+import com.a2t.myapplication.description.ui.DescriptionActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -35,6 +36,8 @@ class RecordsFragment2 : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (requireActivity() as DescriptionActivity).currentScrollView = binding.scrollView
 
         val date = DateFormat.format("d.M.yy", System.currentTimeMillis()).toString()
         // Макет строки

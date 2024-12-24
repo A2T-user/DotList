@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.a2t.myapplication.databinding.FragmentDesc14ConvertBinding
+import com.a2t.myapplication.description.ui.DescriptionActivity
 
 class ConvertFragment14 : Fragment() {
     private var _binding: FragmentDesc14ConvertBinding? = null
@@ -19,6 +20,12 @@ class ConvertFragment14 : Fragment() {
         _binding = FragmentDesc14ConvertBinding.inflate(layoutInflater)
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        (requireActivity() as DescriptionActivity).currentScrollView = binding.scrollView
     }
 
     override fun onDestroyView() {

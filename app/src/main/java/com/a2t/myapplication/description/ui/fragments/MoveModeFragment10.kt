@@ -11,6 +11,7 @@ import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.ContextMenuMoveBinding
 import com.a2t.myapplication.databinding.FragmentDesc10MoveModeBinding
 import com.a2t.myapplication.databinding.ToolbarModesBinding
+import com.a2t.myapplication.description.ui.DescriptionActivity
 
 class MoveModeFragment10 : Fragment() {
     private var _binding: FragmentDesc10MoveModeBinding? = null
@@ -31,6 +32,7 @@ class MoveModeFragment10 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (requireActivity() as DescriptionActivity).currentScrollView = binding.scrollView
         // Панель режимов
         modesBinding.clModesToolbar.isVisible = true
         val animationMoveMode = AnimationUtils.loadAnimation(requireContext(), R.anim.arrow_right)

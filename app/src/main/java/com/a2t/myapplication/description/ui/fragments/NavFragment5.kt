@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.a2t.myapplication.databinding.FragmentDesc5NavBinding
 import com.a2t.myapplication.databinding.ToolbarSmallBinding
+import com.a2t.myapplication.description.ui.DescriptionActivity
 
 class NavFragment5 : Fragment() {
     private var _binding: FragmentDesc5NavBinding? = null
@@ -24,6 +25,8 @@ class NavFragment5 : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (requireActivity() as DescriptionActivity).currentScrollView = binding.scrollView
         smallBarBinding.tvSumLine.text = "4"
         smallBarBinding.tvSumDir.text = "1"
         smallBarBinding.tvSumSum.text = "5"

@@ -3,6 +3,7 @@ package com.a2t.myapplication.description.ui
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.widget.ScrollView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -11,6 +12,7 @@ import com.a2t.myapplication.databinding.ActivityDescriptionBinding
 import com.a2t.myapplication.databinding.DescriptionContentBinding
 
 const val CURRENT_TAB = "current_tab"
+const val STEP_SCROLL = 20
 
 class DescriptionActivity : AppCompatActivity() {
     private lateinit var mainBackPressedCallback: OnBackPressedCallback
@@ -18,6 +20,7 @@ class DescriptionActivity : AppCompatActivity() {
     private val binding get() = _binding!!
     private lateinit var descriptionContentBinding: DescriptionContentBinding
     private lateinit var viewPager: ViewPager2
+    lateinit var currentScrollView: ScrollView
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -47,9 +50,27 @@ class DescriptionActivity : AppCompatActivity() {
         binding.goToPrevious.setOnClickListener {
             goToTab(viewPager.currentItem, true)
         }
+        binding.goToPrevious.setOnLongClickListener {
+            goToTab(1, true)
+            true
+        }
 
         binding.goToNext.setOnClickListener {
             goToTab(viewPager.currentItem + 2, true)
+        }
+        binding.goToNext.setOnLongClickListener {
+            goToTab(15, true)
+            true
+        }
+
+        binding.goToUp.setOnTouchListener { v, event ->
+            currentScrollView.smoothScrollTo(0, currentScrollView.scrollY - STEP_SCROLL)
+            true
+        }
+
+        binding.goToDown.setOnTouchListener { v, event ->
+            currentScrollView.smoothScrollTo(0, currentScrollView.scrollY + STEP_SCROLL)
+            true
         }
 
         binding.goToDescContent.setOnClickListener {
