@@ -72,6 +72,7 @@ const val CURRENT_TAB = "current_tab"
 
 class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChangedListener {
     lateinit var mainBackPressedCallback: OnBackPressedCallback
+    lateinit var floatingBarBackPressedCallback: OnBackPressedCallback
     val fragmentManager: FragmentManager = supportFragmentManager
     private val mainViewModel: MainViewModel by viewModel()
     private val adapter = MainAdapter(this)
@@ -178,6 +179,14 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
         onBackPressedDispatcher.addCallback(this, mainBackPressedCallback)
 
+        floatingBarBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                requestMenuFocus()
+            }
+        }
+        floatingBarBackPressedCallback.isEnabled = false
+        onBackPressedDispatcher.addCallback(this, floatingBarBackPressedCallback)
+
         mainViewModel.idDir = intent.getLongExtra("IDDIR", 0L)
 
         val startDay = AlarmHelper.startOfCurrentDay()
@@ -243,8 +252,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ГЛАВНАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // Кнопка МЕНЮ
         topToolbarBinding.btnMenu.setOnClickListener {
-            //requestMenuFocus()                   // Присвоение фокуса
-            //noSleepModeOff()           // Выключение режима БЕЗ СНА
             fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
                 .add(R.id.container_menu, MainMenuFragment())
                 .addToBackStack("MainMenuFragment").commit()
@@ -480,6 +487,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             if (!hasFocus) {
                 v?.isVisible = false
                 cancelCurrentHolder()
+                mainBackPressedCallback.isEnabled = true
+                floatingBarBackPressedCallback.isEnabled = false
             }
         }
 
@@ -558,6 +567,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             if (!hasFocus) {
                 v?.isVisible = false
                 cancelCurrentHolder()
+                mainBackPressedCallback.isEnabled = true
+                floatingBarBackPressedCallback.isEnabled = false
             }
         }
         // Кнопка ВЫРЕЗАТЬ
@@ -773,9 +784,13 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             sideToolbarBinding.llSideBar.isVisible = true                   // Вывести бок.панель
             sideToolbarBinding.ivSideBarOpen.requestFocus()                 // и перевести фокус на нее
             sideToolbarBinding.ivSideBarOpen.animate().rotation(0f)   // Кнопку Развернуть панель в исх.положение
+            mainBackPressedCallback.isEnabled = false
+            floatingBarBackPressedCallback.isEnabled = true
         } else {
             if (isSideToolbarFullShow) sideBarFullOpenClose()      // Свернуть бок.панель
             sideToolbarBinding.llSideBar.isVisible = false                  // Убрать бок.панель
+            floatingBarBackPressedCallback.isEnabled = false
+            mainBackPressedCallback.isEnabled = true
             lifecycleScope.launch {
                 delay(50)
                 binding.sideBarFlag.isVisible = true
@@ -1066,6 +1081,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         contextMenu.layoutParams = params
         contextMenu.isVisible = true
         contextMenu.requestFocus()
+        mainBackPressedCallback.isEnabled = false
+        floatingBarBackPressedCallback.isEnabled = true
     }
     // По скольку метод getLocationOnScreen возвращает значение Y в системе координат с началом отсчета
     // в верхнем левом углу экрана, а контекстное меню вставляется в контейнер с началом отсчета
