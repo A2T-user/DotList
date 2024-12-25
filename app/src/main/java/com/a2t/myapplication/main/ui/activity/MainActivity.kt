@@ -15,7 +15,9 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
@@ -72,7 +74,7 @@ const val CURRENT_TAB = "current_tab"
 
 class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChangedListener {
     lateinit var mainBackPressedCallback: OnBackPressedCallback
-    lateinit var floatingBarBackPressedCallback: OnBackPressedCallback
+    private lateinit var floatingBarBackPressedCallback: OnBackPressedCallback
     val fragmentManager: FragmentManager = supportFragmentManager
     private val mainViewModel: MainViewModel by viewModel()
     private val adapter = MainAdapter(this)
@@ -1162,7 +1164,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             str = if (countArchive != 0) getString(R.string.del_archive, countArchive.toString()) else ""
             mess += "$str."
             val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_title_attention, null)
-            MaterialAlertDialogBuilder(this)
+            val dialog = MaterialAlertDialogBuilder(this)
                 .setCustomTitle(dialogView)
                 .setMessage(mess)
                 .setNeutralButton(getString(R.string.negative_btn)) { _, _ -> }
@@ -1183,6 +1185,10 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                     }
                 }
                 .show()
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            val neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
+            positiveButton.setTextColor(ContextCompat.getColor(this,R.color.blue_icon))
+            neutralButton.setTextColor(ContextCompat.getColor(this,R.color.blue_icon))
         }
     }
 
@@ -1200,7 +1206,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             str = if (countArchive != 0) getString(R.string.del_archive, countArchive.toString()) else ""
             mess += "$str."
             val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_title_attention, null)
-            MaterialAlertDialogBuilder(this)
+            val dialog = MaterialAlertDialogBuilder(this)
                 .setCustomTitle(dialogView)
                 .setMessage(mess)
                 .setNeutralButton(getString(R.string.negative_btn)) { _, _ -> }
@@ -1211,6 +1217,10 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                     }
                 }
                 .show()
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            val neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
+            positiveButton.setTextColor(ContextCompat.getColor(this,R.color.blue_icon))
+            neutralButton.setTextColor(ContextCompat.getColor(this,R.color.blue_icon))
         }
     }
 
@@ -1228,11 +1238,13 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     @SuppressLint("InflateParams")
     private fun showRecursionError() {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_title_error, null)
-        MaterialAlertDialogBuilder(this)
+        val dialog = MaterialAlertDialogBuilder(this)
             .setCustomTitle(dialogView)
             .setMessage(getString(R.string.recursion_error))
             .setPositiveButton(getString(R.string.ok)) { _, _ -> }
             .show()
+        val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        positiveButton.setTextColor(ContextCompat.getColor(this,R.color.blue_icon))
     }
 
     private fun changingTextFormatRecord(item: ListRecord, position: Int, color: Int?, style: Int?, under: Int?) {
@@ -1254,7 +1266,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         if (adapter.records.any { it.isChecked }) {
             val dialogView =
                 LayoutInflater.from(this).inflate(R.layout.dialog_title_attention, null)
-            MaterialAlertDialogBuilder(this)
+            val dialog = MaterialAlertDialogBuilder(this)
                 .setCustomTitle(dialogView)
                 .setMessage(getString(R.string.del_mark_text))
                 .setNeutralButton(getString(R.string.back)) { _, _ -> }
@@ -1265,6 +1277,10 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                     mainViewModel.updateRecords(adapter.records) {}
                 }
                 .show()
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            val neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
+            positiveButton.setTextColor(ContextCompat.getColor(this,R.color.blue_icon))
+            neutralButton.setTextColor(ContextCompat.getColor(this,R.color.blue_icon))
         } else {
             Toast.makeText(this, getString(R.string.no_marks), Toast.LENGTH_SHORT).show()
         }
@@ -1312,8 +1328,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     override fun passRecordToAlarmFragment(record: ListRecord) {
         mainViewModel.record = record
     }
-
-
 
     override fun showNumberOfSelectedRecords() {
         val number = getMainBuffer().size + getMoveBuffer().size
