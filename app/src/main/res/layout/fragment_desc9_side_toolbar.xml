@@ -34,14 +34,42 @@
             <LinearLayout style="@style/LLLineContainer">
 
                 <ImageView
+                    android:src="@drawable/ic_eye_small"
+                    tools:ignore= "ContentDescription"
+                    style="@style/IVSideBarStyle"/>
+
+                <TextView
+                    style="@style/RegularDescText"
+                    android:text="@string/desc_side_tb_text0" />
+
+            </LinearLayout>
+
+            <TextView
+                android:text="@string/desc_side_tb_text01"
+                style="@style/RegularText" />
+
+            <LinearLayout style="@style/LLLineContainer">
+
+                <ImageView
+                    android:src="@drawable/ic_del_mark"
+                    tools:ignore= "ContentDescription"
+                    style="@style/IVSideBarStyle" />
+
+                <TextView
+                    style="@style/RegularDescText"
+                    android:text="@string/desc_side_tb_text5" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/LLLineContainer">
+
+                <ImageView
                     android:src="@drawable/ic_send"
                     tools:ignore= "ContentDescription"
                     style="@style/IVSideBarStyle" />
 
                 <TextView
-                    style="@style/RegularText"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    style="@style/RegularDescText"
                     android:text="@string/desc_side_tb_text3" />
 
             </LinearLayout>
@@ -54,27 +82,12 @@
                     style="@style/IVSideBarStyle" />
 
                 <TextView
-                    style="@style/RegularText"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    style="@style/RegularDescText"
                     android:text="@string/desc_side_tb_text4" />
 
             </LinearLayout>
 
-            <LinearLayout style="@style/LLLineContainer">
 
-                <ImageView
-                    android:src="@drawable/ic_del_mark"
-                    tools:ignore= "ContentDescription"
-                    style="@style/IVSideBarStyle" />
-
-                <TextView
-                    style="@style/RegularText"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:text="@string/desc_side_tb_text5" />
-
-            </LinearLayout>
 
             <LinearLayout style="@style/LLLineContainer">
 
@@ -84,9 +97,7 @@
                     style="@style/IVSideBarStyle" />
 
                 <TextView
-                    style="@style/RegularText"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    style="@style/RegularDescText"
                     android:text="@string/desc_side_tb_text6" />
 
             </LinearLayout>
@@ -99,9 +110,7 @@
                     style="@style/IVSideBarStyle" />
 
                 <TextView
-                    style="@style/RegularText"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    style="@style/RegularDescText"
                     android:text="@string/desc_side_tb_text7" />
 
             </LinearLayout>
@@ -114,9 +123,7 @@
                     style="@style/IVSideBarStyle" />
 
                 <TextView
-                    style="@style/RegularText"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    style="@style/RegularDescText"
                     android:text="@string/desc_side_tb_text8" />
 
             </LinearLayout>
@@ -129,9 +136,7 @@
                     style="@style/IVSideBarStyle" />
 
                 <TextView
-                    style="@style/RegularText"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    style="@style/RegularDescText"
                     android:text="@string/desc_side_tb_text9" />
 
             </LinearLayout>

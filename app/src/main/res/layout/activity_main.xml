@@ -23,7 +23,6 @@
             android:layout_weight="1">
 
             <!-- РЕЦИКЛЕР -->
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"
                 android:layout_width="match_parent"
@@ -37,6 +36,17 @@
                 android:scrollbarThumbVertical="@color/blue_icon"
                 android:scrollbars="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            <ImageView
+                android:id="@+id/iv_eye"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_eye"
+                android:layout_gravity="top|center_horizontal"
+                android:layout_marginTop="150dp"
+                android:alpha="0.3"
+                tools:ignore="contentDescription"
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:id="@+id/ll_btn_scroll"

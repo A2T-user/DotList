@@ -261,16 +261,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             if (clickDebounce()) fullPathDir(getIdCurrentDir())
         }
 
-        // НЕ СПЯЩИЙ РЕЖИМ
-        topToolbarBinding.imageEye.setOnClickListener {
-            requestMenuFocus()
-            if (isNoSleepMode) {
-                noSleepModeOff()
-            } else {
-                noSleepModeON()
-            }
-        }
-
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ БОКОВАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // swipe влево по флагу для открытия БОКОВОЙ ПАНЕЛИ
         val downX = AtomicReference( 0f)
@@ -310,6 +300,18 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             sideBarFullOpenClose()
         }
 
+        // Кнопка не спящий режим
+        sideToolbarBinding.llSideBarNoSleep.setOnClickListener { view ->
+            requestFocusInTouch(view)
+            noSleepModeON()
+        }
+
+        // Кнопка Удалить метки
+        sideToolbarBinding.llSideBarDelMark.setOnClickListener { view ->
+            requestFocusInTouch(view)
+            deleteAllMarks()
+        }
+
         // Кнопка Переслать
         sideToolbarBinding.llSideBarSend.setOnClickListener { view ->
             requestFocusInTouch(view)
@@ -336,12 +338,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
                 .add(R.id.container_view, TextFragment())
                 .addToBackStack("textFragment").commit()
-        }
-
-        // Кнопка Удалить метки
-        sideToolbarBinding.llSideBarDelMark.setOnClickListener { view ->
-            requestFocusInTouch(view)
-            deleteAllMarks()
         }
 
         // Кнопка режима Переноса
@@ -557,10 +553,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             true
         }
 
-        contextMenuFormatBinding.btnCloseMenu.setOnClickListener {
-            requestMenuFocus()
-        }
-
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ КОНТЕКСТНОЕ МЕНЮ MOVE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // Потеря фокуса контекст.меню приводит к скрытию меню
         contextMenuMoveBinding.llContextMenuMove.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
@@ -645,8 +637,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private fun noSleepModeON() {
         isNoSleepMode = true
         switchNoSleepMode(true)    // В активити включаем keepScreenOn
-        topToolbarBinding.imageEye.setImageResource(R.drawable.ic_eye_open) // Сменить иконку
-        topToolbarBinding.imageEye.startAnimation(animationEye)             // Анимация иконки
+        binding.ivEye.isVisible = true
+        binding.ivEye.startAnimation(animationEye)             // Анимация иконки
         // Маргание иконки каждые 10 секунд
         eyeJob = lifecycleScope.launch {
             eyeAnimation()
@@ -656,14 +648,13 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private fun noSleepModeOff() {
         isNoSleepMode = false
         switchNoSleepMode(false)       // В активити выключаем keepScreenOn
-        topToolbarBinding.imageEye.setImageResource(R.drawable.ic_eye_closed)   // Сменить иконку
-        topToolbarBinding.imageEye.startAnimation(animationEye)                 // Анимация иконки
+        binding.ivEye.isVisible = false
         eyeJob.cancel()                                                         // Отменить маргание глаза
     }
     // Анимация глаза
     private suspend fun eyeAnimation() {
         delay(EYE_ANIMATION_DELEY)
-        topToolbarBinding.imageEye.startAnimation(animationEye)             // Анимация иконки
+        binding.ivEye.startAnimation(animationEye)             // Анимация иконки
         eyeAnimation()                                                      // Рекурсия
     }
 
@@ -685,7 +676,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     // Открытие специального режима
     private fun enableSpecialMode() {
         noSleepModeOff()           // Выключение режима БЕЗ СНА
-        topToolbarBinding.imageEye.isVisible = getSpecialMode() == SpecialMode.NORMAL
         binding.sideBarContainer.isVisible = getSpecialMode() == SpecialMode.NORMAL
         showSpecialModeToolbar()
         showNumberOfSelectedRecords()
@@ -813,6 +803,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     // Показать пояснительный текст кнопок боковой панели
     private fun showSideBarText(show: Boolean) {
         sideToolbarBinding.tvSideBarOpen.isVisible = show                   // Текст кнопки Развернуть панель
+        sideToolbarBinding.tvSideBarNoSleep.isVisible = show                // Текст кнопки БЕЗ СНА
         sideToolbarBinding.tvSideBarSend.isVisible = show                   // Текст кнопки Переслать
         sideToolbarBinding.tvSideBarConvertText.isVisible = show            // Текст кнопки Конвертация
         sideToolbarBinding.tvSideBarDelMark.isVisible = show                // Текст кнопки Удалить метки
@@ -1010,6 +1001,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
     private fun goToDir(animationController: LayoutAnimationController?) {
         binding.progressBar.isVisible = true
+        requestMenuFocus()
+        noSleepModeOff()
         mainViewModel.deletingExpiredRecords {
             showList(animationController)
         }

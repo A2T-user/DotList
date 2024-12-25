@@ -35,6 +35,7 @@
     <string name="side_bar_open">Свернуть</string>
     <string name="side_bar_send">Переслать список</string>
     <string name="side_bar_convert_text">Конвертировать текст\n в список</string>
+    <string name="side_bar_no_sleep">Режим БЕЗ СНА</string>
     <string name="side_bar_del_mark">Удалить \u0020\u0020\u2713</string>
     <string name="side_bar_del_mode">Удалить несколько\nзаписей</string>
     <string name="side_bar_rest_mode">Восстановить\nудаленные записи</string>
