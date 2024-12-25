@@ -54,9 +54,9 @@
             </LinearLayout>
 
             <TextView
-                android:text="@string/desc_records_text4"
+                style="@style/RegularText"
                 android:layout_marginTop="4dp"
-                style="@style/RegularText" />
+                android:text="@string/desc_records_text4" />
 
             <TextView
                 android:text="@string/desc_records_text5"
@@ -145,10 +145,7 @@
                 android:layout_marginTop="2dp">
 
                 <ImageView
-                    style="@style/BackgroundBtnStyle"
-                    android:layout_weight="0"
-                    android:layout_width="wrap_content"
-                    android:layout_marginStart="0dp"
+                    style="@style/BackgroundDescBtnStyle"
                     android:src="@drawable/ic_del_white"
                     tools:ignore="contentDescription" />
 
@@ -166,10 +163,7 @@
                 android:layout_marginTop="2dp">
 
                 <ImageView
-                    style="@style/BackgroundBtnStyle"
-                    android:layout_weight="0"
-                    android:layout_width="wrap_content"
-                    android:layout_marginStart="0dp"
+                    style="@style/BackgroundDescBtnStyle"
                     android:src="@drawable/ic_bell_plus"
                     tools:ignore="contentDescription" />
 
@@ -187,10 +181,7 @@
                 android:layout_marginTop="2dp">
 
                 <ImageView
-                    style="@style/BackgroundBtnStyle"
-                    android:layout_weight="0"
-                    android:layout_width="wrap_content"
-                    android:layout_marginStart="0dp"
+                    style="@style/BackgroundDescBtnStyle"
                     android:src="@drawable/ic_bell_edit"
                     tools:ignore="contentDescription" />
 
@@ -208,10 +199,7 @@
                 android:layout_marginTop="2dp">
 
                 <ImageView
-                    style="@style/BackgroundBtnStyle"
-                    android:layout_weight="0"
-                    android:layout_width="wrap_content"
-                    android:layout_marginStart="0dp"
+                    style="@style/BackgroundDescBtnStyle"
                     android:src="@drawable/ic_dir_on"
                     tools:ignore="contentDescription" />
 
@@ -229,10 +217,7 @@
                 android:layout_marginTop="2dp">
 
                 <ImageView
-                    style="@style/BackgroundBtnStyle"
-                    android:layout_weight="0"
-                    android:layout_width="wrap_content"
-                    android:layout_marginStart="0dp"
+                    style="@style/BackgroundDescBtnStyle"
                     android:src="@drawable/ic_dir_off"
                     tools:ignore="contentDescription" />
 
@@ -246,10 +231,7 @@
                 android:layout_marginTop="2dp">
 
                 <ImageView
-                    style="@style/BackgroundBtnStyle"
-                    android:layout_weight="0"
-                    android:layout_width="wrap_content"
-                    android:layout_marginStart="0dp"
+                    style="@style/BackgroundDescBtnStyle"
                     android:src="@drawable/ic_edit"
                     tools:ignore="contentDescription" />
 

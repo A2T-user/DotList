@@ -12,7 +12,6 @@ import com.a2t.myapplication.databinding.ActivityDescriptionBinding
 import com.a2t.myapplication.databinding.DescriptionContentBinding
 
 const val CURRENT_TAB = "current_tab"
-const val STEP_SCROLL = 20
 
 class DescriptionActivity : AppCompatActivity() {
     private lateinit var mainBackPressedCallback: OnBackPressedCallback
@@ -60,16 +59,6 @@ class DescriptionActivity : AppCompatActivity() {
         }
         binding.goToNext.setOnLongClickListener {
             goToTab(15, true)
-            true
-        }
-
-        binding.goToUp.setOnTouchListener { v, event ->
-            currentScrollView.smoothScrollTo(0, currentScrollView.scrollY - STEP_SCROLL)
-            true
-        }
-
-        binding.goToDown.setOnTouchListener { v, event ->
-            currentScrollView.smoothScrollTo(0, currentScrollView.scrollY + STEP_SCROLL)
             true
         }
 

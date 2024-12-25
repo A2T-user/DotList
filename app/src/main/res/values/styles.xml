@@ -165,6 +165,15 @@
         <item name="android:padding">5dp</item>
     </style>
 
+    <style name="BackgroundDescBtnStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">3dp</item>
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:background">@drawable/btn_rect_white_alpha</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
     <style name="MainTextStyle">
         <item name="android:textColor">?attr/colorMainText</item>
         <item name="android:textColorHint">@color/color_hint</item>
@@ -234,12 +243,21 @@
         <item name="android:textColor">?attr/colorMainText</item>
     </style>
 
+    <style name="RegularDescText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingHorizontal">6dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">?attr/colorMainText</item>
+    </style>
+
     <style name="LLScrollContainer">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">vertical</item>
         <item name="android:paddingTop">4dp</item>
-        <item name="android:paddingBottom">150dp</item>
+        <item name="android:paddingBottom">80dp</item>
     </style>
 
     <style name="LLLineContainer">

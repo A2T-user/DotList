@@ -49,6 +49,38 @@
             android:background="@color/yellow_dir"/>
 
         <LinearLayout
+            android:id="@+id/llSideBarNoSleep"
+            tools:ignore="UseCompoundDrawables"
+            style="@style/LLSideBarStyle">
+
+            <ImageView
+                android:src="@drawable/ic_eye_small"
+                tools:ignore= "ContentDescription"
+                style="@style/IVSideBarStyle"/>
+
+            <TextView
+                android:id="@+id/tvSideBarNoSleep"
+                android:text="@string/side_bar_no_sleep"
+                style="@style/TVSideBarStyle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llSideBarDelMark"
+            tools:ignore="UseCompoundDrawables"
+            style="@style/LLSideBarStyle">
+
+            <ImageView
+                android:src="@drawable/ic_del_mark"
+                tools:ignore= "ContentDescription"
+                style="@style/IVSideBarStyle" />
+
+            <TextView
+                android:id="@+id/tvSideBarDelMark"
+                android:text="@string/side_bar_del_mark"
+                style="@style/TVSideBarStyle" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/llSideBarSend"
             tools:ignore="UseCompoundDrawables"
             style="@style/LLSideBarStyle">
@@ -80,21 +112,7 @@
                 style="@style/TVSideBarStyle" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/llSideBarDelMark"
-            tools:ignore="UseCompoundDrawables"
-            style="@style/LLSideBarStyle">
 
-            <ImageView
-                android:src="@drawable/ic_del_mark"
-                tools:ignore= "ContentDescription"
-                style="@style/IVSideBarStyle" />
-
-            <TextView
-                android:id="@+id/tvSideBarDelMark"
-                android:text="@string/side_bar_del_mark"
-                style="@style/TVSideBarStyle" />
-        </LinearLayout>
 
         <View
             android:layout_width="match_parent"

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ll_context_menu_format"
     android:layout_width="wrap_content"
     android:layout_height="56dp"
@@ -136,24 +135,6 @@
                 style="@style/TVContextMenu"
                 android:contentDescription="@string/btn_back_text"
                 android:text="@string/btn_format_color_text" />
-
-        </LinearLayout>
-
-        <View style="@style/DeviderMenuFormatStyle" />
-
-        <!-- Кнопка отката -->
-        <LinearLayout
-            android:id="@+id/btnCloseMenu"
-            android:background="@drawable/click_selector"
-            android:layout_gravity="center_vertical"
-            android:gravity="center"
-            style="@style/LLContextMenu">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_close"
-                tools:ignore="contentDescription"/>
 
         </LinearLayout>
     </LinearLayout>

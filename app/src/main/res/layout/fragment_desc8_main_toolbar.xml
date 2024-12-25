@@ -43,17 +43,6 @@
                 android:text="@string/desc_main_tb_text4"
                 style="@style/RegularText" />
 
-            <TextView
-                android:text="@string/desc_main_tb_text5"
-                app:drawableStartCompat="@drawable/ic_eye_closed"
-                android:drawablePadding="6dp"
-                android:gravity="center_vertical"
-                style="@style/RegularText"/>
-
-            <TextView
-                android:text="@string/desc_main_tb_text6"
-                style="@style/RegularText" />
-
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
