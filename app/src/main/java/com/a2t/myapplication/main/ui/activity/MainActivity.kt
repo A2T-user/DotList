@@ -99,7 +99,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private var heightScreen = 0                                   // Ширина экрана
     private var maxShiftToRight = 0f                               // Величина максимального смещения при свайпе в право
     private var maxShiftToLeft = 0f                                // Величина максимального смещения при свайпе в лево
-    private var hidhtContextMenu = 0                               // Высота контекстного меню
+    private var heighContextMenu = 0                               // Высота контекстного меню
     private lateinit var animationMoveMode: Animation
     private lateinit var animationDeleteMode: Animation
     private lateinit var animationRestoreMode: Animation
@@ -137,7 +137,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         widthScreen = resources.displayMetrics.widthPixels
         heightScreen = resources.displayMetrics.heightPixels
         val dpSize = this.resources.displayMetrics.density              // Размер dp
-        hidhtContextMenu = (56 * dpSize).toInt()                        // Высота контекстного меню в px
+        heighContextMenu = (56 * dpSize).toInt()                        // Высота контекстного меню в px
         maxShiftToRight = widthScreen * K_MAX_SHIFT_RIGHT               // Величина максимального смещения при свайпе в право
         maxShiftToLeft = widthScreen * K_MAX_SHIFT_LEFT                 // Величина максимального смещения при свайпе в лево
         App.getTextSizeLiveData().observe(this) { size ->
@@ -188,8 +188,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
         floatingBarBackPressedCallback.isEnabled = false
         onBackPressedDispatcher.addCallback(this, floatingBarBackPressedCallback)
-
-        mainViewModel.idDir = intent.getLongExtra("IDDIR", 0L)
+        val idDirInt = intent.getLongExtra("IDDIR", -1L)
+        if (idDirInt != -1L) mainViewModel.idDir = idDirInt
 
         val startDay = AlarmHelper.startOfCurrentDay()
         mainViewModel.deleteOldAlarm(startDay) {
@@ -1096,7 +1096,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         val coordinateY = if (holderTopY < borderY) {   // Если холдер находится над границей
             holderBottomY + 20                          // Контекст.меню выводится на 20 пикселов ниже холдера
         } else {
-            holderTopY - 20 - hidhtContextMenu          // Контекст.меню выводится на 20 пикселов выше холдера
+            holderTopY - 20 - heighContextMenu          // Контекст.меню выводится на 20 пикселов выше холдера
         }
         return coordinateY                              // Y точки, в которую надо вывести контекст.меню
     }
@@ -1382,6 +1382,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         intent.putExtra(CURRENT_TAB, currentTab)
         startActivity(intent)
     }
+
+    fun getRecords () = adapter.records
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
