@@ -47,6 +47,16 @@ class MainAdapter(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
+        //Приведение холдера в исходное состояние
+        holder.checkbox.isClickable = false
+        holder.checkbox.isEnabled = false
+        holder.llForeground.setOnClickListener(null)
+        holder.llForeground.setOnLongClickListener(null)
+        holder.checkbox.setOnClickListener(null)
+        holder.clCheckbox.setOnClickListener(null)
+        holder.llAction.setOnTouchListener(null)
+        holder.llAction.setOnClickListener(null)
+
         val item = records[position]
         holder.bind(item)
         App.getTextSizeLiveData().observeForever(holder.observerTextSize!!)
@@ -215,7 +225,7 @@ class MainAdapter(
                 }
 
                 // Открытие меню Вырезать/Копировать
-                holder.ivAction.setOnClickListener{
+                holder.llAction.setOnClickListener{
                     selectCurrentHolder(item, position)
                     mac.showContextMenuMove(holder)    // Не для новой строки
                 }
@@ -235,7 +245,7 @@ class MainAdapter(
                 }
 
                 // Выбор/отмена записи для удаления
-                holder.ivAction.setOnClickListener{
+                holder.llAction.setOnClickListener{
                     if (mac.getMainBuffer().removeAll { it.id == item.id }) {
                         holder.ivAction.setImageResource(R.drawable.ic_basket_white)
                     } else {
@@ -257,7 +267,7 @@ class MainAdapter(
                 }
 
                 // Выбор/отмена записи для восстановления
-                holder.ivAction.setOnClickListener{
+                holder.llAction.setOnClickListener{
                     if (mac.getMainBuffer().removeAll { it.id == item.id }) {
                         holder.ivAction.setImageResource(R.drawable.ic_basket_white)
                     } else {
@@ -286,7 +296,7 @@ class MainAdapter(
                 }
 
                 // Архивирование/разархивирование
-                holder.ivAction.setOnClickListener{
+                holder.llAction.setOnClickListener{
                     item.isArchive = !item.isArchive
                     mac.updateRecord(item)
                     val res = if (item.isArchive) R.drawable.ic_archive_red else R.drawable.ic_archive_trans
