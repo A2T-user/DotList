@@ -1383,6 +1383,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         startActivity(intent)
     }
 
+    fun getRecords () = adapter.records
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 

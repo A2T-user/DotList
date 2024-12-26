@@ -1,6 +1,7 @@
 package com.a2t.myapplication.main.ui.fragments
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,6 +34,17 @@ class TextFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        savedInstanceState?.let {
+            mainViewModel.textFragmentMode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                it.getParcelable("mode", TextFragmentMode::class.java)
+            } else {
+                it.getParcelable("mode")
+            }
+            mainViewModel.idCurrentDir = it.getLong("idCurrentDir")
+            mainViewModel.mainRecords.clear()
+            mainViewModel.mainRecords.addAll((requireActivity() as MainActivity).getRecords())
+        }
+
         mode = mainViewModel.textFragmentMode
         idCurrentDir = mainViewModel.idCurrentDir
         records.clear()
@@ -43,6 +55,10 @@ class TextFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        savedInstanceState?.let {
+            binding.etText.setText(it.getString("text"))
+        }
 
         App.getTextSizeLiveData().observe(viewLifecycleOwner) { size ->
             binding.etText.textSize = size
@@ -233,6 +249,13 @@ class TextFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = true
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable("mode", mode)
+        outState.putLong("idCurrentDir", idCurrentDir)
+        outState.putString("text", binding.etText.text.toString())
     }
 
     override fun onDestroyView() {
