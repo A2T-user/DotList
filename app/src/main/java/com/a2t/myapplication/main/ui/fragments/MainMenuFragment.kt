@@ -68,6 +68,12 @@ class MainMenuFragment: Fragment() {
         }
     }
 
+    private fun requestFocusInTouch(view: View) {
+        view.isFocusableInTouchMode = true
+        view.requestFocus()
+        view.isFocusableInTouchMode = false
+    }
+
     override fun onStart() {
         super.onStart()
         (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = false
@@ -91,15 +97,6 @@ class MainMenuFragment: Fragment() {
         super.onStop()
         (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = true
     }
-
-    private fun requestFocusInTouch(view: View) {
-        view.isFocusableInTouchMode = true
-        view.requestFocus()
-        view.isFocusableInTouchMode = false
-    }
-
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()

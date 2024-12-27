@@ -992,18 +992,19 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private fun goToParentDir() {
         mainViewModel.getParentDirId(getIdCurrentDir()) { ids ->
             mainViewModel.idDir = ids[0]
+            requestMenuFocus()
             goToDir(animOpenParentDir)
         }
     }
 
     override fun goToChildDir(id: Long) {
+        requestMenuFocus()
         mainViewModel.idDir = id
         goToDir(animOpenChildDir)
     }
 
     private fun goToDir(animationController: LayoutAnimationController?) {
         binding.progressBar.isVisible = true
-        requestMenuFocus()
         noSleepModeOff()
         mainViewModel.deletingExpiredRecords {
             showList(animationController)

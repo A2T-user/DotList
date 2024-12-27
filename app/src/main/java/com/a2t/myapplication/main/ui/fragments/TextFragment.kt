@@ -246,6 +246,20 @@ class TextFragment : Fragment() {
         (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = false
     }
 
+    override fun onResume() {
+        super.onResume()
+        view?.apply {
+            isFocusable = true
+            isFocusableInTouchMode = true
+            requestFocus()
+            setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    parentFragmentManager.beginTransaction().remove(this@TextFragment).commitAllowingStateLoss() // Закрытие фрагмента
+                }
+            }
+        }
+    }
+
     override fun onStop() {
         super.onStop()
         (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = true
@@ -256,10 +270,5 @@ class TextFragment : Fragment() {
         outState.putParcelable("mode", mode)
         outState.putLong("idCurrentDir", idCurrentDir)
         outState.putString("text", binding.etText.text.toString())
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
