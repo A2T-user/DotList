@@ -84,7 +84,7 @@ class AlarmFragment : Fragment() {
         alarmTime = alarmDateTime!! % 86400000
         alarmDate = alarmDateTime!! - alarmTime!!
 
-        if (savedInstanceState != null) {
+        savedInstanceState?.let {
             val savedAlarmTime = savedInstanceState.getLong(ALARM_TIME, -1)
             val savedAlarmDate = savedInstanceState.getLong(ALARM_DATE, -1)
             val savedAlarmDateTime = savedInstanceState.getLong(ALARM_DATE_TIME, -1)
@@ -205,7 +205,7 @@ class AlarmFragment : Fragment() {
                     record?.alarmText = alarmText
                     record?.alarmId = workRequestId
                     record?.let { it1 -> mainViewModel.updateRecord(it1) {} }
-                    (requireActivity() as MainActivity).updatCurrentHolder()
+                    (requireActivity() as MainActivity).cancelCurrentHolder()
                     requireActivity().supportFragmentManager.popBackStack()
                 }
             } else {
@@ -219,12 +219,12 @@ class AlarmFragment : Fragment() {
             record?.alarmText = null
             record?.alarmId = null
             record?.let { mainViewModel.updateRecord(it) {} }
-            (requireActivity() as MainActivity).updatCurrentHolder()
+            (requireActivity() as MainActivity).cancelCurrentHolder()
             requireActivity().supportFragmentManager.popBackStack()
         }
 
         buttonBinding.btnCancel.setOnClickListener {
-            (requireActivity() as MainActivity).updatCurrentHolder()
+            (requireActivity() as MainActivity).cancelCurrentHolder()
             requireActivity().supportFragmentManager.popBackStack()
         }
     }
@@ -298,20 +298,6 @@ class AlarmFragment : Fragment() {
         (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = false
     }
 
-    override fun onResume() {
-        super.onResume()
-        view?.apply {
-            isFocusable = true
-            isFocusableInTouchMode = true
-            requestFocus()
-            setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    parentFragmentManager.beginTransaction().remove(this@AlarmFragment).commitAllowingStateLoss() // Закрытие фрагмента
-                }
-            }
-        }
-    }
-
     override fun onStop() {
         super.onStop()
         (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = true
@@ -320,6 +306,6 @@ class AlarmFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        (requireActivity() as MainActivity).updatCurrentHolder()
+        (requireActivity() as MainActivity).cancelCurrentHolder()
     }
 }

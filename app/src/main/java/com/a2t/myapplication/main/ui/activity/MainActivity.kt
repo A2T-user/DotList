@@ -1014,7 +1014,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private fun showList(animationController: LayoutAnimationController?) = lifecycleScope.launch {
         mainViewModel.getRecords { records ->
             fillingRecycler(records, animationController)
-            updatFieldsOfSmallToolbar()
+            updateFieldsOfSmallToolbar()
             binding.progressBar.isVisible = false
         }
 
@@ -1102,7 +1102,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         return coordinateY                              // Y точки, в которую надо вывести контекст.меню
     }
 
-    override fun updatFieldsOfSmallToolbar() {
+    override fun updateFieldsOfSmallToolbar() {
         var countLine = 0
         var countDir = 0
         adapter.records.forEach {
@@ -1308,14 +1308,10 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
     }
 
-    private fun cancelCurrentHolder () {
+    fun cancelCurrentHolder () {
         adapter.currentHolderIdLiveData.postValue(-1L)
         adapter.currentItem = null
         adapter.currentHolderPosition = -1
-    }
-    fun updatCurrentHolder () {
-        adapter.notifyItemChanged(adapter.currentHolderPosition)
-        cancelCurrentHolder()
     }
 
     fun getSpecialMode(): SpecialMode = mainViewModel.specialMode

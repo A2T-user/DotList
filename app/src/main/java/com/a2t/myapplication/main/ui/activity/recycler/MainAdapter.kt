@@ -353,7 +353,7 @@ class MainAdapter(
                     val position = records.size - 1
                     notifyItemInserted(position)
                     notifyItemRangeChanged(position -1, 2)
-                    mac.updatFieldsOfSmallToolbar()
+                    mac.updateFieldsOfSmallToolbar()
                 }
             } else {   // Старая строка
                 if (holder.aetRecord.getText().toString().isEmpty()) {  // Если aetRecord пустое,

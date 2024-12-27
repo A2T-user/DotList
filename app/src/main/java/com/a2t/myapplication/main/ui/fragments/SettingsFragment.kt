@@ -49,9 +49,6 @@ class SettingsFragment : Fragment() {
             binding.ivSystemTeme.alpha = 1f
         }
         // Период восстановления
-        binding.tvRestorePeriod.text = App.appSettings.restorePeriod.toString()
-        binding.seekBarRestorePeriod.progress = App.appSettings.restorePeriod
-
         binding.seekBarRestorePeriod.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser:  Boolean) {
                 val period = progress + 1
@@ -118,6 +115,7 @@ class SettingsFragment : Fragment() {
             else -> binding.ivSystemTeme.alpha = 1f
         }
         binding.tvRestorePeriod.text = newSettings.restorePeriod.toString()     // Период восстановления
+        binding.seekBarRestorePeriod.progress = newSettings.restorePeriod -1
         binding.swEditEmptyDir.isChecked = newSettings.editEmptyDir             // Редактирование
         binding.swSortingChecks.isChecked = newSettings.sortingChecks           // Сортировка
         binding.swCrossingChecks.isChecked = newSettings.crossedOutOn           // Зачеркивание
