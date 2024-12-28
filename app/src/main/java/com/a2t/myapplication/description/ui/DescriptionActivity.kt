@@ -35,6 +35,7 @@ class DescriptionActivity : AppCompatActivity() {
                 requestFocusInTouch(descriptionContentBinding.descGeneral1)
             }
         }
+
         mainBackPressedCallback.isEnabled = false
         onBackPressedDispatcher.addCallback(this, mainBackPressedCallback)
 
@@ -61,6 +62,26 @@ class DescriptionActivity : AppCompatActivity() {
             goToTab(15, true)
             true
         }
+
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                when(position) {
+                    0 -> {
+                        binding.goToPrevious.alpha = 0.5f
+                        binding.goToNext.alpha = 1f
+                    }
+                    14 -> {
+                        binding.goToNext.alpha = 0.5f
+                        binding.goToPrevious.alpha = 1f
+                    }
+                    else -> {
+                        binding.goToPrevious.alpha = 1f
+                        binding.goToNext.alpha = 1f
+                    }
+                }
+            }
+        })
 
         binding.goToDescContent.setOnClickListener {
             descriptionContentBinding.llDescriptionContent.isVisible = true

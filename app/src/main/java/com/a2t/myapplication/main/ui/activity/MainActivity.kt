@@ -188,6 +188,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
         floatingBarBackPressedCallback.isEnabled = false
         onBackPressedDispatcher.addCallback(this, floatingBarBackPressedCallback)
+        
         val idDirInt = intent.getLongExtra("IDDIR", -1L)
         if (idDirInt != -1L) mainViewModel.idDir = idDirInt
 
@@ -289,6 +290,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             }
             return@setOnTouchListener isTouch.get()
         }
+
         // Потеря фокуса кнопкой развернуть/свернуть убирает бок.панель
         sideToolbarBinding.ivSideBarOpen.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) sideBarShowOrHide(false)
