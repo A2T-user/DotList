@@ -188,7 +188,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
         floatingBarBackPressedCallback.isEnabled = false
         onBackPressedDispatcher.addCallback(this, floatingBarBackPressedCallback)
-        
         val idDirInt = intent.getLongExtra("IDDIR", -1L)
         if (idDirInt != -1L) mainViewModel.idDir = idDirInt
 
