@@ -242,6 +242,7 @@ class MainAdapter(
 
                 holder.llForeground.setOnClickListener {
                     mac.requestMenuFocus()
+                    mac.completionSpecialMode()
                 }
 
                 // Выбор/отмена записи для удаления
@@ -264,6 +265,7 @@ class MainAdapter(
 
                 holder.llForeground.setOnClickListener {
                     mac.requestMenuFocus()
+                    mac.completionSpecialMode()
                 }
 
                 // Выбор/отмена записи для восстановления
