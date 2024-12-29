@@ -2,6 +2,7 @@ package com.a2t.myapplication.main.ui.activity.recycler
 
 import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.main.domain.model.ListRecord
+import com.a2t.myapplication.main.ui.activity.model.SpecialMode
 
 interface MainAdapterCallback {
     fun onStartDrag(viewHolder: RecyclerView.ViewHolder)
@@ -21,4 +22,6 @@ interface MainAdapterCallback {
     fun getMoveBuffer(): ArrayList<ListRecord>
     fun getMainBuffer(): ArrayList<ListRecord>
     fun passRecordToAlarmFragment (record: ListRecord)
+    fun setSpecialMode(mode: SpecialMode)
+    fun enableSpecialMode()
 }

@@ -241,8 +241,7 @@ class MainAdapter(
                 }
 
                 holder.llForeground.setOnClickListener {
-                    mac.requestMenuFocus()
-                    mac.completionSpecialMode()
+                    goToNormalMode(item)
                 }
 
                 // Выбор/отмена записи для удаления
@@ -264,8 +263,7 @@ class MainAdapter(
                 }
 
                 holder.llForeground.setOnClickListener {
-                    mac.requestMenuFocus()
-                    mac.completionSpecialMode()
+                    goToNormalMode(item)
                 }
 
                 // Выбор/отмена записи для восстановления
@@ -438,6 +436,17 @@ class MainAdapter(
         currentHolderIdLiveData.postValue(item.id)
         currentItem = item
         currentHolderPosition = position
+    }
+
+    private fun goToNormalMode (item: ListRecord) {
+        mac.apply {
+            requestMenuFocus()
+            setSpecialMode(SpecialMode.NORMAL)
+            enableSpecialMode()
+            getMainBuffer().clear()
+            getMoveBuffer().clear()
+            goToChildDir(item.id)
+        }
     }
 
     override fun getItemCount() = records.size
