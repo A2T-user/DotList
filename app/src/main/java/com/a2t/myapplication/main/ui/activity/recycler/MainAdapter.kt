@@ -211,8 +211,7 @@ class MainAdapter(
                 holder.ivAction.setImageResource(R.drawable.ic_menu)
                 if (mac.getMainBuffer().any { it.id == item.id }) {
                     holder.ivAction.setImageResource(R.drawable.ic_copy_red)
-                }
-                if (mac.getMoveBuffer().any { it.id == item.id }) {
+                } else if (mac.getMoveBuffer().any { it.id == item.id }) {
                     holder.ivAction.setImageResource(R.drawable.ic_cut_red)
                 }
 
@@ -236,12 +235,9 @@ class MainAdapter(
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Режим DELETE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             SpecialMode.DELETE -> {
                 holder.ivAction.setImageResource(R.drawable.ic_basket_white)
-                if (mac.getMainBuffer().any { it.id == item.id }) {
-                    holder.ivAction.setImageResource(R.drawable.ic_del_mode)
-                }
 
                 holder.llForeground.setOnClickListener {
-                    goToNormalMode(item)
+                    if (item.isDir) goToNormalMode(item)
                 }
 
                 // Выбор/отмена записи для удаления
@@ -258,12 +254,9 @@ class MainAdapter(
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Режим RESTORE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             SpecialMode.RESTORE -> {
                 holder.ivAction.setImageResource(R.drawable.ic_basket_white)
-                if (mac.getMainBuffer().any { it.id == item.id }) {
-                    holder.ivAction.setImageResource(R.drawable.ic_rest_mode)
-                }
 
                 holder.llForeground.setOnClickListener {
-                    goToNormalMode(item)
+                    if (item.isDir) goToNormalMode(item)
                 }
 
                 // Выбор/отмена записи для восстановления
