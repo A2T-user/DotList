@@ -161,7 +161,11 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 mainBackPressedCallback.isEnabled = true
                 when (getSpecialMode()) {
                     SpecialMode.DELETE, SpecialMode.RESTORE -> {
-                        completionSpecialMode()
+                        requestMenuFocus()
+                        mainViewModel.specialMode = SpecialMode.NORMAL
+                        enableSpecialMode()
+                        clearBuffers()
+                        goToParentDir()
                     }
                     else -> {
                         if (getIdCurrentDir() > 0) {
@@ -188,6 +192,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
         floatingBarBackPressedCallback.isEnabled = false
         onBackPressedDispatcher.addCallback(this, floatingBarBackPressedCallback)
+
         val idDirInt = intent.getLongExtra("IDDIR", -1L)
         if (idDirInt != -1L) mainViewModel.idDir = idDirInt
 
@@ -677,7 +682,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     }
 
     // Открытие специального режима
-    private fun enableSpecialMode() {
+    override fun enableSpecialMode() {
         noSleepModeOff()           // Выключение режима БЕЗ СНА
         binding.sideBarContainer.isVisible = getSpecialMode() == SpecialMode.NORMAL
         showSpecialModeToolbar()
@@ -980,6 +985,11 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         getMainBuffer().clear()
         getMoveBuffer().clear()
         goToNormalMode()
+    }
+
+    private fun clearBuffers() {
+        getMainBuffer().clear()
+        getMoveBuffer().clear()
     }
 
     // Возврат в режим NORMAL
@@ -1382,6 +1392,10 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     }
 
     fun getRecords () = adapter.records
+
+    override fun setSpecialMode(mode: SpecialMode) {
+        mainViewModel.specialMode = mode
+    }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
