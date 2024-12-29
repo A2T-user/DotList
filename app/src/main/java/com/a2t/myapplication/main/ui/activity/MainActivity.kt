@@ -1400,8 +1400,11 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
-        mainViewModel.idDir = intent.getLongExtra("IDDIR", 0L)
-        goToNormalMode()
+        val id = intent.getLongExtra("IDDIR", -1L)
+        if (id != -1L) {
+            mainViewModel.idDir = id
+            goToNormalMode()
+        }
     }
 
 
