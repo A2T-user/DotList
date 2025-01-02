@@ -137,7 +137,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         widthScreen = resources.displayMetrics.widthPixels
         heightScreen = resources.displayMetrics.heightPixels
         val dpSize = this.resources.displayMetrics.density              // Размер dp
-        heighContextMenu = (56 * dpSize).toInt()                        // Высота контекстного меню в px
+        heighContextMenu = (58 * dpSize).toInt()                        // Высота контекстного меню в px
         maxShiftToRight = widthScreen * K_MAX_SHIFT_RIGHT               // Величина максимального смещения при свайпе в право
         maxShiftToLeft = widthScreen * K_MAX_SHIFT_LEFT                 // Величина максимального смещения при свайпе в лево
         App.getTextSizeLiveData().observe(this) { size ->
