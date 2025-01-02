@@ -14,7 +14,7 @@ import com.a2t.myapplication.databinding.DescriptionContentBinding
 const val CURRENT_TAB = "current_tab"
 
 class DescriptionActivity : AppCompatActivity() {
-    private lateinit var mainBackPressedCallback: OnBackPressedCallback
+    private lateinit var descBackPressedCallback: OnBackPressedCallback
     private var _binding: ActivityDescriptionBinding? = null
     private val binding get() = _binding!!
     private lateinit var descriptionContentBinding: DescriptionContentBinding
@@ -30,14 +30,14 @@ class DescriptionActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // $$$$$$$$$$$$$$$$$$$$$$   Реакция на нажатие системной кнопки BACK   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        mainBackPressedCallback = object : OnBackPressedCallback(true) {
+        descBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 requestFocusInTouch(descriptionContentBinding.descGeneral1)
             }
         }
 
-        mainBackPressedCallback.isEnabled = false
-        onBackPressedDispatcher.addCallback(this, mainBackPressedCallback)
+        descBackPressedCallback.isEnabled = false
+        onBackPressedDispatcher.addCallback(this, descBackPressedCallback)
 
         viewPager = binding.pager
         val adapter = PagerAdapter(this)
@@ -86,12 +86,12 @@ class DescriptionActivity : AppCompatActivity() {
         binding.goToDescContent.setOnClickListener {
             descriptionContentBinding.llDescriptionContent.isVisible = true
             descriptionContentBinding.llDescriptionContent.requestFocus()
-            mainBackPressedCallback.isEnabled = true
+            descBackPressedCallback.isEnabled = true
         }
 
         descriptionContentBinding.llDescriptionContent.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) descriptionContentBinding.llDescriptionContent.isVisible = false
-            mainBackPressedCallback.isEnabled = false
+            descBackPressedCallback.isEnabled = false
         }
 
         binding.fon.setOnTouchListener { v, _ ->
