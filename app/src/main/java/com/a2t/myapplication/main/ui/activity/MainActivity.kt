@@ -15,9 +15,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
@@ -116,7 +114,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private var isClickAllowed = true
     private var scrollState = ScrollState.STOPPED
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -204,6 +202,20 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             goToDir(animOpenNewDir)
         }
         deleteOldAlarm(startDay)
+
+        if (App.appSettings.launchCounter == 1) {
+            val dialogView =
+                LayoutInflater.from(this).inflate(R.layout.dialog_title_attention, null)
+            MaterialAlertDialogBuilder(this)
+                .setCustomTitle(dialogView)
+                .setMessage(getString(R.string.first_launch_message))
+                .setNeutralButton(getString(R.string.first_launch_neutral_button)) { _, _ -> }
+                .setPositiveButton(getString(R.string.first_launch_positive_button)) { _, _ ->
+                    val intent = Intent(this, DescriptionActivity::class.java)
+                    startActivity(intent)
+                }
+                .show()
+        }
 
         // Изменение высоты шрифта
         val counter = AtomicInteger() // Счетчик срабатываний Zoom
@@ -1176,7 +1188,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             str = if (countArchive != 0) getString(R.string.del_archive, countArchive.toString()) else ""
             mess += "$str."
             val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_title_attention, null)
-            val dialog = MaterialAlertDialogBuilder(this)
+            MaterialAlertDialogBuilder(this)
                 .setCustomTitle(dialogView)
                 .setMessage(mess)
                 .setNeutralButton(getString(R.string.negative_btn)) { _, _ -> }
@@ -1197,10 +1209,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                     }
                 }
                 .show()
-            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            val neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
-            positiveButton.setTextColor(ContextCompat.getColor(this,R.color.blue_icon))
-            neutralButton.setTextColor(ContextCompat.getColor(this,R.color.blue_icon))
         }
     }
 
@@ -1218,7 +1226,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             str = if (countArchive != 0) getString(R.string.del_archive, countArchive.toString()) else ""
             mess += "$str."
             val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_title_attention, null)
-            val dialog = MaterialAlertDialogBuilder(this)
+            MaterialAlertDialogBuilder(this)
                 .setCustomTitle(dialogView)
                 .setMessage(mess)
                 .setNeutralButton(getString(R.string.negative_btn)) { _, _ -> }
@@ -1229,10 +1237,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                     }
                 }
                 .show()
-            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            val neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
-            positiveButton.setTextColor(ContextCompat.getColor(this,R.color.blue_icon))
-            neutralButton.setTextColor(ContextCompat.getColor(this,R.color.blue_icon))
         }
     }
 
@@ -1250,13 +1254,11 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     @SuppressLint("InflateParams")
     private fun showRecursionError() {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_title_error, null)
-        val dialog = MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this)
             .setCustomTitle(dialogView)
             .setMessage(getString(R.string.recursion_error))
             .setPositiveButton(getString(R.string.ok)) { _, _ -> }
             .show()
-        val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-        positiveButton.setTextColor(ContextCompat.getColor(this,R.color.blue_icon))
     }
 
     private fun changingTextFormatRecord(item: ListRecord, position: Int, color: Int?, style: Int?, under: Int?) {
@@ -1278,7 +1280,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         if (adapter.records.any { it.isChecked }) {
             val dialogView =
                 LayoutInflater.from(this).inflate(R.layout.dialog_title_attention, null)
-            val dialog = MaterialAlertDialogBuilder(this)
+            MaterialAlertDialogBuilder(this)
                 .setCustomTitle(dialogView)
                 .setMessage(getString(R.string.del_mark_text))
                 .setNeutralButton(getString(R.string.back)) { _, _ -> }
@@ -1289,10 +1291,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                     mainViewModel.updateRecords(adapter.records) {}
                 }
                 .show()
-            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            val neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
-            positiveButton.setTextColor(ContextCompat.getColor(this,R.color.blue_icon))
-            neutralButton.setTextColor(ContextCompat.getColor(this,R.color.blue_icon))
         } else {
             Toast.makeText(this, getString(R.string.no_marks), Toast.LENGTH_SHORT).show()
         }
@@ -1342,16 +1340,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         modesToolbarBinding.countRecords.text = number.toString()
         modesToolbarBinding.countRecords.isVisible = number > 0
     }
-
-    /*override fun onStart() {
-        super.onStart()
-        if (mainViewModel.textFragmentMode == TextFragmentMode.CONVERT) {
-            goToNormalMode()
-        }
-        mainViewModel.mainRecords.clear()
-        mainViewModel.textFragmentMode = null
-        mainViewModel.idCurrentDir = 0
-    }*/
 
     override fun onScrollStateChanged(scrollState: ScrollState) {
         when (scrollState) {

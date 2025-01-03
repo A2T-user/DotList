@@ -24,6 +24,7 @@ class App : Application() {
         const val LIGHT = "LIGHT"
         const val DARK = "DARK"
         const val SYSTEM = "SYSTEM"
+        const val LAUNCH_COUNTER = "LAUNCH_COUNTER"
         const val STATE_THEME = "STATE_THEME"
         const val RESTORE_PERIOD = "RESTORE_PERIOD"
         const val EDIT_EMPTY_DIR = "EDIT_EMPTY_DIR"
@@ -45,6 +46,8 @@ class App : Application() {
             .build()
         pref = getSharedPreferences("list_preferences", Context.MODE_PRIVATE)
         getSettings()
+        appSettings.launchCounter++
+        pref.edit { putInt(LAUNCH_COUNTER, appSettings.launchCounter) }
         switchTheme()
         startKoin {
             androidContext(this@App)
@@ -65,6 +68,7 @@ class App : Application() {
 
     private fun getSettings () {
         appSettings = AppSettings(
+            pref.getInt(LAUNCH_COUNTER, 0),
             pref.getString(STATE_THEME, SYSTEM),
             pref.getInt(RESTORE_PERIOD, 3),
             pref.getBoolean(EDIT_EMPTY_DIR, true),
@@ -78,6 +82,7 @@ class App : Application() {
 
     fun saveSettings () {
         pref.edit {
+            putInt(LAUNCH_COUNTER, appSettings.launchCounter)
             putString(STATE_THEME, appSettings.stateTheme)
             putInt(RESTORE_PERIOD, appSettings.restorePeriod)
             putBoolean(EDIT_EMPTY_DIR, appSettings.editEmptyDir)
