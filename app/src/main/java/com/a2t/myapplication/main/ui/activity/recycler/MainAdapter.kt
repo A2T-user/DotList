@@ -118,7 +118,7 @@ class MainAdapter(
                     holder.llForeground.startAnimation(
                         AnimationUtils.loadAnimation(App.appContext, R.anim.del_holder)
                     ) // Анимация удаления
-                    mac.deleteSingleRecord(arrayListOf(item))
+                    mac.deleteRecords(arrayListOf(item))
                 }
 
                 holder.ivBtnEdit.setOnClickListener {            // Редактировать запись
