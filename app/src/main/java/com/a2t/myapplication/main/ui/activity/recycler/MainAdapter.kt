@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -114,8 +115,10 @@ class MainAdapter(
                 }
 
                 holder.ivBtnDel.setOnClickListener {            // Удалить запись
-                    mac.requestMenuFocus()
-                    mac.deleteRecords(arrayListOf(item))
+                    holder.llForeground.startAnimation(
+                        AnimationUtils.loadAnimation(App.appContext, R.anim.del_holder)
+                    ) // Анимация удаления
+                    mac.deleteSingleRecord(arrayListOf(item))
                 }
 
                 holder.ivBtnEdit.setOnClickListener {            // Редактировать запись
