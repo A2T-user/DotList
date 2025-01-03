@@ -83,7 +83,7 @@ class TextFragment : Fragment() {
 
         // Кнопка Отмена
         binding.btnCancel.setOnClickListener {
-            completionOfFragment()
+            view.requestFocus()
         }
 
         // Кнопка Action
@@ -94,9 +94,9 @@ class TextFragment : Fragment() {
                     val convertRecords = convertStringToList()
                     if (convertRecords.isNotEmpty()) {
                         mainViewModel.insertRecords(convertRecords)
-                        records.addAll(convertRecords)
                         mainViewModel.mainRecords.clear()
-                        mainViewModel.mainRecords.addAll(records)
+                        mainViewModel.textFragmentMode = null
+                        mainViewModel.idCurrentDir = 0
                         (requireActivity() as MainActivity).goToNormalMode()
                         completionOfFragment()
                     }
@@ -192,7 +192,6 @@ class TextFragment : Fragment() {
                     // Добавление нового элемента в convertRecords
                     convertRecords.add(getNewItem(record.toString(), note, maxNpp, index))
                 }
-
             }
         }
         return convertRecords
@@ -203,7 +202,7 @@ class TextFragment : Fragment() {
             0L,
             idCurrentDir,
             isDir = false,
-            maxNpp + 1 + index,
+            maxNpp + index + 1,
             isChecked = false,
             record,
             note,
@@ -248,9 +247,7 @@ class TextFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        view?.apply {
-            isFocusable = true
-            isFocusableInTouchMode = true
+        binding.etText.apply {
             requestFocus()
             setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {

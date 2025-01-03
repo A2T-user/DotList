@@ -1343,7 +1343,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         modesToolbarBinding.countRecords.isVisible = number > 0
     }
 
-    override fun onStart() {
+    /*override fun onStart() {
         super.onStart()
         if (mainViewModel.textFragmentMode == TextFragmentMode.CONVERT) {
             goToNormalMode()
@@ -1351,7 +1351,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         mainViewModel.mainRecords.clear()
         mainViewModel.textFragmentMode = null
         mainViewModel.idCurrentDir = 0
-    }
+    }*/
 
     override fun onScrollStateChanged(scrollState: ScrollState) {
         when (scrollState) {
