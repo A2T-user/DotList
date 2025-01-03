@@ -12,6 +12,7 @@
         android:background="@drawable/circle_frame_blue_yell"/>
 
     <ImageView
+        android:id="@+id/iv_icon"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:scaleType="fitCenter"

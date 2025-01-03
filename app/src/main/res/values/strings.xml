@@ -116,4 +116,8 @@
     <string name="text_err">Текст напоминания не может быть пустым</string>
     <string name="notifi_title">Вы просили напомнить:</string>
     <string name="ban_notifications">Вы не будете получать уведомления с напоминаниями</string>
+    
+    <string name="first_launch_message">Ознакомьтесь со всеми возможностями приложения.\nВ дальнейшем открыть описание приложкения можно в меню на верхней панели инструментов.\nОткрыть описание?</string>
+    <string name="first_launch_positive_button">Да</string>
+    <string name="first_launch_neutral_button">Не сейчас</string>
 </resources>
