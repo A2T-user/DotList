@@ -79,7 +79,7 @@
 
     <string name="del_attempt">Попытка удалить записей: %1$s</string>
     <string name="del_subordinate">.\nТакже будет удалено вложенных записей: %1$s</string>
-    <string name="del_archive">,\nвключая архивных папок: %1$s.</string>
+    <string name="del_archive">,\nвключая архивных папок: %1$s</string>
     <string name="negative_btn">Отмена</string>
 
     <string name="rest_attempt">Попытка восстановить записей: %1$s</string>
