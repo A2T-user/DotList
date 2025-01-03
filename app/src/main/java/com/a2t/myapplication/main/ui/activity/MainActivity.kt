@@ -1175,7 +1175,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     }
 
     @SuppressLint("InflateParams")
-    override fun deleteRecords(records: List<ListRecord>) {
+    fun deleteRecords(records: List<ListRecord>) {
         mainViewModel.selectionSubordinateRecordsToDelete(records) { list ->
             val mutableRecords = list.toMutableList()
             val selectedRecords = records.size
@@ -1209,6 +1209,25 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                     }
                 }
                 .show()
+        }
+    }
+
+    override fun deleteSingleRecord(records: List<ListRecord>) {
+        mainViewModel.selectionSubordinateRecordsToDelete(records) { list ->
+            val mutableRecords = list.toMutableList()
+            mutableRecords.addAll(records)
+            mutableRecords.forEach { it.isDelete = true }
+            mainViewModel.updateRecords(mutableRecords) {
+                if (getSpecialMode() == SpecialMode.NORMAL) {
+                    val position = adapter.records.indexOfFirst { it.id == records[0].id }
+                    adapter.records.removeAt(position)
+                    adapter.notifyItemRemoved(position) // Уведомление об удалении
+                    adapter.notifyItemRangeChanged(
+                        position, adapter.records.size - position)
+                } else {
+                    completionSpecialMode()
+                }
+            }
         }
     }
 
