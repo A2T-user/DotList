@@ -1174,6 +1174,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         return current
     }
 
+    // Удаление выбранных записей, если у выбранных записей есть вложенные - выдать предупреждение
     @SuppressLint("InflateParams")
     override fun deleteRecords(records: List<ListRecord>) {
         mainViewModel.selectionSubordinateRecordsToDelete(records) { list ->
@@ -1183,44 +1184,32 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             if (subordinateRecords != 0) {
                 val countArchive = mutableRecords.count { it.isArchive }
                 mutableRecords.addAll(records)
-                var mess = getString(R.string.del_attempt, selectedRecords.toString())
-                var str = getString(
-                    R.string.del_subordinate,
-                    subordinateRecords.toString()
-                )
-                mess += str
-                str = if (countArchive != 0) getString(R.string.del_archive, countArchive.toString()) else ""
+                var mess = getString(R.string.del_attempt, selectedRecords.toString(), subordinateRecords.toString())
+                val str = if (countArchive != 0) getString(R.string.del_archive, countArchive.toString()) else ""
                 mess += "$str."
-                val dialogView =
-                    LayoutInflater.from(this).inflate(R.layout.dialog_title_attention, null)
+                val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_title_attention, null)
                 MaterialAlertDialogBuilder(this)
                     .setCustomTitle(dialogView)
                     .setMessage(mess)
-                    .setNeutralButton(getString(R.string.negative_btn)) { _, _ ->
-                        requestMenuFocus()
-                    }
+                    .setNeutralButton(getString(R.string.negative_btn)) { _, _ -> requestMenuFocus() }
                     .setPositiveButton(getString(R.string.delete)) { _, _ ->
-                        deleteRecordsAfterVerification(records, mutableRecords)
+                        deleteRecordsAfterSelection(records, mutableRecords)
                     }
                     .show()
             } else {
-                deleteRecordsAfterVerification(records, mutableRecords)
+                deleteRecordsAfterSelection(records, mutableRecords)
             }
         }
     }
 
-    private fun deleteRecordsAfterVerification(records: List<ListRecord>, mutableRecords: MutableList<ListRecord>) {
+    private fun deleteRecordsAfterSelection(records: List<ListRecord>, mutableRecords: MutableList<ListRecord>) {
         mutableRecords.forEach { it.isDelete = true }
         mainViewModel.updateRecords(mutableRecords) {
             if (getSpecialMode() == SpecialMode.NORMAL) {
-                val position =
-                    adapter.records.indexOfFirst { it.id == records[0].id }
+                val position = adapter.records.indexOfFirst { it.id == records[0].id }
                 adapter.records.removeAt(position)
                 adapter.notifyItemRemoved(position) // Уведомление об удалении
-                adapter.notifyItemRangeChanged(
-                    position,
-                    adapter.records.size - position
-                )
+                adapter.notifyItemRangeChanged(position, adapter.records.size - position)
             } else {
                 completionSpecialMode()
             }
