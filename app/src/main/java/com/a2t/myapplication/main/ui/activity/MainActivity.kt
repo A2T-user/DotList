@@ -1181,9 +1181,9 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             val mutableRecords = list.toMutableList()
             val selectedRecords = records.size
             val subordinateRecords = mutableRecords.size
+            mutableRecords.addAll(records)
             if (subordinateRecords != 0) {
                 val countArchive = mutableRecords.count { it.isArchive }
-                mutableRecords.addAll(records)
                 var mess = getString(R.string.del_attempt, selectedRecords.toString(), subordinateRecords.toString())
                 val str = if (countArchive != 0) getString(R.string.del_archive, countArchive.toString()) else ""
                 mess += "$str."

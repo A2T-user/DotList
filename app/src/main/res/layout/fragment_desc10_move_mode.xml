@@ -79,16 +79,6 @@
                 style="@style/RegularText"
                 android:text="@string/desc_move_mode_text4"/>
 
-
-
-
         </LinearLayout>
-
-
-
-
-
     </ScrollView>
-
-
 </LinearLayout>

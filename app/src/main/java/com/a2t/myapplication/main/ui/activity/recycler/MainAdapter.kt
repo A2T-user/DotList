@@ -238,6 +238,9 @@ class MainAdapter(
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Режим DELETE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             SpecialMode.DELETE -> {
                 holder.ivAction.setImageResource(R.drawable.ic_basket_white)
+                if (mac.getMainBuffer().any { it.id == item.id }) {
+                    holder.ivAction.setImageResource(R.drawable.ic_del_mode)
+                }
 
                 holder.llForeground.setOnClickListener {
                     if (item.isDir) goToNormalMode(item)
@@ -257,6 +260,9 @@ class MainAdapter(
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Режим RESTORE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             SpecialMode.RESTORE -> {
                 holder.ivAction.setImageResource(R.drawable.ic_basket_white)
+                if (mac.getMainBuffer().any { it.id == item.id }) {
+                    holder.ivAction.setImageResource(R.drawable.ic_rest_mode)
+                }
 
                 holder.llForeground.setOnClickListener {
                     if (item.isDir) goToNormalMode(item)
