@@ -140,7 +140,6 @@
                     android:text="@string/desc_side_tb_text9" />
 
             </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

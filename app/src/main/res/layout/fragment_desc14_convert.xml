@@ -36,6 +36,7 @@
             <TextView
                 style="@style/RegularText"
                 android:text="@string/desc_convert_text2" />
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

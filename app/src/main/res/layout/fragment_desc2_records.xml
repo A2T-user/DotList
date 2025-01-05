@@ -256,8 +256,6 @@
                 android:text="@string/desc_records_text26"
                 style="@style/RegularText" />
 
-
-
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
