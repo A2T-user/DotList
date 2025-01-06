@@ -5,6 +5,8 @@ import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
+import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -402,6 +404,15 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ НИЖНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        val specialModeGestureDetector = GestureDetector(this, SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
+            override fun onSwipeLeft() {}
+            override fun onSwipeRight() {}
+            override fun onSwipeDown() {
+                Log.e("МОЁ", "onSwipeDown")
+                completionSpecialMode()
+            }
+        }))
+
         // Свайп вниз закрывает нижнюю панель и переводит рециклер в обычный режим
         modesToolbarBinding.clModesToolbar.setOnTouchListener { _, event ->
             when(event.action) {
@@ -415,7 +426,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                     if (isTouch.get()) {
                         val dX = event.x - downX.get()
                         val dY = event.y - downY.get()
-                        if (abs(dY / dX) > 1 && dY > 100) {// Если жест вертикальный, вниз
+                        if (abs(dY / dX) > 1 && dY > 50) {// Если жест вертикальный, вниз
                             completionSpecialMode()
                         }
                     }
@@ -423,6 +434,11 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             }
             return@setOnTouchListener isTouch.get()
         }
+
+        modesToolbarBinding.bar.setOnTouchListener { _, event -> specialModeGestureDetector.onTouchEvent(event) }
+
+        modesToolbarBinding.flCircle.setOnTouchListener { _, event -> specialModeGestureDetector.onTouchEvent(event) }
+
         // Клик по кнопке Закрыть закрывает нижнюю панель и переводит экран в обычный режим
         modesToolbarBinding.btnCloseToolbar.setOnClickListener {
             completionSpecialMode()
@@ -440,6 +456,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
             if (currentTab != 0) openDescriptionActivity(currentTab)
         }
+        modesToolbarBinding.btnHelp.setOnTouchListener { _, event -> specialModeGestureDetector.onTouchEvent(event) }
 
         modesToolbarBinding.btnSelectAll.setOnClickListener {
             if (getSpecialMode() == SpecialMode.DELETE || getSpecialMode() == SpecialMode.RESTORE) {
@@ -452,6 +469,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 showNumberOfSelectedRecords()
             }
         }
+        modesToolbarBinding.btnSelectAll.setOnTouchListener { _, event -> specialModeGestureDetector.onTouchEvent(event) }
 
         modesToolbarBinding.btnAction.setOnClickListener {
             when(getSpecialMode()) {
@@ -496,6 +514,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 else -> {}
             }
         }
+        modesToolbarBinding.btnAction.setOnTouchListener { _, event -> specialModeGestureDetector.onTouchEvent(event) }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ КОНТЕКСТНОЕ МЕНЮ ФОРМАТ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // Потеря фокуса контекст.меню приводит к скрытию меню

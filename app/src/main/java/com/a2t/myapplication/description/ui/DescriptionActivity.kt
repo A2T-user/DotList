@@ -2,7 +2,6 @@ package com.a2t.myapplication.description.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.GestureDetector
 import android.view.View
 import android.widget.ScrollView
@@ -52,11 +51,11 @@ class DescriptionActivity : AppCompatActivity() {
 
         gestureDetector = GestureDetector(this, SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
             override fun onSwipeLeft() {
-                descriptionContentBinding.llDescriptionContent.isVisible = false
-                descBackPressedCallback.isEnabled = false
+                closeDescriptionContent()
             }
 
             override fun onSwipeRight() {}
+            override fun onSwipeDown() {}
         }))
 
         binding.goToPrevious.setOnClickListener {
@@ -102,14 +101,11 @@ class DescriptionActivity : AppCompatActivity() {
         }
 
         descriptionContentBinding.llDescriptionContent.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) descriptionContentBinding.llDescriptionContent.isVisible = false
-            descBackPressedCallback.isEnabled = false
+            if (!hasFocus) closeDescriptionContent()
         }
 
         descriptionContentBinding.llDescriptionContent.setOnTouchListener { _, event ->
-            Log.e("МОЁ", "Touch")
             gestureDetector.onTouchEvent(event)
-            true
         }
 
         binding.fon.setOnTouchListener { v, _ ->
@@ -132,6 +128,11 @@ class DescriptionActivity : AppCompatActivity() {
         createListeners(descriptionContentBinding.archive13, 13)
         createListeners(descriptionContentBinding.convert14, 14)
         createListeners(descriptionContentBinding.send15, 15)
+    }
+
+    private fun closeDescriptionContent() {
+        descriptionContentBinding.llDescriptionContent.isVisible = false
+        descBackPressedCallback.isEnabled = false
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -166,7 +167,6 @@ class DescriptionActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-
         _binding = null
     }
 }
