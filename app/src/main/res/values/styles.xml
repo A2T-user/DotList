@@ -290,7 +290,7 @@
         <item name="android:textColor">@color/yellow_dir</item>
         <item name="android:drawablePadding">6dp</item>
         <item name="drawableTint">@color/yellow_dir</item>
-        <item name="android:foreground">@drawable/click_selector</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
     </style>
 
     <style name="TVMainMenu">

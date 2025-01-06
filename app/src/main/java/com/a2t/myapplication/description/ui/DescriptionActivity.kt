@@ -2,6 +2,7 @@ package com.a2t.myapplication.description.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.GestureDetector
 import android.view.View
 import android.widget.ScrollView
 import androidx.activity.OnBackPressedCallback
@@ -10,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.a2t.myapplication.databinding.ActivityDescriptionBinding
 import com.a2t.myapplication.databinding.DescriptionContentBinding
+import com.a2t.myapplication.main.ui.activity.SwipeGestureListener
 
 const val CURRENT_TAB = "current_tab"
 
@@ -20,7 +22,7 @@ class DescriptionActivity : AppCompatActivity() {
     private lateinit var descriptionContentBinding: DescriptionContentBinding
     private lateinit var viewPager: ViewPager2
     lateinit var currentScrollView: ScrollView
-
+    private lateinit var gestureDetector: GestureDetector
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +48,15 @@ class DescriptionActivity : AppCompatActivity() {
         val currentTab = savedInstanceState?.getInt(CURRENT_TAB, 0) // Значение по умолчанию - 0
             ?: intent.getIntExtra(CURRENT_TAB, 0)
         goToTab(currentTab, false)
+
+        gestureDetector = GestureDetector(this, SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
+            override fun onSwipeLeft() {
+                closeDescriptionContent()
+            }
+
+            override fun onSwipeRight() {}
+            override fun onSwipeDown() {}
+        }))
 
         binding.goToPrevious.setOnClickListener {
             goToTab(viewPager.currentItem, true)
@@ -90,8 +101,11 @@ class DescriptionActivity : AppCompatActivity() {
         }
 
         descriptionContentBinding.llDescriptionContent.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) descriptionContentBinding.llDescriptionContent.isVisible = false
-            descBackPressedCallback.isEnabled = false
+            if (!hasFocus) closeDescriptionContent()
+        }
+
+        descriptionContentBinding.llDescriptionContent.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
         }
 
         binding.fon.setOnTouchListener { v, _ ->
@@ -99,72 +113,44 @@ class DescriptionActivity : AppCompatActivity() {
             true
         }
 
-        descriptionContentBinding.descGeneral1.setOnClickListener { v ->
-            requestFocusInTouch(v)
-            goToTab(1, true)
-        }
-        descriptionContentBinding.records2.setOnClickListener { v ->
-            requestFocusInTouch(v)
-            goToTab(2, true)
-        }
-        descriptionContentBinding.lines3.setOnClickListener { v ->
-            requestFocusInTouch(v)
-            goToTab(3, true)
-        }
-        descriptionContentBinding.dirs4.setOnClickListener { v ->
-            requestFocusInTouch(v)
-            goToTab(4, true)
-        }
-        descriptionContentBinding.nav5.setOnClickListener { v ->
-            requestFocusInTouch(v)
-            goToTab(5, true)
-        }
-        descriptionContentBinding.size6.setOnClickListener { v ->
-            requestFocusInTouch(v)
-            goToTab(6, true)
-        }
-        descriptionContentBinding.alarms7.setOnClickListener { v ->
-            requestFocusInTouch(v)
-            goToTab(7, true)
-        }
-        descriptionContentBinding.mainTb8.setOnClickListener { v ->
-            requestFocusInTouch(v)
-            goToTab(8, true)
-        }
-        descriptionContentBinding.sideTb9.setOnClickListener { v ->
-            requestFocusInTouch(v)
-            goToTab(9, true)
-        }
-        descriptionContentBinding.moveMode10.setOnClickListener { v ->
-            requestFocusInTouch(v)
-            goToTab(10, true)
-        }
-        descriptionContentBinding.delMode11.setOnClickListener { v ->
-            requestFocusInTouch(v)
-            goToTab(11, true)
-        }
-        descriptionContentBinding.restMode12.setOnClickListener { v ->
-            requestFocusInTouch(v)
-            goToTab(12, true)
-        }
-        descriptionContentBinding.archive13.setOnClickListener { v ->
-            requestFocusInTouch(v)
-            goToTab(13, true)
-        }
-        descriptionContentBinding.convert14.setOnClickListener { v ->
-            requestFocusInTouch(v)
-            goToTab(14, true)
-        }
-        descriptionContentBinding.send15.setOnClickListener { v ->
-            requestFocusInTouch(v)
-            goToTab(15, true)
-        }
+        createListeners(descriptionContentBinding.descGeneral1, 1)
+        createListeners(descriptionContentBinding.records2, 2)
+        createListeners(descriptionContentBinding.lines3, 3)
+        createListeners(descriptionContentBinding.dirs4, 4)
+        createListeners(descriptionContentBinding.nav5, 5)
+        createListeners(descriptionContentBinding.size6, 6)
+        createListeners(descriptionContentBinding.alarms7, 7)
+        createListeners(descriptionContentBinding.mainTb8, 8)
+        createListeners(descriptionContentBinding.sideTb9, 9)
+        createListeners(descriptionContentBinding.moveMode10, 10)
+        createListeners(descriptionContentBinding.delMode11, 11)
+        createListeners(descriptionContentBinding.restMode12, 12)
+        createListeners(descriptionContentBinding.archive13, 13)
+        createListeners(descriptionContentBinding.convert14, 14)
+        createListeners(descriptionContentBinding.send15, 15)
+    }
 
+    private fun closeDescriptionContent() {
+        descriptionContentBinding.llDescriptionContent.isVisible = false
+        descBackPressedCallback.isEnabled = false
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun createListeners (view: View, position: Int) {
+        view.setOnClickListener { v ->
+            requestFocusInTouch(v)
+            goToTab(position, true)
+        }
+        view.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
+        }
     }
 
     private fun goToTab(position: Int, showAnimation: Boolean) {
         if (position in 1..15) {
+            requestFocusInTouch(binding.fon)
             viewPager.setCurrentItem(position - 1, showAnimation)
+
         }
     }
 
@@ -181,7 +167,6 @@ class DescriptionActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-
         _binding = null
     }
 }
