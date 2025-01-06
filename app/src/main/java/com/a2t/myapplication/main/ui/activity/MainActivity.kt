@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -283,6 +282,11 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ БОКОВАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        val sideBarGestureDetector = GestureDetector(this, SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
+            override fun onSwipeLeft() {}
+            override fun onSwipeRight() { sideBarShowOrHide(false) }
+            override fun onSwipeDown() {}
+        }))
         // swipe влево по флагу для открытия БОКОВОЙ ПАНЕЛИ
         val downX = AtomicReference( 0f)
         val downY = AtomicReference( 0f)
@@ -318,21 +322,25 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         sideToolbarBinding.ivSideBarOpen.setOnClickListener {
             sideBarFullOpenClose()
         }
+        sideToolbarBinding.ivSideBarOpen.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
         sideToolbarBinding.tvSideBarOpen.setOnClickListener {
             sideBarFullOpenClose()
         }
+        sideToolbarBinding.tvSideBarOpen.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         // Кнопка не спящий режим
         sideToolbarBinding.llSideBarNoSleep.setOnClickListener { view ->
             requestFocusInTouch(view)
             noSleepModeON()
         }
+        sideToolbarBinding.llSideBarNoSleep.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         // Кнопка Удалить метки
         sideToolbarBinding.llSideBarDelMark.setOnClickListener { view ->
             requestFocusInTouch(view)
             deleteAllMarks()
         }
+        sideToolbarBinding.llSideBarDelMark.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         // Кнопка Переслать
         sideToolbarBinding.llSideBarSend.setOnClickListener { view ->
@@ -349,6 +357,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 Toast.makeText(this, getString(R.string.dir_empty), Toast.LENGTH_SHORT).show()
             }
         }
+        sideToolbarBinding.llSideBarSend.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         // Кнопка Конвертировать
         sideToolbarBinding.llSideBarConvertText.setOnClickListener { view ->
@@ -361,6 +370,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 .add(R.id.container_view, TextFragment())
                 .addToBackStack("textFragment").commit()
         }
+        sideToolbarBinding.llSideBarConvertText.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         // Кнопка режима Переноса
         sideToolbarBinding.llSideBarMoveMode.setOnClickListener { view ->
@@ -369,6 +379,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             enableSpecialMode()
             goToDir(animOpenNewDir)
         }
+        sideToolbarBinding.llSideBarMoveMode.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         // Кнопка режима Удаления
         sideToolbarBinding.llSideBarDelMode.setOnClickListener { view ->
@@ -377,6 +388,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             enableSpecialMode()
             goToDir(animOpenNewDir)
         }
+        sideToolbarBinding.llSideBarDelMode.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         // Кнопка режима Восстановления
         sideToolbarBinding.llSideBarRestMode.setOnClickListener { view ->
@@ -385,6 +397,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             enableSpecialMode()
             goToDir(animOpenNewDir)
         }
+        sideToolbarBinding.llSideBarRestMode.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         // Кнопка режима Архив
         sideToolbarBinding.llSideBarArchiveMode.setOnClickListener { view ->
@@ -393,6 +406,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             enableSpecialMode()
             goToDir(animOpenNewDir)
         }
+        sideToolbarBinding.llSideBarArchiveMode.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         smallToolbarBinding.llRootDir.setOnClickListener {
@@ -407,10 +421,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         val specialModeGestureDetector = GestureDetector(this, SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
             override fun onSwipeLeft() {}
             override fun onSwipeRight() {}
-            override fun onSwipeDown() {
-                Log.e("МОЁ", "onSwipeDown")
-                completionSpecialMode()
-            }
+            override fun onSwipeDown() { completionSpecialMode() }
         }))
 
         // Свайп вниз закрывает нижнюю панель и переводит рециклер в обычный режим
@@ -1418,10 +1429,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
     }
 
-
     override fun onDestroy() {
         super.onDestroy()
-
-        _binding = null // Очищаем привязку, чтобы избежать утечек памяти
+        _binding = null
     }
 }

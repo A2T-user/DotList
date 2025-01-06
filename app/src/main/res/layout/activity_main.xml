@@ -66,11 +66,11 @@
                     android:id="@+id/iv_btn_scroll"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/circle_color_bar"
-                    android:src="@drawable/ic_scroll_down"
-                    android:padding="12dp"
                     android:alpha="0.7"
-                    tools:ignore="contentDescription"/>
+                    android:background="@drawable/circle_color_bar"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_scroll_down"
+                    tools:ignore="contentDescription" />
 
             </LinearLayout>
 
@@ -83,6 +83,17 @@
                     android:layout_gravity="bottom|end"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"/>
+
+            <LinearLayout
+                android:id="@+id/container_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="6dp"
+                android:animateLayoutChanges="true"
+                android:gravity="center"
+                android:orientation="vertical" />
 
         </FrameLayout>
 
@@ -186,17 +197,6 @@
         android:layout_marginTop="16dp"
         android:paddingEnd="10dp"
         android:paddingBottom="10dp"
-        android:animateLayoutChanges="true"/>
-
-    <LinearLayout
-        android:id="@+id/container_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="6dp"
         android:animateLayoutChanges="true"/>
 
 </FrameLayout>
