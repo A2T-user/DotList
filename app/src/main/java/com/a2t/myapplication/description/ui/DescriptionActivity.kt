@@ -50,12 +50,12 @@ class DescriptionActivity : AppCompatActivity() {
         goToTab(currentTab, false)
 
         gestureDetector = GestureDetector(this, SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
-            override fun onSwipeLeft() {
+            override fun onSwipeLeft(): Boolean {
                 closeDescriptionContent()
+                return true
             }
-
-            override fun onSwipeRight() {}
-            override fun onSwipeDown() {}
+            override fun onSwipeRight() = false
+            override fun onSwipeDown() = false
         }))
 
         binding.goToPrevious.setOnClickListener {

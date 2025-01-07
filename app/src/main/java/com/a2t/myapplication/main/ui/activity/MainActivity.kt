@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.VelocityTracker
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -114,6 +115,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private var isNoSleepMode = false
     private var isClickAllowed = true
     private var scrollState = ScrollState.STOPPED
+    private lateinit var velocityTracker: VelocityTracker
+    private lateinit var specialModeGestureDetector: GestureDetector
 
     @SuppressLint("ClickableViewAccessibility", "InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -164,7 +167,11 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                         mainViewModel.specialMode = SpecialMode.NORMAL
                         enableSpecialMode()
                         clearBuffers()
-                        goToParentDir()
+                        if (getIdCurrentDir() == 0L) {
+                            goToNormalMode()
+                        } else {
+                            goToParentDir()
+                        }
                     }
                     else -> {
                         if (getIdCurrentDir() > 0) {
@@ -283,9 +290,12 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ БОКОВАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         val sideBarGestureDetector = GestureDetector(this, SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
-            override fun onSwipeLeft() {}
-            override fun onSwipeRight() { sideBarShowOrHide(false) }
-            override fun onSwipeDown() {}
+            override fun onSwipeLeft() = false
+            override fun onSwipeRight(): Boolean {
+                sideBarShowOrHide(false)
+                return true
+            }
+            override fun onSwipeDown() = false
         }))
         // swipe влево по флагу для открытия БОКОВОЙ ПАНЕЛИ
         val downX = AtomicReference( 0f)
@@ -418,37 +428,19 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ НИЖНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        val specialModeGestureDetector = GestureDetector(this, SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
-            override fun onSwipeLeft() {}
-            override fun onSwipeRight() {}
-            override fun onSwipeDown() { completionSpecialMode() }
+        specialModeGestureDetector = GestureDetector(this, SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
+            override fun onSwipeLeft() = false
+            override fun onSwipeRight() = false
+            override fun onSwipeDown(): Boolean {
+                completionSpecialMode()
+                return true
+            }
         }))
 
         // Свайп вниз закрывает нижнюю панель и переводит рециклер в обычный режим
         modesToolbarBinding.clModesToolbar.setOnTouchListener { _, event ->
-            when(event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    downX.set(event.x)
-                    downY.set(event.y)
-                    isTouch.set(true)
-                }
-                MotionEvent.ACTION_CANCEL -> isTouch.set(false)
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_HOVER_EXIT, MotionEvent.ACTION_MOVE -> {
-                    if (isTouch.get()) {
-                        val dX = event.x - downX.get()
-                        val dY = event.y - downY.get()
-                        if (abs(dY / dX) > 1 && dY > 50) {// Если жест вертикальный, вниз
-                            completionSpecialMode()
-                        }
-                    }
-                }
-            }
-            return@setOnTouchListener isTouch.get()
+            specialModeGestureDetector.onTouchEvent(event)
         }
-
-        modesToolbarBinding.bar.setOnTouchListener { _, event -> specialModeGestureDetector.onTouchEvent(event) }
-
-        modesToolbarBinding.flCircle.setOnTouchListener { _, event -> specialModeGestureDetector.onTouchEvent(event) }
 
         // Клик по кнопке Закрыть закрывает нижнюю панель и переводит экран в обычный режим
         modesToolbarBinding.btnCloseToolbar.setOnClickListener {
@@ -467,7 +459,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
             if (currentTab != 0) openDescriptionActivity(currentTab)
         }
-        modesToolbarBinding.btnHelp.setOnTouchListener { _, event -> specialModeGestureDetector.onTouchEvent(event) }
 
         modesToolbarBinding.btnSelectAll.setOnClickListener {
             if (getSpecialMode() == SpecialMode.DELETE || getSpecialMode() == SpecialMode.RESTORE) {
@@ -480,7 +471,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 showNumberOfSelectedRecords()
             }
         }
-        modesToolbarBinding.btnSelectAll.setOnTouchListener { _, event -> specialModeGestureDetector.onTouchEvent(event) }
 
         modesToolbarBinding.btnAction.setOnClickListener {
             when(getSpecialMode()) {
@@ -525,7 +515,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 else -> {}
             }
         }
-        modesToolbarBinding.btnAction.setOnTouchListener { _, event -> specialModeGestureDetector.onTouchEvent(event) }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ КОНТЕКСТНОЕ МЕНЮ ФОРМАТ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // Потеря фокуса контекст.меню приводит к скрытию меню
@@ -1432,5 +1421,19 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        velocityTracker = VelocityTracker.obtain() // Создаем новый объект VelocityTracker
+        velocityTracker.addMovement(event)
+
+        if (event != null) {
+            specialModeGestureDetector.onTouchEvent(event) // Обработка жестов
+        }
+
+        if (event?.action == MotionEvent.ACTION_UP || event?.action == MotionEvent.ACTION_CANCEL) {
+            velocityTracker.recycle() // Освобождаем ресурсы
+        }
+        return super.onTouchEvent(event)
     }
 }
