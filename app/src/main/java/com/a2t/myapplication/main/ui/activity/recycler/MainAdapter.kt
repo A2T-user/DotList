@@ -242,10 +242,6 @@ class MainAdapter(
                     holder.ivAction.setImageResource(R.drawable.ic_del_mode)
                 }
 
-                holder.llForeground.setOnClickListener {
-                    if (item.isDir) goToNormalMode(item)
-                }
-
                 // Выбор/отмена записи для удаления
                 holder.llAction.setOnClickListener{
                     if (mac.getMainBuffer().removeAll { it.id == item.id }) {
@@ -262,10 +258,6 @@ class MainAdapter(
                 holder.ivAction.setImageResource(R.drawable.ic_basket_white)
                 if (mac.getMainBuffer().any { it.id == item.id }) {
                     holder.ivAction.setImageResource(R.drawable.ic_rest_mode)
-                }
-
-                holder.llForeground.setOnClickListener {
-                    if (item.isDir) goToNormalMode(item)
                 }
 
                 // Выбор/отмена записи для восстановления
@@ -438,17 +430,6 @@ class MainAdapter(
         currentHolderIdLiveData.postValue(item.id)
         currentItem = item
         currentHolderPosition = position
-    }
-
-    private fun goToNormalMode (item: ListRecord) {
-        mac.apply {
-            requestMenuFocus()
-            setSpecialMode(SpecialMode.NORMAL)
-            enableSpecialMode()
-            getMainBuffer().clear()
-            getMoveBuffer().clear()
-            goToChildDir(item.id)
-        }
     }
 
     override fun getItemCount() = records.size

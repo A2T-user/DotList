@@ -22,7 +22,8 @@
                 style="@style/RegularText"
                 android:text="@string/desc_rest_mode_text1"/>
 
-            <LinearLayout style="@style/LLLineContainer">
+            <LinearLayout style="@style/LLLineContainer"
+                android:paddingHorizontal="0dp">
 
                 <TextView
                     style="@style/RegularText"
@@ -57,7 +58,8 @@
                 style="@style/RegularText"
                 android:text="@string/desc_rest_mode_text3"/>
 
-            <LinearLayout style="@style/LLLineContainer">
+            <LinearLayout style="@style/LLLineContainer"
+                android:paddingHorizontal="0dp">
 
                 <TextView
                     style="@style/RegularText"

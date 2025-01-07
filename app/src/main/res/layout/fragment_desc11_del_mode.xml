@@ -22,7 +22,8 @@
                 style="@style/RegularText"
                 android:text="@string/desc_del_mode_text1"/>
 
-            <LinearLayout style="@style/LLLineContainer">
+            <LinearLayout style="@style/LLLineContainer"
+                android:paddingHorizontal="0dp">
 
                 <TextView
                     style="@style/RegularText"
