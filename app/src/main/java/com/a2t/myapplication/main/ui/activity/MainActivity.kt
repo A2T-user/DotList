@@ -163,15 +163,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 mainBackPressedCallback.isEnabled = true
                 when (getSpecialMode()) {
                     SpecialMode.DELETE, SpecialMode.RESTORE -> {
-                        requestMenuFocus()
-                        mainViewModel.specialMode = SpecialMode.NORMAL
-                        enableSpecialMode()
-                        clearBuffers()
-                        if (getIdCurrentDir() == 0L) {
-                            goToNormalMode()
-                        } else {
-                            goToParentDir()
-                        }
+
                     }
                     else -> {
                         if (getIdCurrentDir() > 0) {
@@ -1016,11 +1008,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         getMainBuffer().clear()
         getMoveBuffer().clear()
         goToNormalMode()
-    }
-
-    private fun clearBuffers() {
-        getMainBuffer().clear()
-        getMoveBuffer().clear()
     }
 
     // Возврат в режим NORMAL
