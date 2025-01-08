@@ -413,9 +413,11 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         smallToolbarBinding.llRootDir.setOnClickListener {
             requestMenuFocus()
-            if (getIdCurrentDir() != 0L) {
-                mainViewModel.idDir = 0L
-                goToDir(animOpenParentDir)
+            if (getSpecialMode() != SpecialMode.DELETE && getSpecialMode() != SpecialMode.RESTORE) {
+                if (getIdCurrentDir() != 0L) {
+                    mainViewModel.idDir = 0L
+                    goToDir(animOpenParentDir)
+                }
             }
         }
 
