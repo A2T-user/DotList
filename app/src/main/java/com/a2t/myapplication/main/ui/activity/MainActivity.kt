@@ -77,7 +77,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private lateinit var floatingBarBackPressedCallback: OnBackPressedCallback
     val fragmentManager: FragmentManager = supportFragmentManager
     private val mainViewModel: MainViewModel by viewModel()
-    private val adapter = MainAdapter(this)
+    val adapter = MainAdapter(this)
     private lateinit var recycler: RecyclerView
     private var mIth: ItemTouchHelper? = null
     private var mIthScb: ItemTouchHelper.Callback? = null

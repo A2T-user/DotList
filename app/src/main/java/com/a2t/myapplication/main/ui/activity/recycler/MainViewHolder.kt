@@ -112,7 +112,7 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         changeBellType(item)
         changeBellIcon()
         item.alarmTime?.let {
-            tvTimeBellFull.text = DateFormat.format("EEE dd.M.yy HH:mm", it)
+            tvTimeBellFull.text = DateFormat.format("EEE, dd.M.yy HH:mm", it)
             .toString()
             .replaceFirstChar { char -> char.uppercase() }
         }
