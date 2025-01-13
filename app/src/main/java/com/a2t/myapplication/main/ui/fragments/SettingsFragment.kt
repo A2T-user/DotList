@@ -115,7 +115,7 @@ class SettingsFragment : Fragment() {
             else -> binding.ivSystemTeme.alpha = 1f
         }
         binding.tvRestorePeriod.text = newSettings.restorePeriod.toString()     // Период восстановления
-        binding.seekBarRestorePeriod.progress = newSettings.restorePeriod -1
+        binding.seekBarRestorePeriod.progress = newSettings.restorePeriod - 1
         binding.swEditEmptyDir.isChecked = newSettings.editEmptyDir             // Редактирование
         binding.swSortingChecks.isChecked = newSettings.sortingChecks           // Сортировка
         binding.swCrossingChecks.isChecked = newSettings.crossedOutOn           // Зачеркивание
@@ -124,9 +124,9 @@ class SettingsFragment : Fragment() {
 
     // Обнуляем чек во всех строках
     private fun installNullCheckTheme() {
-        binding.ivLightTeme.alpha = 0f
-        binding.ivDarkTeme.alpha = 0f
-        binding.ivSystemTeme.alpha = 0f
+        binding.ivLightTeme.alpha = 0.3f
+        binding.ivDarkTeme.alpha = 0.3f
+        binding.ivSystemTeme.alpha = 0.3f
     }
 
     override fun onStart() {

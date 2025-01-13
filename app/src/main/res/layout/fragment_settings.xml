@@ -62,6 +62,7 @@
             <ImageView
                 android:id="@+id/ivLightTeme"
                 android:contentDescription="@string/light_theme"
+                android:src="@drawable/ic_theme_light"
                 style="@style/IVSettingThemeStyle"/>
 
             <TextView
@@ -77,6 +78,7 @@
             <ImageView
                 android:id="@+id/ivDarkTeme"
                 android:contentDescription="@string/dark_theme"
+                android:src="@drawable/ic_theme_dark"
                 style="@style/IVSettingThemeStyle"/>
 
             <TextView
@@ -95,6 +97,7 @@
             <ImageView
                 android:id="@+id/ivSystemTeme"
                 android:contentDescription="@string/system_theme"
+                android:src="@drawable/ic_theme_system"
                 style="@style/IVSettingThemeStyle" />
 
             <TextView
