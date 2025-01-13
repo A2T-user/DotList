@@ -178,7 +178,7 @@
             android:layout_marginEnd="4dp"
             android:textColor="@color/white"
             android:textSize="16sp"
-            tools:text="03.11.24 14:07"/>
+            tools:text="вс, 03.11.24 14:07"/>
 
     </LinearLayout>
 

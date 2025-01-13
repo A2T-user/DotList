@@ -101,6 +101,8 @@ class AlarmFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val adapter = (requireActivity() as MainActivity).adapter
+
         App.getTextSizeLiveData().observe(viewLifecycleOwner) { size ->
             binding.etText.textSize = size
             binding.tvDate.textSize = size
@@ -201,12 +203,18 @@ class AlarmFragment : Fragment() {
                         workRequestId = sendNotification()
                     }
                     // Сохранение нового напоминания в БД
-                    record?.alarmTime = alarmDateTime
                     record?.alarmText = alarmText
-                    record?.alarmId = workRequestId
-                    record?.let { it1 -> mainViewModel.updateRecord(it1) {} }
+                    record?.apply {
+                        alarmTime = alarmDateTime
+                        alarmId = workRequestId
+                    }?.let { mainViewModel.updateRecord(it) {} }
+                    // Сохранение нового напоминания массиве рециклера и обновление строки
+                    mainViewModel.record = record
+                    adapter.notifyItemChanged(adapter.currentHolderPosition)
                     (requireActivity() as MainActivity).cancelCurrentHolder()
+                    // Закрыть фрагмент
                     requireActivity().supportFragmentManager.popBackStack()
+
                 }
             } else {
                 Toast.makeText(requireContext(), getString(R.string.text_err), Toast.LENGTH_SHORT).show()
@@ -215,11 +223,17 @@ class AlarmFragment : Fragment() {
 
         buttonBinding.btnDel.setOnClickListener {
             removeAlarm()
-            record?.alarmTime = null
-            record?.alarmText = null
-            record?.alarmId = null
-            record?.let { mainViewModel.updateRecord(it) {} }
+            // Сохранение в БД
+            record?.apply {
+                alarmTime = null
+                alarmText = null
+                alarmId = null
+            }?.let { mainViewModel.updateRecord(it) {} }
+            // Сохранение нового напоминания массиве рециклера и обновление строки
+            mainViewModel.record = record
+            adapter.notifyItemChanged(adapter.currentHolderPosition)
             (requireActivity() as MainActivity).cancelCurrentHolder()
+            // Закрыть фрагмент
             requireActivity().supportFragmentManager.popBackStack()
         }
 
