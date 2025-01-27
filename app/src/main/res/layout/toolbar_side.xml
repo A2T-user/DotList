@@ -51,7 +51,7 @@
         <LinearLayout
             android:id="@+id/llSideBarNoSleep"
             tools:ignore="UseCompoundDrawables"
-            style="@style/LLSideBarStyle">
+            style="@style/LLSideBarStyleFun">
 
             <ImageView
                 android:src="@drawable/ic_eye_small"
@@ -67,7 +67,7 @@
         <LinearLayout
             android:id="@+id/llSideBarDelMark"
             tools:ignore="UseCompoundDrawables"
-            style="@style/LLSideBarStyle">
+            style="@style/LLSideBarStyleFun">
 
             <ImageView
                 android:src="@drawable/ic_del_mark"
@@ -83,7 +83,7 @@
         <LinearLayout
             android:id="@+id/llSideBarSend"
             tools:ignore="UseCompoundDrawables"
-            style="@style/LLSideBarStyle">
+            style="@style/LLSideBarStyleFun">
 
             <ImageView
                 android:src="@drawable/ic_send"
@@ -99,7 +99,7 @@
         <LinearLayout
             android:id="@+id/llSideBarConvertText"
             tools:ignore="UseCompoundDrawables"
-            style="@style/LLSideBarStyle">
+            style="@style/LLSideBarStyleFun">
 
             <ImageView
                 android:src="@drawable/ic_convert_text"
@@ -123,7 +123,7 @@
         <LinearLayout
             android:id="@+id/llSideBarMoveMode"
             tools:ignore="UseCompoundDrawables"
-            style="@style/LLSideBarStyle">
+            style="@style/LLSideBarStyleFun">
 
             <ImageView
                 android:src="@drawable/ic_move_mode"
@@ -139,7 +139,7 @@
         <LinearLayout
             android:id="@+id/llSideBarDelMode"
             tools:ignore="UseCompoundDrawables"
-            style="@style/LLSideBarStyle">
+            style="@style/LLSideBarStyleFun">
 
             <ImageView
                 android:src="@drawable/ic_del_mode_yell"
@@ -155,7 +155,7 @@
         <LinearLayout
             android:id="@+id/llSideBarRestMode"
             tools:ignore="UseCompoundDrawables"
-            style="@style/LLSideBarStyle">
+            style="@style/LLSideBarStyleFun">
 
             <ImageView
                 android:src="@drawable/ic_rest_mode_yell"
@@ -171,7 +171,7 @@
         <LinearLayout
             android:id="@+id/llSideBarArchiveMode"
             tools:ignore="UseCompoundDrawables"
-            style="@style/LLSideBarStyle">
+            style="@style/LLSideBarStyleFun">
 
             <ImageView
                 android:src="@drawable/ic_archive_mode"
