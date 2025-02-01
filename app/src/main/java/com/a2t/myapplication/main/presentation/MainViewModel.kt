@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
 class MainViewModel(
     private val mainInteractor: MainInteractor
 ): ViewModel() {
-    // Параметры для MainFragment
+    // Параметры для MainActivity
     val moveBuffer = ArrayList<ListRecord>()    // Буфер для режима MOVE(только перенос записей)
     val mainBuffer = ArrayList<ListRecord>()    // Буфер для всех остальных специальных режимов
     var idDir = 0L
@@ -250,12 +250,11 @@ class MainViewModel(
     }
     private fun copyRecords(records: List<ListRecord>, idDir: Long) {
         records.forEach { record ->
-            record.id = 0
-            record.idDir = idDir
-            insertRecordToCopy(record){ newId ->
+            val cloneRecord = record.copy(id = 0, idDir = idDir)
+            insertRecordToCopy(cloneRecord){ newId ->
                 if (record.isDir) {
                     val selectionRecords = mainInteractor.selectionSubordinateRecordsToDelete(record.id)
-                    copyRecords(selectionRecords, newId)
+                        copyRecords(selectionRecords, newId)
                 }
             }
         }
