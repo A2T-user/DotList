@@ -254,7 +254,7 @@ class MainViewModel(
             insertRecordToCopy(cloneRecord){ newId ->
                 if (record.isDir) {
                     val selectionRecords = mainInteractor.selectionSubordinateRecordsToDelete(record.id)
-                        copyRecords(selectionRecords, newId)
+                    copyRecords(selectionRecords, newId)
                 }
             }
         }

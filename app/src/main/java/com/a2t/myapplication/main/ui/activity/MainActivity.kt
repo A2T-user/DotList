@@ -37,19 +37,19 @@ import com.a2t.myapplication.databinding.ToolbarSideBinding
 import com.a2t.myapplication.databinding.ToolbarSmallBinding
 import com.a2t.myapplication.databinding.ToolbarTopBinding
 import com.a2t.myapplication.description.ui.DescriptionActivity
+import com.a2t.myapplication.main.domain.model.ListRecord
+import com.a2t.myapplication.main.presentation.MainViewModel
 import com.a2t.myapplication.main.ui.ActionEditText
-import com.a2t.myapplication.main.ui.fragments.MainMenuFragment
+import com.a2t.myapplication.main.ui.activity.model.SpecialMode
 import com.a2t.myapplication.main.ui.activity.recycler.MainAdapter
 import com.a2t.myapplication.main.ui.activity.recycler.MainAdapterCallback
 import com.a2t.myapplication.main.ui.activity.recycler.MainViewHolder
 import com.a2t.myapplication.main.ui.activity.recycler.MyScrollListener
 import com.a2t.myapplication.main.ui.activity.recycler.OnScrollStateChangedListener
 import com.a2t.myapplication.main.ui.activity.recycler.model.ScrollState
-import com.a2t.myapplication.main.domain.model.ListRecord
-import com.a2t.myapplication.main.presentation.MainViewModel
-import com.a2t.myapplication.main.ui.activity.model.SpecialMode
-import com.a2t.myapplication.main.ui.fragments.models.TextFragmentMode
+import com.a2t.myapplication.main.ui.fragments.MainMenuFragment
 import com.a2t.myapplication.main.ui.fragments.TextFragment
+import com.a2t.myapplication.main.ui.fragments.models.TextFragmentMode
 import com.a2t.myapplication.main.ui.utilities.AlarmHelper
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.delay
@@ -61,6 +61,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.abs
 import kotlin.math.hypot
+
 
 const val K_MAX_SHIFT_RIGHT = 0.2f
 const val K_MAX_SHIFT_LEFT = -0.3f
@@ -470,20 +471,24 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             when(getSpecialMode()) {
                 SpecialMode.MOVE -> {
                     if (getMainBuffer().size + getMoveBuffer().size > 0) {
+                        binding.progressBar.isVisible = true
                         val pasteIds = mutableListOf<Long>()
                         getMainBuffer().forEach { if (it.isDir) pasteIds.add(it.id) }
                         getMoveBuffer().forEach { if (it.isDir) pasteIds.add(it.id) }
                         if (pasteIds.isNotEmpty()) {
                             mainViewModel.pasteRecords(getIdCurrentDir(), pasteIds,
                                 {
+                                    binding.progressBar.isVisible = false
                                     showRecursionError()
                                 },
                                 {
                                     pasteRecords()
+                                    binding.progressBar.isVisible = false
                                 }
                             )
                         } else {
                             pasteRecords()
+                            binding.progressBar.isVisible = false
                         }
                     } else {
                         Toast.makeText(this, getString(R.string.nothing_selected),
@@ -1185,6 +1190,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     // Удаление выбранных записей, если у выбранных записей есть вложенные - выдать предупреждение
     @SuppressLint("InflateParams")
     override fun deleteRecords(records: List<ListRecord>) {
+        binding.progressBar.isVisible = true
         mainViewModel.selectionSubordinateRecordsToDelete(records) { list ->
             val mutableRecords = list.toMutableList()
             val selectedRecords = records.size
@@ -1196,21 +1202,25 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 val str = if (countArchive != 0) getString(R.string.del_archive, countArchive.toString()) else ""
                 mess += "$str."
                 val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_title_attention, null)
+                binding.progressBar.isVisible = false
                 MaterialAlertDialogBuilder(this)
                     .setCustomTitle(dialogView)
                     .setMessage(mess)
-                    .setNeutralButton(getString(R.string.negative_btn)) { _, _ -> requestMenuFocus() }
+                    .setNeutralButton(getString(R.string.negative_btn)) { _, _ ->
+                        requestMenuFocus() }
                     .setPositiveButton(getString(R.string.delete)) { _, _ ->
                         deleteRecordsAfterSelection(records, mutableRecords)
                     }
                     .show()
             } else {
                 deleteRecordsAfterSelection(records, mutableRecords)
+                binding.progressBar.isVisible = false
             }
         }
     }
 
     private fun deleteRecordsAfterSelection(records: List<ListRecord>, mutableRecords: MutableList<ListRecord>) {
+        binding.progressBar.isVisible = true
         mutableRecords.forEach { it.isDelete = true }
         mainViewModel.updateRecords(mutableRecords) {
             if (getSpecialMode() == SpecialMode.NORMAL) {
@@ -1218,14 +1228,17 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 adapter.records.removeAt(position)
                 adapter.notifyItemRemoved(position) // Уведомление об удалении
                 adapter.notifyItemRangeChanged(position, adapter.records.size - position)
+                binding.progressBar.isVisible = false
             } else {
                 completionSpecialMode()
+                binding.progressBar.isVisible = false
             }
         }
     }
 
     @SuppressLint("InflateParams")
     fun restoreRecords(records: List<ListRecord>) {
+        binding.progressBar.isVisible = true
         mainViewModel.selectionSubordinateRecordsToRestore(records) { list ->
             val mutableRecords = list.toMutableList()
             val selectedRecords = records.size
@@ -1238,13 +1251,16 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             str = if (countArchive != 0) getString(R.string.del_archive, countArchive.toString()) else ""
             mess += "$str."
             val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_title_attention, null)
+            binding.progressBar.isVisible = false
             MaterialAlertDialogBuilder(this)
                 .setCustomTitle(dialogView)
                 .setMessage(mess)
                 .setNeutralButton(getString(R.string.negative_btn)) { _, _ -> }
                 .setPositiveButton(getString(R.string.restore)) { _, _ ->
                     mutableRecords.forEach { it.isDelete = false }
+                    binding.progressBar.isVisible = true
                     mainViewModel.updateRecords(mutableRecords) {
+                        binding.progressBar.isVisible = false
                         if (getSpecialMode() == SpecialMode.RESTORE) completionSpecialMode()
                     }
                 }
