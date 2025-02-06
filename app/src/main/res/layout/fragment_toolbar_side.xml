@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/shadow_circle"
-    android:paddingEnd="6dp"
+    android:paddingHorizontal="6dp"
     android:paddingBottom="8dp">
 
     <ScrollView

@@ -96,6 +96,23 @@ class SettingsFragment : Fragment() {
             App.appSettings.notificationOn = checked
             app.saveSettings() // Сохраняем параметры
         }
+        // Выбор ориентации боковой панели
+        // правая
+        binding.rightHand.setOnClickListener {
+            binding.rightHand.alpha = 1.0f
+            binding.leftHand.alpha = 0.3f
+            App.appSettings.isLeftHandControl = false
+            app.saveSettings()
+            (requireActivity() as MainActivity).installHandControl()
+        }
+        // левая
+        binding.leftHand.setOnClickListener {
+            binding.leftHand.alpha = 1.0f
+            binding.rightHand.alpha = 0.3f
+            App.appSettings.isLeftHandControl = true
+            app.saveSettings()
+            (requireActivity() as MainActivity).installHandControl()
+        }
     }
 
     private fun changeTheme() {
@@ -120,6 +137,13 @@ class SettingsFragment : Fragment() {
         binding.swSortingChecks.isChecked = newSettings.sortingChecks           // Сортировка
         binding.swCrossingChecks.isChecked = newSettings.crossedOutOn           // Зачеркивание
         binding.swNotificationOn.isChecked = newSettings.notificationOn         // Напоминания
+        if (newSettings.isLeftHandControl) {
+            binding.leftHand.alpha = 1.0f
+            binding.rightHand.alpha = 0.3f
+        } else {
+            binding.leftHand.alpha = 0.3f
+            binding.rightHand.alpha = 1.0f
+        }
     }
 
     // Обнуляем чек во всех строках

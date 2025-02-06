@@ -8,5 +8,6 @@ data class AppSettings(
     var sortingChecks: Boolean,
     var crossedOutOn: Boolean,
     var notificationOn: Boolean,
-    var textSize: Float
+    var textSize: Float,
+    var isLeftHandControl: Boolean
 )

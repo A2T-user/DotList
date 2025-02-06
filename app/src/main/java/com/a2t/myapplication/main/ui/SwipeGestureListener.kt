@@ -1,4 +1,4 @@
-package com.a2t.myapplication.main.ui.activity
+package com.a2t.myapplication.main.ui
 
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -7,7 +7,7 @@ import kotlin.math.abs
 class SwipeGestureListener(private val listener: OnSwipeListener) : GestureDetector.SimpleOnGestureListener() {
     companion object {
         private const val SWIPE_THRESHOLD = 50
-        private const val SWIPE_VELOCITY_THRESHOLD = 100
+        private const val SWIPE_VELOCITY_THRESHOLD = 50
     }
 
     override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {

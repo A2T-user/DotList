@@ -3,6 +3,6 @@
     <corners android:topLeftRadius="4dp"
         android:bottomLeftRadius="4dp"/>
     <stroke android:width="2px"
-        android:color="@color/yellow_dir" />
+        android:color="@color/white" />
     <solid android:color="@color/red_icon" />
 </shape>

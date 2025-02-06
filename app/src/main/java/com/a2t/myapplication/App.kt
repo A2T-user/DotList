@@ -31,6 +31,7 @@ class App : Application() {
         const val SORTING_CHECKS = "SORTING_СHECKS"
         const val CROSSED_OUT_ON = "CROSSED_OUT_ON"
         const val NOTIFICATION_ON = "NOTIFICATION_ON"
+        const val LEFT_HAND_CONTROL = "LEFT_HAND_CONTROL"
         const val TEXT_SIZE = "TEXT_SIZE"
         lateinit var appSettings: AppSettings
         lateinit var appContext: Context
@@ -75,7 +76,8 @@ class App : Application() {
             pref.getBoolean(SORTING_CHECKS, true),
             pref.getBoolean(CROSSED_OUT_ON, true),
             pref.getBoolean(NOTIFICATION_ON, true),
-            pref.getFloat(TEXT_SIZE, 20f)
+            pref.getFloat(TEXT_SIZE, 20f),
+            pref.getBoolean(LEFT_HAND_CONTROL, false)
         )
         textSizeLiveData.postValue(appSettings.textSize)
     }
@@ -89,6 +91,7 @@ class App : Application() {
             putBoolean(SORTING_CHECKS, appSettings.sortingChecks)
             putBoolean(CROSSED_OUT_ON, appSettings.crossedOutOn)
             putBoolean(NOTIFICATION_ON, appSettings.notificationOn)
+            putBoolean(LEFT_HAND_CONTROL, appSettings.isLeftHandControl)
         }
     }
 
