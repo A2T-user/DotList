@@ -189,43 +189,7 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_text_size"
-            android:text="@string/text_size"
-            app:drawableStartCompat="@drawable/ic_text_size"
-            style="@style/СhapterStyle"
-            android:textSize="18sp"
-            android:textStyle="normal"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <SeekBar
-                android:id="@+id/seekBarTextSize"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:progressTint="@color/blue_icon"
-                android:thumbTint="@color/blue_icon"
-                android:min="18"
-                android:max="27"/>
-
-            <TextView
-                android:id="@+id/tv_text_size_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:background="@drawable/rect_blue"
-                android:gravity="center"
-                android:paddingHorizontal="6dp"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                tools:text="18" />
-
-        </LinearLayout>
 
         <View style="@style/BlueDivider" />
 
@@ -297,5 +261,89 @@
                 style="@style/SwitchStyle" />
 
         </LinearLayout>
+
+        <!--  Напоминания -->
+        <TextView
+            android:text="@string/special_features"
+            style="@style/СhapterStyle"/>
+
+        <TextView
+            android:id="@+id/tv_text_size"
+            android:text="@string/text_size"
+            app:drawableStartCompat="@drawable/ic_text_size"
+            style="@style/СhapterStyle"
+            android:textSize="18sp"
+            android:textStyle="normal"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <SeekBar
+                android:id="@+id/seekBarTextSize"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:progressTint="@color/blue_icon"
+                android:thumbTint="@color/blue_icon"
+                android:min="18"
+                android:max="27"/>
+
+            <TextView
+                android:id="@+id/tv_text_size_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/rect_blue"
+                android:gravity="center"
+                android:paddingHorizontal="6dp"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                tools:text="18" />
+
+        </LinearLayout>
+
+        <TextView
+            android:text="@string/left_hand_control"
+            style="@style/СhapterStyle"
+            app:drawableStartCompat="@drawable/ic_hand"
+            android:textSize="18sp"
+            android:textStyle="normal"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="24dp"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/left_hand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="TODO"
+                android:scaleX="-1"
+                android:alpha="0.3"
+                tools:ignore="co"
+                android:src="@drawable/ic_phone_in_hand"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:src="@drawable/ic_double_arrow"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/right_hand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_phone_in_hand"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
     </LinearLayout>
+
 </ScrollView>

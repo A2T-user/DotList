@@ -71,6 +71,8 @@
     <string name="restore_period_text">срок хранения удаленной записи (1–7 дней). По истечении этого срока ее восстановление становится не возможным.</string>
     <string name="notifications"><u>Напоминания</u></string>
     <string name="show_notification">выдавть уведомление при наступлении времени напоминания</string>
+    <string name="special_features"><u>Специальные возможности</u></string>
+    <string name="left_hand_control">В какой руке вам удобнее держать телефон</string>
 
     <string name="record_hint">Новая строка</string>
     <string name="note_hint">1</string>

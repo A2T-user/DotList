@@ -143,7 +143,6 @@
             android:layout_height="150dp"
             android:layout_marginStart="15dp"
             android:layout_marginVertical="15dp"
-            android:layout_gravity="center_vertical|end"
             android:background="@drawable/side_bar_flag"/>
 
     </LinearLayout>

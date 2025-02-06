@@ -10,11 +10,12 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
+import com.a2t.myapplication.App
 import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.FragmentToolbarSideBinding
 import com.a2t.myapplication.main.presentation.MainViewModel
 import com.a2t.myapplication.main.ui.activity.MainActivity
-import com.a2t.myapplication.main.ui.activity.SwipeGestureListener
+import com.a2t.myapplication.main.ui.SwipeGestureListener
 import com.a2t.myapplication.main.ui.activity.model.SpecialMode
 import com.a2t.myapplication.main.ui.fragments.models.TextFragmentMode
 import com.a2t.myapplication.main.ui.utilities.AppHelper
@@ -40,14 +41,31 @@ class ToolbarSideFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val sideBarGestureDetector = GestureDetector(requireContext(), SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
-            override fun onSwipeLeft() = false
-            override fun onSwipeRight(): Boolean {
-                sideBarHide()
-                return true
-            }
-            override fun onSwipeDown() = false
-        }))
+        val sideBarGestureDetector = if (App.appSettings.isLeftHandControl) {
+            GestureDetector(
+                requireContext(),
+                SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
+                    override fun onSwipeLeft(): Boolean {
+                        sideBarHide()
+                        return true
+                    }
+                    override fun onSwipeRight()= false
+                    override fun onSwipeDown() = false
+                })
+            )
+        } else {
+            GestureDetector(
+                requireContext(),
+                SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
+                    override fun onSwipeLeft() = false
+                    override fun onSwipeRight(): Boolean {
+                        sideBarHide()
+                        return true
+                    }
+                    override fun onSwipeDown() = false
+                })
+            )
+        }
 
         // Кнопка Развернуть/Свернуть боковую панель
         binding.ivSideBarOpen.setOnClickListener {

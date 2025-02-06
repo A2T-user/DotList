@@ -7,6 +7,7 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.GestureDetector
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.VelocityTracker
@@ -40,6 +41,7 @@ import com.a2t.myapplication.description.ui.DescriptionActivity
 import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.presentation.MainViewModel
 import com.a2t.myapplication.main.ui.ActionEditText
+import com.a2t.myapplication.main.ui.SwipeGestureListener
 import com.a2t.myapplication.main.ui.activity.model.SpecialMode
 import com.a2t.myapplication.main.ui.activity.recycler.MainAdapter
 import com.a2t.myapplication.main.ui.activity.recycler.MainAdapterCallback
@@ -52,6 +54,7 @@ import com.a2t.myapplication.main.ui.fragments.ToolbarSideFragment
 import com.a2t.myapplication.main.ui.utilities.AlarmHelper
 import com.a2t.myapplication.main.ui.utilities.AppHelper
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.internal.ViewUtils.dpToPx
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -117,6 +120,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private var scrollState = ScrollState.STOPPED
     private lateinit var velocityTracker: VelocityTracker
     private lateinit var specialModeGestureDetector: GestureDetector
+    private var isLeftHandControl: Boolean = false
+
 
     @SuppressLint("ClickableViewAccessibility", "InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -131,6 +136,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         modesToolbarBinding = binding.modesToolbar
 
         setContentView(binding.root)
+
+        installHandControl()
 
         val app = applicationContext as App
         // Необходимые размеры
@@ -294,8 +301,9 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 MotionEvent.ACTION_CANCEL -> isTouch.set(false)
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_HOVER_EXIT, MotionEvent.ACTION_MOVE -> {
                     if (isTouch.get()) {
-                        val dX = event.x - downX.get()
+                        var dX = event.x - downX.get()
                         val dY = event.y - downY.get()
+                        if (isLeftHandControl) dX *= -1
                         if (abs(dX / dY) > 1.5 && dX < 0) {         // Если жест горизонталный, влево
                             if (sideBarDebounce()) {
                                 noSleepModeOff()                           // Выключение режима БЕЗ СНА
@@ -1300,6 +1308,28 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
     override fun setSpecialMode(mode: SpecialMode) {
         mainViewModel.specialMode = mode
+    }
+
+    @SuppressLint("RestrictedApi")
+    fun installHandControl() {
+        isLeftHandControl = App.appSettings.isLeftHandControl
+        val paramsContainer = binding.sideBarContainer.layoutParams as FrameLayout.LayoutParams
+        val paramsFlag = binding.sideBarFlag.layoutParams as LinearLayout.LayoutParams
+        if (isLeftHandControl) {
+            // Центрирование по вертикали и прижатие к началу по горизонтали
+            paramsContainer.gravity = Gravity.CENTER_VERTICAL or Gravity.START
+            paramsFlag.marginStart = dpToPx(this,0).toInt()
+            paramsFlag.marginEnd = dpToPx(this,15).toInt()
+            binding.sideBarFlag.scaleX = -1f
+        } else {
+            // Центрирование по вертикали и прижатие к концу по горизонтали
+            paramsContainer.gravity = Gravity.CENTER_VERTICAL or Gravity.END
+            paramsFlag.marginStart = dpToPx(this,15).toInt()
+            paramsFlag.marginEnd = dpToPx(this,0).toInt()
+            binding.sideBarFlag.scaleX = 1f
+        }
+        binding.sideBarContainer.layoutParams = paramsContainer
+        binding.sideBarFlag.layoutParams = paramsFlag
     }
 
     override fun onNewIntent(intent: Intent) {
