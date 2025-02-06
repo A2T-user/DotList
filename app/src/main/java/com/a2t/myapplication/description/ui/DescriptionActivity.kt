@@ -12,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.a2t.myapplication.databinding.ActivityDescriptionBinding
 import com.a2t.myapplication.databinding.DescriptionContentBinding
 import com.a2t.myapplication.main.ui.activity.SwipeGestureListener
+import com.a2t.myapplication.main.ui.utilities.AppHelper
 
 const val CURRENT_TAB = "current_tab"
 
@@ -34,7 +35,7 @@ class DescriptionActivity : AppCompatActivity() {
         // $$$$$$$$$$$$$$$$$$$$$$   Реакция на нажатие системной кнопки BACK   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         descBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                requestFocusInTouch(descriptionContentBinding.descGeneral1)
+                AppHelper.requestFocusInTouch(descriptionContentBinding.descGeneral1)
             }
         }
 
@@ -109,7 +110,7 @@ class DescriptionActivity : AppCompatActivity() {
         }
 
         binding.fon.setOnTouchListener { v, _ ->
-            requestFocusInTouch(v)
+            AppHelper.requestFocusInTouch(v)
             true
         }
 
@@ -138,7 +139,7 @@ class DescriptionActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     private fun createListeners (view: View, position: Int) {
         view.setOnClickListener { v ->
-            requestFocusInTouch(v)
+            AppHelper.requestFocusInTouch(v)
             goToTab(position, true)
         }
         view.setOnTouchListener { _, event ->
@@ -148,16 +149,10 @@ class DescriptionActivity : AppCompatActivity() {
 
     private fun goToTab(position: Int, showAnimation: Boolean) {
         if (position in 1..15) {
-            requestFocusInTouch(binding.fon)
+            AppHelper.requestFocusInTouch(binding.fon)
             viewPager.setCurrentItem(position - 1, showAnimation)
 
         }
-    }
-
-    private fun requestFocusInTouch(view: View) {
-        view.isFocusableInTouchMode = true
-        view.requestFocus()
-        view.isFocusableInTouchMode = false
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
