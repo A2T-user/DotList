@@ -128,31 +128,14 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"/>
 
-
     <!-- БОКОВАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
     <LinearLayout
         android:id="@+id/sideBarContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|end"
-        android:gravity="center_vertical|end"
+        android:animateLayoutChanges="true"
         android:orientation="horizontal">
-
-        <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:animateLayoutChanges="true"
-            android:scrollbars="vertical">
-
-            <include
-                android:id="@+id/sideBar"
-                layout="@layout/toolbar_side"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:visibility="gone"/>
-
-        </ScrollView>
 
         <View
             android:id="@+id/sideBarFlag"
@@ -160,6 +143,7 @@
             android:layout_height="150dp"
             android:layout_marginStart="15dp"
             android:layout_marginVertical="15dp"
+            android:layout_gravity="center_vertical|end"
             android:background="@drawable/side_bar_flag"/>
 
     </LinearLayout>

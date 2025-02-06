@@ -14,6 +14,7 @@ import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.FragmentMainMenuBinding
 import com.a2t.myapplication.description.ui.DescriptionActivity
 import com.a2t.myapplication.main.ui.activity.MainActivity
+import com.a2t.myapplication.main.ui.utilities.AppHelper
 
 class MainMenuFragment: Fragment() {
     private var _binding: FragmentMainMenuBinding? = null
@@ -41,13 +42,13 @@ class MainMenuFragment: Fragment() {
         binding.tvVersion.text = getString(R.string.version, version)
 
         binding.tvDescription.setOnClickListener { v ->
-            requestFocusInTouch(v)
+            AppHelper.requestFocusInTouch(v)
             val intent = Intent(requireContext(), DescriptionActivity::class.java)
             startActivity(intent)
         }
 
         binding.tvSettings.setOnClickListener { v ->
-            requestFocusInTouch(v)
+            AppHelper.requestFocusInTouch(v)
             (requireActivity() as MainActivity).fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
                 .add(R.id.container_view, SettingsFragment())
                 .addToBackStack("settingsFragment").commit()
@@ -68,11 +69,6 @@ class MainMenuFragment: Fragment() {
         }
     }
 
-    private fun requestFocusInTouch(view: View) {
-        view.isFocusableInTouchMode = true
-        view.requestFocus()
-        view.isFocusableInTouchMode = false
-    }
 
     override fun onStart() {
         super.onStart()

@@ -24,4 +24,5 @@ interface MainAdapterCallback {
     fun passRecordToAlarmFragment (record: ListRecord)
     fun setSpecialMode(mode: SpecialMode)
     fun enableSpecialMode()
+    fun enableSpecialMode(mode: SpecialMode)
 }

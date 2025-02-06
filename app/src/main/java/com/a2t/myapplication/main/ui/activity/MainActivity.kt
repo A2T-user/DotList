@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -33,7 +34,6 @@ import com.a2t.myapplication.databinding.ActivityMainBinding
 import com.a2t.myapplication.databinding.ContextMenuFormatBinding
 import com.a2t.myapplication.databinding.ContextMenuMoveBinding
 import com.a2t.myapplication.databinding.ToolbarModesBinding
-import com.a2t.myapplication.databinding.ToolbarSideBinding
 import com.a2t.myapplication.databinding.ToolbarSmallBinding
 import com.a2t.myapplication.databinding.ToolbarTopBinding
 import com.a2t.myapplication.description.ui.DescriptionActivity
@@ -48,9 +48,9 @@ import com.a2t.myapplication.main.ui.activity.recycler.MyScrollListener
 import com.a2t.myapplication.main.ui.activity.recycler.OnScrollStateChangedListener
 import com.a2t.myapplication.main.ui.activity.recycler.model.ScrollState
 import com.a2t.myapplication.main.ui.fragments.MainMenuFragment
-import com.a2t.myapplication.main.ui.fragments.TextFragment
-import com.a2t.myapplication.main.ui.fragments.models.TextFragmentMode
+import com.a2t.myapplication.main.ui.fragments.ToolbarSideFragment
 import com.a2t.myapplication.main.ui.utilities.AlarmHelper
+import com.a2t.myapplication.main.ui.utilities.AppHelper
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -75,7 +75,7 @@ const val CURRENT_TAB = "current_tab"
 
 class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChangedListener {
     lateinit var mainBackPressedCallback: OnBackPressedCallback
-    private lateinit var floatingBarBackPressedCallback: OnBackPressedCallback
+    lateinit var floatingBarBackPressedCallback: OnBackPressedCallback
     val fragmentManager: FragmentManager = supportFragmentManager
     private val mainViewModel: MainViewModel by viewModel()
     val adapter = MainAdapter(this)
@@ -87,7 +87,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private val binding get() = _binding!!
     private lateinit var topToolbarBinding: ToolbarTopBinding
     private lateinit var smallToolbarBinding: ToolbarSmallBinding
-    private lateinit var sideToolbarBinding: ToolbarSideBinding
     private lateinit var contextMenuFormatBinding: ContextMenuFormatBinding
     private lateinit var contextMenuMoveBinding: ContextMenuMoveBinding
     private lateinit var modesToolbarBinding: ToolbarModesBinding
@@ -95,7 +94,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private var oldDist = 1f                                       // Расстояние между пальцами начальное
     private var newDist = 0f                                               // конечное, жест ZOOM
     private var sizeGrandText = 20f
-    private var isSideToolbarFullShow = false
     private var widthScreen = 0                                    // Ширина экрана
     private var heightScreen = 0                                   // Ширина экрана
     private var maxShiftToRight = 0f                               // Величина максимального смещения при свайпе в право
@@ -115,6 +113,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private var scrollJob = lifecycleScope.launch {}
     private var isNoSleepMode = false
     private var isClickAllowed = true
+    private var isSideBarOpenAllowed = true
     private var scrollState = ScrollState.STOPPED
     private lateinit var velocityTracker: VelocityTracker
     private lateinit var specialModeGestureDetector: GestureDetector
@@ -127,7 +126,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         recycler = binding.recycler
         topToolbarBinding = binding.topToolbar
         smallToolbarBinding = binding.smallToolbar
-        sideToolbarBinding = binding.sideBar
         contextMenuFormatBinding = binding.contextMenuFormat
         contextMenuMoveBinding = binding.contextMenuMove
         modesToolbarBinding = binding.modesToolbar
@@ -282,14 +280,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ БОКОВАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        val sideBarGestureDetector = GestureDetector(this, SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
-            override fun onSwipeLeft() = false
-            override fun onSwipeRight(): Boolean {
-                sideBarShowOrHide(false)
-                return true
-            }
-            override fun onSwipeDown() = false
-        }))
         // swipe влево по флагу для открытия БОКОВОЙ ПАНЕЛИ
         val downX = AtomicReference( 0f)
         val downY = AtomicReference( 0f)
@@ -306,110 +296,17 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                     if (isTouch.get()) {
                         val dX = event.x - downX.get()
                         val dY = event.y - downY.get()
-                        if (abs(dX / dY) > 1.5 && dX < 0) {                    // Если жест горизонталный, влево
-                            noSleepModeOff()                                    // Выключение режима БЕЗ СНА
-                            sideBarShowOrHide(true)                       // Открыть боковую панель
+                        if (abs(dX / dY) > 1.5 && dX < 0) {         // Если жест горизонталный, влево
+                            if (sideBarDebounce()) {
+                                noSleepModeOff()                           // Выключение режима БЕЗ СНА
+                                sideBarShow()                              // Открыть боковую панель
+                            }
                         }
                     }
                 }
             }
             return@setOnTouchListener isTouch.get()
         }
-
-        // Потеря фокуса кнопкой развернуть/свернуть убирает бок.панель
-        sideToolbarBinding.ivSideBarOpen.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) sideBarShowOrHide(false)
-        }
-
-        // Кнопка Развернуть/Свернуть боковую панель
-        sideToolbarBinding.ivSideBarOpen.setOnClickListener {
-            sideBarFullOpenClose()
-        }
-        sideToolbarBinding.ivSideBarOpen.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-        sideToolbarBinding.tvSideBarOpen.setOnClickListener {
-            sideBarFullOpenClose()
-        }
-        sideToolbarBinding.tvSideBarOpen.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        // Кнопка не спящий режим
-        sideToolbarBinding.llSideBarNoSleep.setOnClickListener { view ->
-            requestFocusInTouch(view)
-            noSleepModeON()
-        }
-        sideToolbarBinding.llSideBarNoSleep.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        // Кнопка Удалить метки
-        sideToolbarBinding.llSideBarDelMark.setOnClickListener { view ->
-            requestFocusInTouch(view)
-            deleteAllMarks()
-        }
-        sideToolbarBinding.llSideBarDelMark.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        // Кнопка Переслать
-        sideToolbarBinding.llSideBarSend.setOnClickListener { view ->
-            requestFocusInTouch(view)
-            if (adapter.records.size > 1) {
-                mainViewModel.textFragmentMode = TextFragmentMode.SEND
-                mainViewModel.idCurrentDir = getIdCurrentDir()
-                mainViewModel.mainRecords.clear()
-                mainViewModel.mainRecords.addAll(adapter.records)
-                fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
-                    .add(R.id.container_view, TextFragment())
-                    .addToBackStack("textFragment").commit()
-            } else {
-                Toast.makeText(this, getString(R.string.dir_empty), Toast.LENGTH_SHORT).show()
-            }
-        }
-        sideToolbarBinding.llSideBarSend.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        // Кнопка Конвертировать
-        sideToolbarBinding.llSideBarConvertText.setOnClickListener { view ->
-            requestFocusInTouch(view)
-            mainViewModel.textFragmentMode = TextFragmentMode.CONVERT
-            mainViewModel.idCurrentDir = getIdCurrentDir()
-            mainViewModel.mainRecords.clear()
-            mainViewModel.mainRecords.addAll(adapter.records)
-            fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
-                .add(R.id.container_view, TextFragment())
-                .addToBackStack("textFragment").commit()
-        }
-        sideToolbarBinding.llSideBarConvertText.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        // Кнопка режима Переноса
-        sideToolbarBinding.llSideBarMoveMode.setOnClickListener { view ->
-            requestFocusInTouch(view)
-            mainViewModel.specialMode = SpecialMode.MOVE
-            enableSpecialMode()
-            goToDir(animOpenNewDir)
-        }
-        sideToolbarBinding.llSideBarMoveMode.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        // Кнопка режима Удаления
-        sideToolbarBinding.llSideBarDelMode.setOnClickListener { view ->
-            requestFocusInTouch(view)
-            mainViewModel.specialMode = SpecialMode.DELETE
-            enableSpecialMode()
-            goToDir(animOpenNewDir)
-        }
-        sideToolbarBinding.llSideBarDelMode.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        // Кнопка режима Восстановления
-        sideToolbarBinding.llSideBarRestMode.setOnClickListener { view ->
-            requestFocusInTouch(view)
-            mainViewModel.specialMode = SpecialMode.RESTORE
-            enableSpecialMode()
-            goToDir(animOpenNewDir)
-        }
-        sideToolbarBinding.llSideBarRestMode.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        // Кнопка режима Архив
-        sideToolbarBinding.llSideBarArchiveMode.setOnClickListener { view ->
-            requestFocusInTouch(view)
-            mainViewModel.specialMode = SpecialMode.ARCHIVE
-            enableSpecialMode()
-            goToDir(animOpenNewDir)
-        }
-        sideToolbarBinding.llSideBarArchiveMode.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         smallToolbarBinding.llRootDir.setOnClickListener {
@@ -611,7 +508,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 adapter.notifyItemChanged(adapter.currentHolderPosition)
                 showNumberOfSelectedRecords()
             }
-            requestFocusInTouch(view)
+            AppHelper.requestFocusInTouch(view)
         }
         contextMenuMoveBinding.btnCut.setOnLongClickListener { view ->
             adapter.records.forEachIndexed { index, item ->
@@ -621,7 +518,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 adapter.notifyItemChanged(index)
             }
             showNumberOfSelectedRecords()
-            requestFocusInTouch(view)
+            AppHelper.requestFocusInTouch(view)
             true
         }
         // Кнопка КОПИРОВАТЬ
@@ -634,7 +531,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 adapter.notifyItemChanged(adapter.currentHolderPosition)
                 showNumberOfSelectedRecords()
             }
-            requestFocusInTouch(view)
+            AppHelper.requestFocusInTouch(view)
         }
         contextMenuMoveBinding.btnCopy.setOnLongClickListener { view ->
             adapter.records.forEachIndexed { index, item ->
@@ -644,7 +541,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 adapter.notifyItemChanged(index)
             }
             showNumberOfSelectedRecords()
-            requestFocusInTouch(view)
+            AppHelper.requestFocusInTouch(view)
             true
         }
         // Кнопка ОТМЕНА
@@ -656,7 +553,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 adapter.notifyItemChanged(adapter.currentHolderPosition)
                 showNumberOfSelectedRecords()
             }
-            requestFocusInTouch(view)
+            AppHelper.requestFocusInTouch(view)
         }
         contextMenuMoveBinding.btnBack.setOnLongClickListener { view ->
             adapter.records.forEachIndexed { index, item ->
@@ -665,14 +562,14 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 adapter.notifyItemChanged(index)
             }
             showNumberOfSelectedRecords()
-            requestFocusInTouch(view)
+            AppHelper.requestFocusInTouch(view)
             true
         }
     }
 
     // Режим БЕЗ СНА
     // Включение режима БЕЗ СНА
-    private fun noSleepModeON() {
+    fun noSleepModeON() {
         isNoSleepMode = true
         switchNoSleepMode(true)    // В активити включаем keepScreenOn
         binding.ivEye.isVisible = true
@@ -703,12 +600,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
     // Присвоение фокуса кнопке меню
     override fun requestMenuFocus() {
-        requestFocusInTouch(topToolbarBinding.btnMenu)
-    }
-    private fun requestFocusInTouch(view: View) {
-        view.isFocusableInTouchMode = true
-        view.requestFocus()
-        view.isFocusableInTouchMode = false
+        AppHelper.requestFocusInTouch(topToolbarBinding.btnMenu)
     }
 
     // Открытие специального режима
@@ -717,6 +609,15 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         binding.sideBarContainer.isVisible = getSpecialMode() == SpecialMode.NORMAL
         showSpecialModeToolbar()
         showNumberOfSelectedRecords()
+    }
+
+    override fun enableSpecialMode(mode: SpecialMode) {
+        mainViewModel.specialMode = mode
+        noSleepModeOff()           // Выключение режима БЕЗ СНА
+        binding.sideBarContainer.isVisible = getSpecialMode() == SpecialMode.NORMAL
+        showSpecialModeToolbar()
+        showNumberOfSelectedRecords()
+        goToDir(animOpenNewDir)
     }
 
     // Показать панель инструментов специального режима
@@ -797,7 +698,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         archiveModeAnimation()                                                              // Рекурсия
     }
 
-    // Остановить все анимации
+    // Остановить все анимации иконки панели режимов
     private fun stopAllModeAnimations() {
         archiveJob.cancel()
         modesToolbarBinding.ivBarModes1.clearAnimation()
@@ -805,50 +706,26 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         modesToolbarBinding.ivBarModes3.clearAnimation()
     }
 
-    // Показать/скрыть боковую панель
-    private fun sideBarShowOrHide(show: Boolean) {
-        if (show) {
-            binding.sideBarFlag.isVisible = false
-            sideToolbarBinding.llSideBar.isVisible = true                   // Вывести бок.панель
-            sideToolbarBinding.ivSideBarOpen.requestFocus()                 // и перевести фокус на нее
-            sideToolbarBinding.ivSideBarOpen.animate().rotation(0f)   // Кнопку Развернуть панель в исх.положение
-            mainBackPressedCallback.isEnabled = false
-            floatingBarBackPressedCallback.isEnabled = true
-        } else {
-            if (isSideToolbarFullShow) sideBarFullOpenClose()      // Свернуть бок.панель
-            sideToolbarBinding.llSideBar.isVisible = false                  // Убрать бок.панель
-            floatingBarBackPressedCallback.isEnabled = false
-            mainBackPressedCallback.isEnabled = true
-            lifecycleScope.launch {
-                delay(50)
-                binding.sideBarFlag.isVisible = true
-            }
+    // Показать боковую панель
+    private fun sideBarShow() {
+        Log.e("МОЁ", "sideBarShow")
+        fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
+            .add(R.id.sideBarContainer, ToolbarSideFragment())
+            .addToBackStack("ToolbarSideFragment").commit()
+        sideBarFlagHide()
+    }
+
+    fun sideBarFlagShow() {
+        Log.e("МОЁ", "sideBarFlagShow")
+        lifecycleScope.launch {
+            delay(100)
+            binding.sideBarFlag.isVisible = true
         }
     }
 
-    // Разворачивание/сворачивание боковой панели
-    private fun sideBarFullOpenClose() {
-        if (isSideToolbarFullShow) {
-            sideToolbarBinding.ivSideBarOpen.animate().rotation(0f)       // Перевернуть кнопку Развернуть панель
-            showSideBarText(false)                                        // Убрать пояснительный текст кнопок
-        } else {
-            sideToolbarBinding.ivSideBarOpen.animate().rotation(180f)     // Перевернуть кнопку Развернуть панель
-            showSideBarText(true)                                         // Показать пояснительный текст кнопок
-        }
-        isSideToolbarFullShow = !isSideToolbarFullShow
-    }
-
-    // Показать пояснительный текст кнопок боковой панели
-    private fun showSideBarText(show: Boolean) {
-        sideToolbarBinding.tvSideBarOpen.isVisible = show                   // Текст кнопки Развернуть панель
-        sideToolbarBinding.tvSideBarNoSleep.isVisible = show                // Текст кнопки БЕЗ СНА
-        sideToolbarBinding.tvSideBarSend.isVisible = show                   // Текст кнопки Переслать
-        sideToolbarBinding.tvSideBarConvertText.isVisible = show            // Текст кнопки Конвертация
-        sideToolbarBinding.tvSideBarDelMark.isVisible = show                // Текст кнопки Удалить метки
-        sideToolbarBinding.tvSideBarDelMode.isVisible = show                // Текст кнопки Удаление
-        sideToolbarBinding.tvSideBarRestMode.isVisible = show               // Текст кнопки Восстановление
-        sideToolbarBinding.tvSideBarMoveMode.isVisible = show               // Текст кнопки Перенос
-        sideToolbarBinding.tvSideBarArchiveMode.isVisible = show            // Текст кнопки Архив
+    fun sideBarFlagHide() {
+        Log.e("МОЁ", "sideBarFlagHide")
+        binding.sideBarFlag.isVisible = false
     }
 
     private fun getItemById(id: Long, records: List<ListRecord>): ListRecord? {
@@ -1187,6 +1064,18 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         return current
     }
 
+    private fun sideBarDebounce(): Boolean {
+        val current = isSideBarOpenAllowed
+        if (isClickAllowed) {
+            isSideBarOpenAllowed = false
+            lifecycleScope.launch {
+                delay(1000)
+                isSideBarOpenAllowed = true
+            }
+        }
+        return current
+    }
+
     // Удаление выбранных записей, если у выбранных записей есть вложенные - выдать предупреждение
     @SuppressLint("InflateParams")
     override fun deleteRecords(records: List<ListRecord>) {
@@ -1304,7 +1193,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     }
 
     @SuppressLint("InflateParams")
-    private fun deleteAllMarks() {
+    fun deleteAllMarks() {
         if (adapter.records.any { it.isChecked }) {
             val dialogView =
                 LayoutInflater.from(this).inflate(R.layout.dialog_title_attention, null)
