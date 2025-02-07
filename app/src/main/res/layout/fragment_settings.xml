@@ -265,6 +265,8 @@
         <!--  Напоминания -->
         <TextView
             android:text="@string/special_features"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
             style="@style/СhapterStyle"/>
 
         <TextView
@@ -307,9 +309,10 @@
 
         <TextView
             android:text="@string/left_hand_control"
-            style="@style/СhapterStyle"
+            style="@style/SettTextStyle"
             app:drawableStartCompat="@drawable/ic_hand"
-            android:textSize="18sp"
+            android:drawablePadding="6dp"
+            android:layout_marginTop="10dp"
             android:textStyle="normal"/>
 
         <LinearLayout
@@ -324,10 +327,9 @@
                 android:id="@+id/left_hand"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="TODO"
                 android:scaleX="-1"
                 android:alpha="0.3"
-                tools:ignore="co"
+                tools:ignore="ContentDescription"
                 android:src="@drawable/ic_phone_in_hand"/>
 
             <ImageView
