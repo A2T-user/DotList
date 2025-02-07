@@ -41,6 +41,8 @@ class ToolbarSideFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (App.appSettings.isLeftHandControl) binding.ivSideBarOpen.scaleX = -1.0f
+
         val sideBarGestureDetector = if (App.appSettings.isLeftHandControl) {
             GestureDetector(
                 requireContext(),
