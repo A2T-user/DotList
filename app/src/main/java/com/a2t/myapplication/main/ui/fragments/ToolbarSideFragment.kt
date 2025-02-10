@@ -191,7 +191,6 @@ class ToolbarSideFragment: Fragment() {
     override fun onStart() {
         super.onStart()
         ma.mainBackPressedCallback.isEnabled = false
-        ma.floatingBarBackPressedCallback.isEnabled = true
         ma.sideBarFlagHide()
     }
 
@@ -211,9 +210,7 @@ class ToolbarSideFragment: Fragment() {
 
     override fun onStop() {
         super.onStop()
-        ma.floatingBarBackPressedCallback.isEnabled = false
         ma.mainBackPressedCallback.isEnabled = true
-        //ma.sideBarFlagShow()
     }
 
     override fun onDestroyView() {
