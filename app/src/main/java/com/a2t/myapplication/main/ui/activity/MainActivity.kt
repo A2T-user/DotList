@@ -78,7 +78,7 @@ const val CURRENT_TAB = "current_tab"
 
 class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChangedListener {
     lateinit var mainBackPressedCallback: OnBackPressedCallback
-    lateinit var floatingBarBackPressedCallback: OnBackPressedCallback
+    private lateinit var floatingBarBackPressedCallback: OnBackPressedCallback
     val fragmentManager: FragmentManager = supportFragmentManager
     private val mainViewModel: MainViewModel by viewModel()
     val adapter = MainAdapter(this)
@@ -328,6 +328,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ НИЖНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        val modesToolbarManager = ModesToolbarManager(this, mainViewModel)
         specialModeGestureDetector = GestureDetector(this, SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
             override fun onSwipeLeft() = false
             override fun onSwipeRight() = false
@@ -349,75 +350,15 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
         // Клик по кнопке ? открыват Описание на нужной вклвдке
         modesToolbarBinding.btnHelp.setOnClickListener {
-            val currentTab = when(adapter.specialMode) {
-                SpecialMode.MOVE -> 10
-                SpecialMode.DELETE -> 11
-                SpecialMode.RESTORE -> 12
-                SpecialMode.ARCHIVE -> 13
-                else -> 0
-            }
-
-            if (currentTab != 0) openDescriptionActivity(currentTab)
+            modesToolbarManager.openHelp()
         }
 
         modesToolbarBinding.btnSelectAll.setOnClickListener {
-            if (getSpecialMode() == SpecialMode.DELETE || getSpecialMode() == SpecialMode.RESTORE) {
-                adapter.records.forEachIndexed { index, rec ->
-                    if (!rec.isNew && getMainBuffer().all { it.id != rec.id }) {
-                        getMainBuffer().add(rec)
-                        adapter.notifyItemChanged(index)
-                    }
-                }
-                showNumberOfSelectedRecords()
-            }
+            modesToolbarManager.selectAll()
         }
 
         modesToolbarBinding.btnAction.setOnClickListener {
-            when(getSpecialMode()) {
-                SpecialMode.MOVE -> {
-                    if (getMainBuffer().size + getMoveBuffer().size > 0) {
-                        binding.progressBar.isVisible = true
-                        val pasteIds = mutableListOf<Long>()
-                        getMainBuffer().forEach { if (it.isDir) pasteIds.add(it.id) }
-                        getMoveBuffer().forEach { if (it.isDir) pasteIds.add(it.id) }
-                        if (pasteIds.isNotEmpty()) {
-                            mainViewModel.pasteRecords(getIdCurrentDir(), pasteIds,
-                                {
-                                    binding.progressBar.isVisible = false
-                                    showRecursionError()
-                                },
-                                {
-                                    pasteRecords()
-                                    binding.progressBar.isVisible = false
-                                }
-                            )
-                        } else {
-                            pasteRecords()
-                            binding.progressBar.isVisible = false
-                        }
-                    } else {
-                        Toast.makeText(this, getString(R.string.nothing_selected),
-                            Toast.LENGTH_SHORT).show()
-                    }
-                }
-                SpecialMode.DELETE -> {
-                    if (getMainBuffer().size > 0) {
-                        deleteRecords(getMainBuffer())
-                    } else {
-                        Toast.makeText(this, getString(R.string.nothing_selected),
-                            Toast.LENGTH_SHORT).show()
-                    }
-                }
-                SpecialMode.RESTORE -> {
-                    if (getMainBuffer().size > 0) {
-                        restoreRecords(getMainBuffer())
-                    } else {
-                        Toast.makeText(this, getString(R.string.nothing_selected),
-                            Toast.LENGTH_SHORT).show()
-                    }
-                }
-                else -> {}
-            }
+            modesToolbarManager.clickBtnAction()
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ КОНТЕКСТНОЕ МЕНЮ ФОРМАТ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -508,11 +449,12 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
         // Кнопка ВЫРЕЗАТЬ
         contextMenuMoveBinding.btnCut.setOnClickListener { view ->
-            val item = adapter.currentItem
-            getMainBuffer().removeAll { it.id == item?.id }
-            getMoveBuffer().removeAll { it.id == item?.id }
-            if (item != null) {
-                getMoveBuffer().add(item)
+            adapter.currentItem?.let { item ->
+                getMainBuffer().removeAll { it.id == item.id }
+                with(getMoveBuffer()) {
+                    removeAll { it.id == item.id }
+                    add(item)
+                }
                 adapter.notifyItemChanged(adapter.currentHolderPosition)
                 showNumberOfSelectedRecords()
             }
@@ -521,8 +463,10 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         contextMenuMoveBinding.btnCut.setOnLongClickListener { view ->
             adapter.records.forEachIndexed { index, item ->
                 getMainBuffer().removeAll { it.id == item.id }
-                getMoveBuffer().removeAll { it.id == item.id }
-                getMoveBuffer().add(item)
+                with(getMoveBuffer()) {
+                    removeAll { it.id == item.id }
+                    add(item)
+                }
                 adapter.notifyItemChanged(index)
             }
             showNumberOfSelectedRecords()
@@ -531,11 +475,12 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
         // Кнопка КОПИРОВАТЬ
         contextMenuMoveBinding.btnCopy.setOnClickListener { view ->
-            val item = adapter.currentItem
-            getMainBuffer().removeAll { it.id == item?.id }
-            getMoveBuffer().removeAll { it.id == item?.id }
-            if (item != null) {
-                getMainBuffer().add(item)
+            adapter.currentItem?.let { item ->
+                getMainBuffer().apply {
+                    removeAll { it.id == item.id }
+                    add(item)
+                }
+                getMoveBuffer().removeAll { it.id == item.id }
                 adapter.notifyItemChanged(adapter.currentHolderPosition)
                 showNumberOfSelectedRecords()
             }
@@ -554,12 +499,15 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
         // Кнопка ОТМЕНА
         contextMenuMoveBinding.btnBack.setOnClickListener { view ->
-            val item = adapter.currentItem
-            getMainBuffer().removeAll { it.id == item?.id }
-            getMoveBuffer().removeAll { it.id == item?.id }
-            if (adapter.currentHolderPosition > 0) {
-                adapter.notifyItemChanged(adapter.currentHolderPosition)
-                showNumberOfSelectedRecords()
+            adapter.currentItem?.let { item ->
+                val itemId = item.id
+                getMainBuffer().removeAll { it.id == itemId }
+                getMoveBuffer().removeAll { it.id == itemId }
+
+                if (adapter.currentHolderPosition > 0) {
+                    adapter.notifyItemChanged(adapter.currentHolderPosition)
+                    showNumberOfSelectedRecords()
+                }
             }
             AppHelper.requestFocusInTouch(view)
         }
@@ -1133,59 +1081,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
     }
 
-    @SuppressLint("InflateParams")
-    fun restoreRecords(records: List<ListRecord>) {
-        binding.progressBar.isVisible = true
-        mainViewModel.selectionSubordinateRecordsToRestore(records) { list ->
-            val mutableRecords = list.toMutableList()
-            val selectedRecords = records.size
-            val subordinateRecords = mutableRecords.size
-            val countArchive = mutableRecords.count { it.isArchive }
-            mutableRecords.addAll(records)
-            var mess = getString(R.string.rest_attempt, selectedRecords.toString())
-            var str = if (subordinateRecords != 0) getString(R.string.rest_subordinate, subordinateRecords.toString()) else ""
-            mess += str
-            str = if (countArchive != 0) getString(R.string.del_archive, countArchive.toString()) else ""
-            mess += "$str."
-            val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_title_attention, null)
-            binding.progressBar.isVisible = false
-            MaterialAlertDialogBuilder(this)
-                .setCustomTitle(dialogView)
-                .setMessage(mess)
-                .setNeutralButton(getString(R.string.negative_btn)) { _, _ -> }
-                .setPositiveButton(getString(R.string.restore)) { _, _ ->
-                    mutableRecords.forEach { it.isDelete = false }
-                    binding.progressBar.isVisible = true
-                    mainViewModel.updateRecords(mutableRecords) {
-                        binding.progressBar.isVisible = false
-                        if (getSpecialMode() == SpecialMode.RESTORE) completionSpecialMode()
-                    }
-                }
-                .show()
-        }
-    }
-
-    private fun pasteRecords() {
-        // Перенос записей
-        getMoveBuffer().forEach { it.idDir = getIdCurrentDir() }
-        mainViewModel.updateRecords(getMoveBuffer()) {
-            // Копирование
-            mainViewModel.copyRecords(getMainBuffer()){
-                completionSpecialMode()
-            }
-        }
-    }
-
-    @SuppressLint("InflateParams")
-    private fun showRecursionError() {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_title_error, null)
-        MaterialAlertDialogBuilder(this)
-            .setCustomTitle(dialogView)
-            .setMessage(getString(R.string.recursion_error))
-            .setPositiveButton(getString(R.string.ok)) { _, _ -> }
-            .show()
-    }
-
     private fun changingTextFormatRecord(item: ListRecord, position: Int, color: Int?, style: Int?, under: Int?) {
         if (color != null) item.textColor = color
         if (style != null) item.textStyle = style
@@ -1298,12 +1193,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
     }
 
-    private fun openDescriptionActivity(currentTab: Int) {
-        val intent = Intent(this, DescriptionActivity::class.java)
-        intent.putExtra(CURRENT_TAB, currentTab)
-        startActivity(intent)
-    }
-
     fun getRecords () = adapter.records
 
     override fun setSpecialMode(mode: SpecialMode) {
@@ -1330,6 +1219,10 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
         binding.sideBarContainer.layoutParams = paramsContainer
         binding.sideBarFlag.layoutParams = paramsFlag
+    }
+
+    fun showProgressbar (isShow: Boolean) {
+        binding.progressBar.isVisible = isShow
     }
 
     override fun onNewIntent(intent: Intent) {
