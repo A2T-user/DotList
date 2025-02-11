@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.view.GestureDetector
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -362,6 +361,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ КОНТЕКСТНОЕ МЕНЮ ФОРМАТ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        val contextMenuFormatManager = ContextMenuFormatManager(adapter, mainViewModel)
         // Потеря фокуса контекст.меню приводит к скрытию меню
         contextMenuFormatBinding.llContextMenuFormat.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
             if (!hasFocus) {
@@ -373,71 +373,72 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         contextMenuFormatBinding.btnTextColor1.setOnClickListener {
-            changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, 1, null, null)
+            contextMenuFormatManager.changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, 1, null, null)
         }
         contextMenuFormatBinding.btnTextColor1.setOnLongClickListener {
-            changingTextFormatAllRecords(adapter.records, 1, null, null)
+            contextMenuFormatManager.changingTextFormatAllRecords(adapter.records, 1, null, null)
             true
         }
 
         contextMenuFormatBinding.btnTextColor2.setOnClickListener {
-            changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, 2, null, null)
+            contextMenuFormatManager.changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, 2, null, null)
         }
         contextMenuFormatBinding.btnTextColor2.setOnLongClickListener {
-            changingTextFormatAllRecords(adapter.records, 2, null, null)
+            contextMenuFormatManager.changingTextFormatAllRecords(adapter.records, 2, null, null)
             true
         }
 
         contextMenuFormatBinding.btnTextColor3.setOnClickListener {
-            changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, 3, null, null)
+            contextMenuFormatManager.changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, 3, null, null)
         }
         contextMenuFormatBinding.btnTextColor3.setOnLongClickListener {
-            changingTextFormatAllRecords(adapter.records, 3, null, null)
+            contextMenuFormatManager.changingTextFormatAllRecords(adapter.records, 3, null, null)
             true
         }
 
         contextMenuFormatBinding.btnTextStyleB.setOnClickListener {
-            changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, null, 1, null)
+            contextMenuFormatManager.changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, null, 1, null)
         }
         contextMenuFormatBinding.btnTextStyleB.setOnLongClickListener {
-            changingTextFormatAllRecords(adapter.records, null, 1, null)
+            contextMenuFormatManager.changingTextFormatAllRecords(adapter.records, null, 1, null)
             true
         }
 
         contextMenuFormatBinding.btnTextStyleI.setOnClickListener {
-            changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, null, 2, null)
+            contextMenuFormatManager.changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, null, 2, null)
         }
         contextMenuFormatBinding.btnTextStyleI.setOnLongClickListener {
-            changingTextFormatAllRecords(adapter.records, null, 2, null)
+            contextMenuFormatManager.changingTextFormatAllRecords(adapter.records, null, 2, null)
             true
         }
 
         contextMenuFormatBinding.btnTextStyleBI.setOnClickListener {
-            changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, null, 3, null)
+            contextMenuFormatManager.changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, null, 3, null)
         }
         contextMenuFormatBinding.btnTextStyleBI.setOnLongClickListener {
-            changingTextFormatAllRecords(adapter.records, null, 3, null)
+            contextMenuFormatManager.changingTextFormatAllRecords(adapter.records, null, 3, null)
             true
         }
 
         contextMenuFormatBinding.btnTextStyleU.setOnClickListener {
-            changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, null, null, 1)
+            contextMenuFormatManager.changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, null, null, 1)
         }
         contextMenuFormatBinding.btnTextStyleU.setOnLongClickListener {
-            changingTextFormatAllRecords(adapter.records, null, null, 1)
+            contextMenuFormatManager.changingTextFormatAllRecords(adapter.records, null, null, 1)
             true
         }
 
         contextMenuFormatBinding.btnTextRegular.setOnClickListener {
-            changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, 0, 0, 0)
+            contextMenuFormatManager.changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, 0, 0, 0)
         }
         contextMenuFormatBinding.btnTextRegular.setOnLongClickListener {
             requestMenuFocus()
-            changingTextFormatAllRecords(adapter.records, 0, 0, 0)
+            contextMenuFormatManager.changingTextFormatAllRecords(adapter.records, 0, 0, 0)
             true
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ КОНТЕКСТНОЕ МЕНЮ MOVE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        val contextMenuMoveManager = ContextMenuMoveManager(this, adapter, mainViewModel)
         // Потеря фокуса контекст.меню приводит к скрытию меню
         contextMenuMoveBinding.llContextMenuMove.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
             if (!hasFocus) {
@@ -449,76 +450,26 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
         // Кнопка ВЫРЕЗАТЬ
         contextMenuMoveBinding.btnCut.setOnClickListener { view ->
-            adapter.currentItem?.let { item ->
-                getMainBuffer().removeAll { it.id == item.id }
-                with(getMoveBuffer()) {
-                    removeAll { it.id == item.id }
-                    add(item)
-                }
-                adapter.notifyItemChanged(adapter.currentHolderPosition)
-                showNumberOfSelectedRecords()
-            }
-            AppHelper.requestFocusInTouch(view)
+            contextMenuMoveManager.btnClick(view, "cut")
         }
         contextMenuMoveBinding.btnCut.setOnLongClickListener { view ->
-            adapter.records.forEachIndexed { index, item ->
-                getMainBuffer().removeAll { it.id == item.id }
-                with(getMoveBuffer()) {
-                    removeAll { it.id == item.id }
-                    add(item)
-                }
-                adapter.notifyItemChanged(index)
-            }
-            showNumberOfSelectedRecords()
-            AppHelper.requestFocusInTouch(view)
+            contextMenuMoveManager.btnLongClick(view, "cut")
             true
         }
         // Кнопка КОПИРОВАТЬ
         contextMenuMoveBinding.btnCopy.setOnClickListener { view ->
-            adapter.currentItem?.let { item ->
-                getMainBuffer().apply {
-                    removeAll { it.id == item.id }
-                    add(item)
-                }
-                getMoveBuffer().removeAll { it.id == item.id }
-                adapter.notifyItemChanged(adapter.currentHolderPosition)
-                showNumberOfSelectedRecords()
-            }
-            AppHelper.requestFocusInTouch(view)
+            contextMenuMoveManager.btnClick(view, "copy")
         }
         contextMenuMoveBinding.btnCopy.setOnLongClickListener { view ->
-            adapter.records.forEachIndexed { index, item ->
-                getMainBuffer().removeAll { it.id == item.id }
-                getMoveBuffer().removeAll { it.id == item.id }
-                getMainBuffer().add(item)
-                adapter.notifyItemChanged(index)
-            }
-            showNumberOfSelectedRecords()
-            AppHelper.requestFocusInTouch(view)
+            contextMenuMoveManager.btnLongClick(view, "copy")
             true
         }
         // Кнопка ОТМЕНА
         contextMenuMoveBinding.btnBack.setOnClickListener { view ->
-            adapter.currentItem?.let { item ->
-                val itemId = item.id
-                getMainBuffer().removeAll { it.id == itemId }
-                getMoveBuffer().removeAll { it.id == itemId }
-
-                if (adapter.currentHolderPosition > 0) {
-                    adapter.notifyItemChanged(adapter.currentHolderPosition)
-                    showNumberOfSelectedRecords()
-                }
-            }
-            AppHelper.requestFocusInTouch(view)
+            contextMenuMoveManager.btnClick(view, "cancel")
         }
         contextMenuMoveBinding.btnBack.setOnLongClickListener { view ->
-            adapter.records.forEachIndexed { index, item ->
-                getMainBuffer().removeAll { it.id == item.id }
-                getMoveBuffer().removeAll { it.id == item.id }
-                adapter.notifyItemChanged(index)
-            }
-            showNumberOfSelectedRecords()
-            AppHelper.requestFocusInTouch(view)
+            contextMenuMoveManager.btnLongClick(view, "cancel")
             true
         }
     }
@@ -664,7 +615,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
     // Показать боковую панель
     private fun sideBarShow() {
-        Log.e("МОЁ", "sideBarShow")
         fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
             .add(R.id.sideBarContainer, ToolbarSideFragment())
             .addToBackStack("ToolbarSideFragment").commit()
@@ -672,7 +622,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     }
 
     fun sideBarFlagShow() {
-        Log.e("МОЁ", "sideBarFlagShow")
         lifecycleScope.launch {
             delay(100)
             binding.sideBarFlag.isVisible = true
@@ -680,7 +629,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     }
 
     fun sideBarFlagHide() {
-        Log.e("МОЁ", "sideBarFlagHide")
         binding.sideBarFlag.isVisible = false
     }
 
@@ -841,7 +789,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         adapter.isKeyboardON = false            // Если нажат Back, клавиатура точно скрыта
         requestMenuFocus()
         noSleepModeOff()                        // Выключение режима БЕЗ СНА
-        goToParentDir()                        // Переход к родительской папке
+        goToParentDir()                         // Переход к родительской папке
     }
 
     override fun completionSpecialMode() {
@@ -1078,20 +1026,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 completionSpecialMode()
                 binding.progressBar.isVisible = false
             }
-        }
-    }
-
-    private fun changingTextFormatRecord(item: ListRecord, position: Int, color: Int?, style: Int?, under: Int?) {
-        if (color != null) item.textColor = color
-        if (style != null) item.textStyle = style
-        if (under != null) item.textUnder = under
-        mainViewModel.updateRecord(item) {}
-        adapter.notifyItemChanged(position)
-    }
-
-    private fun changingTextFormatAllRecords(records: List<ListRecord>, color: Int?, style: Int?, under: Int?) {
-        records.forEachIndexed { index, listRecord ->
-            changingTextFormatRecord(listRecord, index, color, style, under)
         }
     }
 
