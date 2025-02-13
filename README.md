@@ -39,3 +39,6 @@
 - LiveData
 - SQLite & Room Database
 - Shared Preferences
+
+## Установка
+ОС Android версии не ниже 8.0
