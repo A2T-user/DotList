@@ -34,10 +34,8 @@
 - Clean Architecture
 - Koin
 - Material Design
-- Fragments
+- Fragments & ViewPager2
 - Kotlin Coroutines & Flow
 - LiveData
 - SQLite & Room Database
 - Shared Preferences
-- ViewPager2
-- 
