@@ -6,8 +6,8 @@ import kotlin.math.abs
 
 class SwipeGestureListener(private val listener: OnSwipeListener) : GestureDetector.SimpleOnGestureListener() {
     companion object {
-        private const val SWIPE_THRESHOLD = 50
-        private const val SWIPE_VELOCITY_THRESHOLD = 50
+        private const val SWIPE_THRESHOLD = 30
+        private const val SWIPE_VELOCITY_THRESHOLD = 30
     }
 
     override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {

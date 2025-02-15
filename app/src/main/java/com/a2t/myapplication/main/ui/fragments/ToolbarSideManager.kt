@@ -18,22 +18,6 @@ class ToolbarSideManager (
     val binding: FragmentToolbarSideBinding,
     private var isSideToolbarFullShow: Boolean
 ){
-    /*fun btnAction(btnId: Int): Boolean {
-        var result = true
-        when(btnId) {
-            R.id.ivSideBarOpen, R.id.tvSideBarOpen -> expandSideBar()
-            R.id.llSideBarNoSleep -> noSleepMode()
-            R.id.llSideBarDelMark -> delMark()
-            R.id.llSideBarSend -> sendList()
-            R.id.llSideBarConvertText -> convertText()
-            R.id.llSideBarMoveMode -> moveMode()
-            R.id.llSideBarDelMode -> delMode()
-            R.id.llSideBarRestMode -> restMode()
-            R.id.llSideBarArchiveMode -> archiveMode()
-            else -> result = false
-        }
-        return result
-    }*/
 
     // Убрать боковую панель
     fun sideBarHide() {
