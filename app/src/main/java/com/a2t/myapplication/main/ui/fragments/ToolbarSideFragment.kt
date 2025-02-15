@@ -6,27 +6,21 @@ import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import com.a2t.myapplication.App
-import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.FragmentToolbarSideBinding
 import com.a2t.myapplication.main.presentation.MainViewModel
 import com.a2t.myapplication.main.ui.activity.MainActivity
 import com.a2t.myapplication.main.ui.SwipeGestureListener
-import com.a2t.myapplication.main.ui.activity.model.SpecialMode
-import com.a2t.myapplication.main.ui.fragments.models.TextFragmentMode
-import com.a2t.myapplication.main.ui.utilities.AppHelper
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class ToolbarSideFragment: Fragment() {
     private val mainViewModel: MainViewModel by activityViewModel()
     private var _binding: FragmentToolbarSideBinding? = null
     private val binding get() = _binding!!
-    private lateinit var ma:MainActivity
+    private lateinit var ma: MainActivity
     private var isSideToolbarFullShow = false
+    private lateinit var tbManager: ToolbarSideManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,6 +35,8 @@ class ToolbarSideFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        tbManager = ToolbarSideManager(this, ma, mainViewModel, binding, isSideToolbarFullShow)
+
         if (App.appSettings.isLeftHandControl) binding.ivSideBarOpen.scaleX = -1.0f
 
         val sideBarGestureDetector = if (App.appSettings.isLeftHandControl) {
@@ -48,7 +44,7 @@ class ToolbarSideFragment: Fragment() {
                 requireContext(),
                 SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
                     override fun onSwipeLeft(): Boolean {
-                        sideBarHide()
+                        tbManager.sideBarHide()
                         return true
                     }
                     override fun onSwipeRight()= false
@@ -61,7 +57,7 @@ class ToolbarSideFragment: Fragment() {
                 SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
                     override fun onSwipeLeft() = false
                     override fun onSwipeRight(): Boolean {
-                        sideBarHide()
+                        tbManager.sideBarHide()
                         return true
                     }
                     override fun onSwipeDown() = false
@@ -70,123 +66,44 @@ class ToolbarSideFragment: Fragment() {
         }
 
         // Кнопка Развернуть/Свернуть боковую панель
-        binding.ivSideBarOpen.setOnClickListener {
-            sideBarFullOpenClose()
-        }
+        binding.ivSideBarOpen.setOnClickListener { tbManager.expandSideBar() }
         binding.ivSideBarOpen.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        binding.tvSideBarOpen.setOnClickListener { sideBarFullOpenClose() }
+        binding.tvSideBarOpen.setOnClickListener { tbManager.expandSideBar() }
         binding.tvSideBarOpen.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         // Кнопка не спящий режим
-        binding.llSideBarNoSleep.setOnClickListener {
-            AppHelper.requestFocusInTouch(binding.llSideBarNoSleep)
-            ma.noSleepModeON()
-        }
+        binding.llSideBarNoSleep.setOnClickListener { tbManager.noSleepMode() }
         binding.llSideBarNoSleep.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         // Кнопка Удалить метки
-        binding.llSideBarDelMark.setOnClickListener {
-            AppHelper.requestFocusInTouch(binding.llSideBarDelMark)
-            ma.deleteAllMarks()
-        }
+        binding.llSideBarDelMark.setOnClickListener { tbManager.delMark() }
         binding.llSideBarDelMark.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         // Кнопка Переслать
-        binding.llSideBarSend.setOnClickListener {
-            AppHelper.requestFocusInTouch(binding.llSideBarSend)
-            if (ma.adapter.records.size > 1) {
-                mainViewModel.textFragmentMode = TextFragmentMode.SEND
-                mainViewModel.idCurrentDir = ma.getIdCurrentDir()
-                mainViewModel.mainRecords.clear()
-                mainViewModel.mainRecords.addAll(ma.adapter.records)
-                ma.fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
-                    .add(R.id.container_view, TextFragment())
-                    .addToBackStack("textFragment").commit()
-            } else {
-                Toast.makeText(requireContext(), getString(R.string.dir_empty), Toast.LENGTH_SHORT).show()
-            }
-        }
+        binding.llSideBarSend.setOnClickListener { tbManager.sendList() }
         binding.llSideBarSend.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         // Кнопка Конвертировать
-        binding.llSideBarConvertText.setOnClickListener {
-            AppHelper.requestFocusInTouch(binding.llSideBarConvertText)
-            mainViewModel.textFragmentMode = TextFragmentMode.CONVERT
-            mainViewModel.idCurrentDir = ma.getIdCurrentDir()
-            mainViewModel.mainRecords.clear()
-            mainViewModel.mainRecords.addAll(ma.adapter.records)
-            ma.fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
-                .add(R.id.container_view, TextFragment())
-                .addToBackStack("textFragment").commit()
-        }
+        binding.llSideBarConvertText.setOnClickListener { tbManager.convertText() }
         binding.llSideBarConvertText.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         // Кнопка режима Переноса
-        binding.llSideBarMoveMode.setOnClickListener {
-            AppHelper.requestFocusInTouch(binding.llSideBarMoveMode)
-            ma.enableSpecialMode(SpecialMode.MOVE)
-        }
+        binding.llSideBarMoveMode.setOnClickListener { tbManager.moveMode() }
         binding.llSideBarMoveMode.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         // Кнопка режима Удаления
-        binding.llSideBarDelMode.setOnClickListener {
-            AppHelper.requestFocusInTouch(binding.llSideBarDelMode)
-            ma.enableSpecialMode(SpecialMode.DELETE)
-        }
+        binding.llSideBarDelMode.setOnClickListener { tbManager.delMode() }
         binding.llSideBarDelMode.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         // Кнопка режима Восстановления
-        binding.llSideBarRestMode.setOnClickListener {
-            AppHelper.requestFocusInTouch(binding.llSideBarRestMode)
-            ma.enableSpecialMode(SpecialMode.RESTORE)
-        }
+        binding.llSideBarRestMode.setOnClickListener { tbManager.restMode() }
         binding.llSideBarRestMode.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
 
         // Кнопка режима Архив
-        binding.llSideBarArchiveMode.setOnClickListener {
-            AppHelper.requestFocusInTouch(binding.llSideBarArchiveMode)
-            ma.enableSpecialMode(SpecialMode.ARCHIVE)
-
-        }
+        binding.llSideBarArchiveMode.setOnClickListener { tbManager.archiveMode() }
         binding.llSideBarArchiveMode.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
     }
 
-    private fun sideBarHide() {
-        // Сворачивание боковой панели
-        if (isSideToolbarFullShow) {
-            binding.ivSideBarOpen.animate().rotation(0f)       // Перевернуть кнопку Развернуть панель
-            showSideBarText(false)                             // Убрать пояснительный текст кнопок
-        }
-        // Закрытие фрагмента
-        parentFragmentManager.beginTransaction().remove(this@ToolbarSideFragment).commitAllowingStateLoss()
-        ma.sideBarFlagShow()
-    }
-
-    // Разворачивание/сворачивание боковой панели
-    private fun sideBarFullOpenClose() {
-        if (isSideToolbarFullShow) {
-            binding.ivSideBarOpen.animate().rotation(0f)       // Перевернуть кнопку Развернуть панель
-            showSideBarText(false)                             // Убрать пояснительный текст кнопок
-        } else {
-            binding.ivSideBarOpen.animate().rotation(180f)     // Перевернуть кнопку Развернуть панель
-            showSideBarText(true)                              // Показать пояснительный текст кнопок
-        }
-        isSideToolbarFullShow = !isSideToolbarFullShow
-    }
-
-    // Показать пояснительный текст кнопок боковой панели
-    private fun showSideBarText(show: Boolean) {
-        binding.tvSideBarOpen.isVisible = show                   // Текст кнопки Развернуть панель
-        binding.tvSideBarNoSleep.isVisible = show                // Текст кнопки БЕЗ СНА
-        binding.tvSideBarSend.isVisible = show                   // Текст кнопки Переслать
-        binding.tvSideBarConvertText.isVisible = show            // Текст кнопки Конвертация
-        binding.tvSideBarDelMark.isVisible = show                // Текст кнопки Удалить метки
-        binding.tvSideBarDelMode.isVisible = show                // Текст кнопки Удаление
-        binding.tvSideBarRestMode.isVisible = show               // Текст кнопки Восстановление
-        binding.tvSideBarMoveMode.isVisible = show               // Текст кнопки Перенос
-        binding.tvSideBarArchiveMode.isVisible = show            // Текст кнопки Архив
-    }
 
     override fun onStart() {
         super.onStart()
@@ -202,7 +119,7 @@ class ToolbarSideFragment: Fragment() {
             requestFocus()
             setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
-                    sideBarHide()
+                    tbManager.sideBarHide()
                 }
             }
         }
