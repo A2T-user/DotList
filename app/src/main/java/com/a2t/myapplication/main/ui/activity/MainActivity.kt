@@ -330,7 +330,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         val modesToolbarManager = ModesToolbarManager(this, mainViewModel)
         specialModeGestureDetector = GestureDetector(this, SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
             override fun onSwipeLeft() = false
-            override fun onSwipeRight() = false
             override fun onSwipeDown(): Boolean {
                 completionSpecialMode()
                 return true
@@ -970,7 +969,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
     private fun sideBarDebounce(): Boolean {
         val current = isSideBarOpenAllowed
-        if (isClickAllowed) {
+        if (isSideBarOpenAllowed) {
             isSideBarOpenAllowed = false
             lifecycleScope.launch {
                 delay(1000)

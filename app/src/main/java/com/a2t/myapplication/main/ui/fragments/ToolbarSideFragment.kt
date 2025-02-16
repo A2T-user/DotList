@@ -2,17 +2,23 @@ package com.a2t.myapplication.main.ui.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.GestureDetector
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.a2t.myapplication.App
 import com.a2t.myapplication.databinding.FragmentToolbarSideBinding
 import com.a2t.myapplication.main.presentation.MainViewModel
 import com.a2t.myapplication.main.ui.activity.MainActivity
-import com.a2t.myapplication.main.ui.SwipeGestureListener
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.abs
 
 class ToolbarSideFragment: Fragment() {
     private val mainViewModel: MainViewModel by activityViewModel()
@@ -21,6 +27,12 @@ class ToolbarSideFragment: Fragment() {
     private lateinit var ma: MainActivity
     private var isSideToolbarFullShow = false
     private lateinit var tbManager: ToolbarSideManager
+    private lateinit var btns: List<View>
+    private var isSwipeAllowed = true
+
+    companion object {
+        private const val SWIPE_THRESHOLD = 10
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,76 +46,71 @@ class ToolbarSideFragment: Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Получаем список кнопок
+        btns = listOf(
+            binding.ivSideBarOpen,
+            binding.tvSideBarOpen,
+            binding.llSideBarNoSleep,
+            binding.llSideBarDelMark,
+            binding.llSideBarSend,
+            binding.llSideBarConvertText,
+            binding.llSideBarMoveMode,
+            binding.llSideBarDelMode,
+            binding.llSideBarRestMode,
+            binding.llSideBarArchiveMode
+        )
 
         tbManager = ToolbarSideManager(this, ma, mainViewModel, binding, isSideToolbarFullShow)
 
         if (App.appSettings.isLeftHandControl) binding.ivSideBarOpen.scaleX = -1.0f
 
-        val sideBarGestureDetector = if (App.appSettings.isLeftHandControl) {
-            GestureDetector(
-                requireContext(),
-                SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
-                    override fun onSwipeLeft(): Boolean {
-                        tbManager.sideBarHide()
-                        return true
+        // Каждой кнопке присваиваем слушателя
+        val downX = AtomicReference( 0f)
+        val downY = AtomicReference( 0f)
+        val isSwipe = AtomicBoolean(false)
+        for (btn in btns) {
+            btn.setOnTouchListener { _, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        downX.set(event.x)
+                        downY.set(event.y)
+                        isSwipe.set(false)
                     }
-                    override fun onSwipeRight()= false
-                    override fun onSwipeDown() = false
-                })
-            )
-        } else {
-            GestureDetector(
-                requireContext(),
-                SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
-                    override fun onSwipeLeft() = false
-                    override fun onSwipeRight(): Boolean {
-                        tbManager.sideBarHide()
-                        return true
+                    MotionEvent.ACTION_HOVER_EXIT, MotionEvent.ACTION_MOVE -> {
+                        Log.e ("МОЁ", "ACTION_MOVE")
+                        var dX = event.x - downX.get()
+                        val dY = event.y - downY.get()
+                        if (App.appSettings.isLeftHandControl) dX *= -1
+                        if (abs(dX / dY) > 1 && dX > SWIPE_THRESHOLD) {         // Если жест горизонталный, влево
+                            isSwipe.set(true)
+                            Log.e ("МОЁ", "ACTION_MOVE isSwipe = " + isSwipe.get())
+                            if (sideBarDebounce()) {
+                                tbManager.sideBarHide()
+                            }
+                        }
+
                     }
-                    override fun onSwipeDown() = false
-                })
-            )
+                    MotionEvent.ACTION_UP -> {
+                        Log.e ("МОЁ", "ACTION_UP isSwipe = " + isSwipe.get())
+                        if (!isSwipe.get()) tbManager.clickBtn(btn.id)
+                    }
+                }
+                return@setOnTouchListener true
+            }
         }
-
-        // Кнопка Развернуть/Свернуть боковую панель
-        binding.ivSideBarOpen.setOnClickListener { tbManager.expandSideBar() }
-        binding.ivSideBarOpen.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-        binding.tvSideBarOpen.setOnClickListener { tbManager.expandSideBar() }
-        binding.tvSideBarOpen.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        // Кнопка не спящий режим
-        binding.llSideBarNoSleep.setOnClickListener { tbManager.noSleepMode() }
-        binding.llSideBarNoSleep.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        // Кнопка Удалить метки
-        binding.llSideBarDelMark.setOnClickListener { tbManager.delMark() }
-        binding.llSideBarDelMark.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        // Кнопка Переслать
-        binding.llSideBarSend.setOnClickListener { tbManager.sendList() }
-        binding.llSideBarSend.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        // Кнопка Конвертировать
-        binding.llSideBarConvertText.setOnClickListener { tbManager.convertText() }
-        binding.llSideBarConvertText.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        // Кнопка режима Переноса
-        binding.llSideBarMoveMode.setOnClickListener { tbManager.moveMode() }
-        binding.llSideBarMoveMode.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        // Кнопка режима Удаления
-        binding.llSideBarDelMode.setOnClickListener { tbManager.delMode() }
-        binding.llSideBarDelMode.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        // Кнопка режима Восстановления
-        binding.llSideBarRestMode.setOnClickListener { tbManager.restMode() }
-        binding.llSideBarRestMode.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
-
-        // Кнопка режима Архив
-        binding.llSideBarArchiveMode.setOnClickListener { tbManager.archiveMode() }
-        binding.llSideBarArchiveMode.setOnTouchListener { _, event -> sideBarGestureDetector.onTouchEvent(event) }
     }
 
+    private fun sideBarDebounce(): Boolean {
+        val current = isSwipeAllowed
+        if (isSwipeAllowed) {
+            isSwipeAllowed = false
+            lifecycleScope.launch {
+                delay(1000)
+                isSwipeAllowed = true
+            }
+        }
+        return current
+    }
 
     override fun onStart() {
         super.onStart()

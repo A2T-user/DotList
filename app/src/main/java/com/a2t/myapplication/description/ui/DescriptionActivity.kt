@@ -55,7 +55,6 @@ class DescriptionActivity : AppCompatActivity() {
                 closeDescriptionContent()
                 return true
             }
-            override fun onSwipeRight() = false
             override fun onSwipeDown() = false
         }))
 
