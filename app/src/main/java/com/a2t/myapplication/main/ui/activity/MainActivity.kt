@@ -509,20 +509,22 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         AppHelper.requestFocusInTouch(topToolbarBinding.btnMenu)
     }
 
+    // Показать скрыть контейнер и флажок бокового меню
+    fun showSideBarContainer (isShow: Boolean) {
+        binding.sideBarContainer.isVisible = isShow
+    }
+
     // Открытие специального режима
     override fun enableSpecialMode() {
         noSleepModeOff()           // Выключение режима БЕЗ СНА
-        binding.sideBarContainer.isVisible = getSpecialMode() == SpecialMode.NORMAL
+        showSideBarContainer (getSpecialMode() == SpecialMode.NORMAL)
         showSpecialModeToolbar()
         showNumberOfSelectedRecords()
     }
 
     override fun enableSpecialMode(mode: SpecialMode) {
         mainViewModel.specialMode = mode
-        noSleepModeOff()           // Выключение режима БЕЗ СНА
-        binding.sideBarContainer.isVisible = getSpecialMode() == SpecialMode.NORMAL
-        showSpecialModeToolbar()
-        showNumberOfSelectedRecords()
+        enableSpecialMode()
         goToDir(animOpenNewDir)
     }
 
