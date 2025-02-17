@@ -1,5 +1,6 @@
 package com.a2t.myapplication.main.ui.activity
 
+import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Canvas
@@ -262,10 +263,10 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         recycler.addOnScrollListener(MyScrollListener(this))
 
         binding.llBtnScroll.setOnClickListener {
-            if (scrollState == ScrollState.DOWN) {
-                recycler.smoothScrollToPosition(adapter.itemCount - 1)
-            } else {
-                recycler.smoothScrollToPosition(0)
+            when(scrollState) {
+                ScrollState.DOWN -> recycler.smoothScrollToPosition(adapter.itemCount - 1)
+                ScrollState.UP -> recycler.smoothScrollToPosition(0)
+                else -> {}
             }
         }
 
@@ -1105,13 +1106,29 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 this.scrollState = scrollState
                 binding.ivBtnScroll.setImageResource(R.drawable.ic_scroll_down)
                 binding.llBtnScroll.isVisible = true
+                binding.tvZoom.visibility = View.GONE
             }
             ScrollState.UP -> {             // Прокрутка вверх
                 this.scrollState = scrollState
                 binding.ivBtnScroll.setImageResource(R.drawable.ic_scroll_up)
                 binding.llBtnScroll.isVisible = true
+                binding.tvZoom.visibility = View.GONE
             }
-            ScrollState.STOPPED -> {}      // Прокрутка остановлена
+            ScrollState.STOPPED -> {
+                this.scrollState = scrollState
+                binding.tvZoom.visibility = View.GONE
+            }
+            ScrollState.END -> {      // Прокрутка остановлена
+                this.scrollState = scrollState
+                // Анимация появления tvZOOM
+                binding.tvZoom.visibility = View.VISIBLE // Делаем видимым перед анимацией
+                binding.tvZoom.alpha = 0f // Устанавливаем начальное значение alpha
+                binding.tvZoom.animate()
+                    .alpha(1f) // Конечное значение alpha
+                    .setDuration(1500) // Длительность анимации в миллисекундах
+                    .setListener(object : AnimatorListenerAdapter() {})
+                    .start()
+            }
         }
         scrollJob.cancel()
         scrollJob = lifecycleScope.launch {
