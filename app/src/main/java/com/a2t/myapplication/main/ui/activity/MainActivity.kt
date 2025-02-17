@@ -118,8 +118,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private lateinit var velocityTracker: VelocityTracker
     private lateinit var specialModeGestureDetector: GestureDetector
     private var isLeftHandControl: Boolean = false
-    private lateinit var btns: List<View>
-
 
     @SuppressLint("ClickableViewAccessibility", "InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -327,7 +325,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ НИЖНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // Получаем список View панели
-        btns = listOf(
+        val btns = listOf(
             modesToolbarBinding.root,
             modesToolbarBinding.btnHelp,
             modesToolbarBinding.btnCloseToolbar,

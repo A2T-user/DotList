@@ -24,7 +24,6 @@ class ToolbarSideFragment: Fragment() {
     private lateinit var ma: MainActivity
     private var isSideToolbarFullShow = false
     private lateinit var tbManager: ToolbarSideManager
-    private lateinit var btns: List<View>
     private var isSwipeAllowed = true
 
     companion object {
@@ -42,8 +41,8 @@ class ToolbarSideFragment: Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Получаем список кнопок
-        btns = listOf(
+        // Получаем список View панели
+        val btns = listOf(
             binding.root,
             binding.ivSideBarOpen,
             binding.tvSideBarOpen,

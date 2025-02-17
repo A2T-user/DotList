@@ -11,7 +11,6 @@ import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.a2t.myapplication.databinding.ActivityDescriptionBinding
 import com.a2t.myapplication.databinding.DescriptionContentBinding
-import com.a2t.myapplication.main.ui.SwipeGestureListener
 import com.a2t.myapplication.main.ui.utilities.AppHelper
 
 const val CURRENT_TAB = "current_tab"
@@ -55,7 +54,6 @@ class DescriptionActivity : AppCompatActivity() {
                 closeDescriptionContent()
                 return true
             }
-            override fun onSwipeDown() = false
         }))
 
         binding.goToPrevious.setOnClickListener {
@@ -113,21 +111,28 @@ class DescriptionActivity : AppCompatActivity() {
             true
         }
 
-        createListeners(descriptionContentBinding.descGeneral1, 1)
-        createListeners(descriptionContentBinding.records2, 2)
-        createListeners(descriptionContentBinding.lines3, 3)
-        createListeners(descriptionContentBinding.dirs4, 4)
-        createListeners(descriptionContentBinding.nav5, 5)
-        createListeners(descriptionContentBinding.size6, 6)
-        createListeners(descriptionContentBinding.alarms7, 7)
-        createListeners(descriptionContentBinding.mainTb8, 8)
-        createListeners(descriptionContentBinding.sideTb9, 9)
-        createListeners(descriptionContentBinding.moveMode10, 10)
-        createListeners(descriptionContentBinding.delMode11, 11)
-        createListeners(descriptionContentBinding.restMode12, 12)
-        createListeners(descriptionContentBinding.archive13, 13)
-        createListeners(descriptionContentBinding.convert14, 14)
-        createListeners(descriptionContentBinding.send15, 15)
+        // Получаем список кнопок панели
+        val btns = listOf(
+            descriptionContentBinding.descGeneral1,
+            descriptionContentBinding.records2,
+            descriptionContentBinding.lines3,
+            descriptionContentBinding.dirs4,
+            descriptionContentBinding.nav5,
+            descriptionContentBinding.size6,
+            descriptionContentBinding.alarms7,
+            descriptionContentBinding.mainTb8,
+            descriptionContentBinding.sideTb9,
+            descriptionContentBinding.moveMode10,
+            descriptionContentBinding.delMode11,
+            descriptionContentBinding.restMode12,
+            descriptionContentBinding.archive13,
+            descriptionContentBinding.convert14,
+            descriptionContentBinding.send15
+        )
+        // Каждой кнопке панели присваиваем слушателя
+        btns.forEachIndexed { index, btn ->
+            createListeners(btn, index + 1)
+        }
     }
 
     private fun closeDescriptionContent() {
