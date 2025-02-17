@@ -1,5 +1,6 @@
 package com.a2t.myapplication.main.ui.activity.recycler
 
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.main.ui.activity.recycler.model.ScrollState
 
@@ -16,6 +17,9 @@ class MyScrollListener(private val listener: OnScrollStateChangedListener) : Rec
         } else {
             ScrollState.STOPPED // Прокрутка остановлена
         }
+
+        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+        if (layoutManager.findLastCompletelyVisibleItemPosition() == layoutManager.itemCount - 1) scrollState = ScrollState.END
 
         listener.onScrollStateChanged(scrollState)
     }

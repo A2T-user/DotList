@@ -22,6 +22,20 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
+            <TextView
+                android:id="@+id/tv_zoom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="62dp"
+                android:layout_gravity="center_horizontal|bottom"
+                android:gravity="center"
+                app:drawableTopCompat="@drawable/ic_zoom"
+                android:text="@string/zoom"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:textColor="?attr/colorMainText"
+                android:visibility="gone"/>
+
             <!-- РЕЦИКЛЕР -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"
