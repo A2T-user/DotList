@@ -40,7 +40,6 @@ import com.a2t.myapplication.description.ui.DescriptionActivity
 import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.presentation.MainViewModel
 import com.a2t.myapplication.main.ui.ActionEditText
-import com.a2t.myapplication.main.ui.SwipeGestureListener
 import com.a2t.myapplication.main.ui.activity.model.SpecialMode
 import com.a2t.myapplication.main.ui.activity.recycler.MainAdapter
 import com.a2t.myapplication.main.ui.activity.recycler.MainAdapterCallback
@@ -50,6 +49,7 @@ import com.a2t.myapplication.main.ui.activity.recycler.OnScrollStateChangedListe
 import com.a2t.myapplication.main.ui.activity.recycler.model.ScrollState
 import com.a2t.myapplication.main.ui.fragments.MainMenuFragment
 import com.a2t.myapplication.main.ui.fragments.ToolbarSideFragment
+import com.a2t.myapplication.main.ui.fragments.ToolbarSideFragment.Companion.SWIPE_THRESHOLD
 import com.a2t.myapplication.main.ui.utilities.AlarmHelper
 import com.a2t.myapplication.main.ui.utilities.AppHelper
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -118,6 +118,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private lateinit var velocityTracker: VelocityTracker
     private lateinit var specialModeGestureDetector: GestureDetector
     private var isLeftHandControl: Boolean = false
+    private lateinit var btns: List<View>
 
 
     @SuppressLint("ClickableViewAccessibility", "InflateParams")
@@ -325,36 +326,43 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ НИЖНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        // Получаем список View панели
+        btns = listOf(
+            modesToolbarBinding.root,
+            modesToolbarBinding.btnHelp,
+            modesToolbarBinding.btnCloseToolbar,
+            modesToolbarBinding.btnSelectAll,
+            modesToolbarBinding.btnAction
+        )
         val modesToolbarManager = ModesToolbarManager(this, mainViewModel)
-        specialModeGestureDetector = GestureDetector(this, SwipeGestureListener(object : SwipeGestureListener.OnSwipeListener {
-            override fun onSwipeLeft() = false
-            override fun onSwipeDown(): Boolean {
-                completionSpecialMode()
-                return true
+        // Каждой View панели присваиваем слушателя
+        var isSwipe = false
+        for (btn in btns) {
+            btn.setOnTouchListener { _, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        downX = event.x
+                        downY = event.y
+                        isSwipe = false
+                    }
+                    MotionEvent.ACTION_HOVER_EXIT, MotionEvent.ACTION_MOVE -> {
+                        var dX = event.x - downX
+                        val dY = event.y - downY
+                        if (App.appSettings.isLeftHandControl) dX *= -1
+                        if (abs(dY / dX) > 1 && dY > SWIPE_THRESHOLD) {         // Если жест горизонталный, влево
+                            isSwipe = true
+                            if (sideBarDebounce()) {
+                                completionSpecialMode()
+                            }
+                        }
+
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        if (!isSwipe) modesToolbarManager.clickBtn(btn.id)
+                    }
+                }
+                return@setOnTouchListener true
             }
-        }))
-
-        // Свайп вниз закрывает нижнюю панель и переводит рециклер в обычный режим
-        modesToolbarBinding.clModesToolbar.setOnTouchListener { _, event ->
-            specialModeGestureDetector.onTouchEvent(event)
-        }
-
-        // Клик по кнопке Закрыть закрывает нижнюю панель и переводит экран в обычный режим
-        modesToolbarBinding.btnCloseToolbar.setOnClickListener {
-            completionSpecialMode()
-        }
-
-        // Клик по кнопке ? открыват Описание на нужной вклвдке
-        modesToolbarBinding.btnHelp.setOnClickListener {
-            modesToolbarManager.openHelp()
-        }
-
-        modesToolbarBinding.btnSelectAll.setOnClickListener {
-            modesToolbarManager.selectAll()
-        }
-
-        modesToolbarBinding.btnAction.setOnClickListener {
-            modesToolbarManager.clickBtnAction()
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ КОНТЕКСТНОЕ МЕНЮ ФОРМАТ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$

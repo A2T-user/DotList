@@ -44,6 +44,7 @@ class ToolbarSideFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // Получаем список кнопок
         btns = listOf(
+            binding.root,
             binding.ivSideBarOpen,
             binding.tvSideBarOpen,
             binding.llSideBarNoSleep,
@@ -60,7 +61,7 @@ class ToolbarSideFragment: Fragment() {
 
         if (App.appSettings.isLeftHandControl) binding.ivSideBarOpen.scaleX = -1.0f
 
-        // Каждой кнопке присваиваем слушателя
+        // Каждой View панели присваиваем слушателя
         var downX = 0f
         var downY = 0f
         var isSwipe = false
