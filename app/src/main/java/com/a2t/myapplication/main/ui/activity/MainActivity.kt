@@ -58,9 +58,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Collections
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.abs
 import kotlin.math.hypot
 
@@ -287,21 +285,21 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ БОКОВАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // swipe влево по флагу для открытия БОКОВОЙ ПАНЕЛИ
-        val downX = AtomicReference( 0f)
-        val downY = AtomicReference( 0f)
-        val isTouch = AtomicBoolean(false)
+        var downX = 0f
+        var downY = 0f
+        var isTouch = false
         binding.sideBarContainer.setOnTouchListener { _, event ->
             when(event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    downX.set(event.x)
-                    downY.set(event.y)
-                    isTouch.set(true)
+                    downX = event.x
+                    downY = event.y
+                    isTouch = true
                 }
-                MotionEvent.ACTION_CANCEL -> isTouch.set(false)
+                MotionEvent.ACTION_CANCEL -> isTouch = false
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_HOVER_EXIT, MotionEvent.ACTION_MOVE -> {
-                    if (isTouch.get()) {
-                        var dX = event.x - downX.get()
-                        val dY = event.y - downY.get()
+                    if (isTouch) {
+                        var dX = event.x - downX
+                        val dY = event.y - downY
                         if (isLeftHandControl) dX *= -1
                         if (abs(dX / dY) > 1.5 && dX < 0) {         // Если жест горизонталный, влево
                             if (sideBarDebounce()) {
@@ -312,7 +310,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                     }
                 }
             }
-            return@setOnTouchListener isTouch.get()
+            return@setOnTouchListener isTouch
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
