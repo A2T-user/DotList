@@ -18,7 +18,17 @@ class ModesToolbarManager(
 ) {
     private val ma = context as MainActivity
 
-    fun openHelp() {
+    fun clickBtn(btnId: Int) {
+        when(btnId) {
+            R.id.btnHelp -> openHelp()
+            R.id.btnCloseToolbar -> ma.completionSpecialMode()
+            R.id.btnSelectAll -> selectAll()
+            R.id.btnAction -> clickBtnAction()
+            else -> {}
+        }
+    }
+
+    private fun openHelp() {
         val currentTab = when(ma.adapter.specialMode) {
             SpecialMode.MOVE -> 10
             SpecialMode.DELETE -> 11
@@ -35,7 +45,7 @@ class ModesToolbarManager(
         context.startActivity(intent)
     }
 
-    fun selectAll() {
+    private fun selectAll() {
         if (ma.getSpecialMode() == SpecialMode.DELETE || ma.getSpecialMode() == SpecialMode.RESTORE) {
             ma.adapter.records.forEachIndexed { index, rec ->
                 if (!rec.isNew && getMainBuffer().all { it.id != rec.id }) {
@@ -47,7 +57,7 @@ class ModesToolbarManager(
         }
     }
 
-    fun clickBtnAction() {
+    private fun clickBtnAction() {
         when(ma.getSpecialMode()) {
             SpecialMode.MOVE -> {
                 actionPasteRecords()
