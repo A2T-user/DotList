@@ -25,7 +25,7 @@ class TextFragment : Fragment() {
     private val mainViewModel: MainViewModel by activityViewModel()
     private var _binding: FragmentTextBinding? = null
     private val binding get() = _binding!!
-
+    private lateinit var ma: MainActivity
     private var mode: TextFragmentMode? = null
     private var idCurrentDir: Long = 0
     private val records = ArrayList<ListRecord>()
@@ -55,6 +55,10 @@ class TextFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        ma = requireActivity() as MainActivity
+
+        ma.showSideBarContainer(false)
 
         savedInstanceState?.let {
             binding.etText.setText(it.getString("text"))
@@ -252,6 +256,7 @@ class TextFragment : Fragment() {
             setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     parentFragmentManager.beginTransaction().remove(this@TextFragment).commitAllowingStateLoss() // Закрытие фрагмента
+                    ma.showSideBarContainer(true)
                 }
             }
         }
