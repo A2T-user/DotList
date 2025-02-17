@@ -58,7 +58,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Collections
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.abs
 import kotlin.math.hypot
 
@@ -220,7 +219,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         // Изменение высоты шрифта
-        val counter = AtomicInteger() // Счетчик срабатываний Zoom
+        var counter = 0 // Счетчик срабатываний Zoom
         recycler.setOnTouchListener{ _: View?, event: MotionEvent ->
             requestMenuFocus()
             when(event.action and MotionEvent.ACTION_MASK) {
@@ -236,9 +235,9 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 }
 
                 MotionEvent.ACTION_MOVE -> {
-                    counter.getAndIncrement()
-                    if (counter.get() == NUMBER_OF_OPERATIO_ZOOM) {
-                        counter.set(0) // Обнуляем счетчик
+                    counter++
+                    if (counter == NUMBER_OF_OPERATIO_ZOOM) {
+                        counter = 0 // Обнуляем счетчик
                         if (isZOOMode) {
                             val dx = event.getX(0) - event.getX(1)
                             val dy = event.getY(0) - event.getY(1)
