@@ -2,7 +2,6 @@ package com.a2t.myapplication.main.ui.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -16,8 +15,6 @@ import com.a2t.myapplication.main.ui.activity.MainActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.abs
 
 class ToolbarSideFragment: Fragment() {
@@ -31,9 +28,8 @@ class ToolbarSideFragment: Fragment() {
     private var isSwipeAllowed = true
 
     companion object {
-        private const val SWIPE_THRESHOLD = 10
+        const val SWIPE_THRESHOLD = 10
     }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -65,25 +61,23 @@ class ToolbarSideFragment: Fragment() {
         if (App.appSettings.isLeftHandControl) binding.ivSideBarOpen.scaleX = -1.0f
 
         // Каждой кнопке присваиваем слушателя
-        val downX = AtomicReference( 0f)
-        val downY = AtomicReference( 0f)
-        val isSwipe = AtomicBoolean(false)
+        var downX = 0f
+        var downY = 0f
+        var isSwipe = false
         for (btn in btns) {
             btn.setOnTouchListener { _, event ->
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        downX.set(event.x)
-                        downY.set(event.y)
-                        isSwipe.set(false)
+                        downX = event.x
+                        downY = event.y
+                        isSwipe = false
                     }
                     MotionEvent.ACTION_HOVER_EXIT, MotionEvent.ACTION_MOVE -> {
-                        Log.e ("МОЁ", "ACTION_MOVE")
-                        var dX = event.x - downX.get()
-                        val dY = event.y - downY.get()
+                        var dX = event.x - downX
+                        val dY = event.y - downY
                         if (App.appSettings.isLeftHandControl) dX *= -1
                         if (abs(dX / dY) > 1 && dX > SWIPE_THRESHOLD) {         // Если жест горизонталный, влево
-                            isSwipe.set(true)
-                            Log.e ("МОЁ", "ACTION_MOVE isSwipe = " + isSwipe.get())
+                            isSwipe = true
                             if (sideBarDebounce()) {
                                 tbManager.sideBarHide()
                             }
@@ -91,8 +85,7 @@ class ToolbarSideFragment: Fragment() {
 
                     }
                     MotionEvent.ACTION_UP -> {
-                        Log.e ("МОЁ", "ACTION_UP isSwipe = " + isSwipe.get())
-                        if (!isSwipe.get()) tbManager.clickBtn(btn.id)
+                        if (!isSwipe) tbManager.clickBtn(btn.id)
                     }
                 }
                 return@setOnTouchListener true
