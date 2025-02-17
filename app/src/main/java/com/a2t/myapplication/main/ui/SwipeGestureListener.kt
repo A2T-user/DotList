@@ -22,9 +22,6 @@ class SwipeGestureListener(private val listener: OnSwipeListener) : GestureDetec
                     diffX < 0 -> {
                         listener.onSwipeLeft()
                     }
-                    diffX > 0 -> {
-                        listener.onSwipeRight()
-                    }
                     else -> false
                 }
             } else false
@@ -42,7 +39,6 @@ class SwipeGestureListener(private val listener: OnSwipeListener) : GestureDetec
 
     interface OnSwipeListener {
         fun onSwipeLeft(): Boolean
-        fun onSwipeRight(): Boolean
         fun onSwipeDown(): Boolean
     }
 }

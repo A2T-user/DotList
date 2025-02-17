@@ -19,6 +19,22 @@ class ToolbarSideManager (
     private var isSideToolbarFullShow: Boolean
 ){
 
+    fun clickBtn(btnId: Int) {
+        when(btnId) {
+            R.id.ivSideBarOpen -> expandSideBar()
+            R.id.tvSideBarOpen -> expandSideBar()
+            R.id.llSideBarNoSleep -> noSleepMode()
+            R.id.llSideBarDelMark -> delMark()
+            R.id.llSideBarSend -> sendList()
+            R.id.llSideBarConvertText -> convertText()
+            R.id.llSideBarMoveMode -> moveMode()
+            R.id.llSideBarDelMode -> delMode()
+            R.id.llSideBarRestMode -> restMode()
+            R.id.llSideBarArchiveMode -> archiveMode()
+            else -> {}
+        }
+    }
+
     // Убрать боковую панель
     fun sideBarHide() {
         // Сворачивание боковой панели
@@ -45,7 +61,7 @@ class ToolbarSideManager (
     }
 
     // Кнопка Развернуть/Свернуть боковую панель
-    fun expandSideBar() {
+    private fun expandSideBar() {
         if (isSideToolbarFullShow) {
             binding.ivSideBarOpen.animate().rotation(0f)       // Перевернуть кнопку Развернуть панель
             showSideBarText(false)                             // Убрать пояснительный текст кнопок
@@ -57,19 +73,19 @@ class ToolbarSideManager (
     }
 
     // Кнопка не спящий режим
-    fun noSleepMode() {
+    private fun noSleepMode() {
         AppHelper.requestFocusInTouch(binding.llSideBarNoSleep)
         ma.noSleepModeON()
     }
 
     // Кнопка Удалить метки
-    fun delMark() {
+    private fun delMark() {
         AppHelper.requestFocusInTouch(binding.llSideBarDelMark)
         ma.deleteAllMarks()
     }
 
     // Кнопка Переслать
-    fun sendList() {
+    private fun sendList() {
         AppHelper.requestFocusInTouch(binding.llSideBarSend)
         if (ma.adapter.records.size > 1) {
             mainViewModel.textFragmentMode = TextFragmentMode.SEND
@@ -85,7 +101,7 @@ class ToolbarSideManager (
     }
 
     // Кнопка Конвертировать
-    fun convertText() {
+    private fun convertText() {
         AppHelper.requestFocusInTouch(binding.llSideBarConvertText)
         mainViewModel.textFragmentMode = TextFragmentMode.CONVERT
         mainViewModel.idCurrentDir = ma.getIdCurrentDir()
@@ -97,25 +113,25 @@ class ToolbarSideManager (
     }
 
     // Кнопка режима Переноса
-    fun moveMode() {
+    private fun moveMode() {
         AppHelper.requestFocusInTouch(binding.llSideBarMoveMode)
         ma.enableSpecialMode(SpecialMode.MOVE)
     }
 
     // Кнопка режима Удаления
-    fun delMode() {
+    private fun delMode() {
         AppHelper.requestFocusInTouch(binding.llSideBarDelMode)
         ma.enableSpecialMode(SpecialMode.DELETE)
     }
 
     // Кнопка режима Восстановления
-    fun restMode() {
+    private fun restMode() {
         AppHelper.requestFocusInTouch(binding.llSideBarRestMode)
         ma.enableSpecialMode(SpecialMode.RESTORE)
     }
 
     // Кнопка режима Архив
-    fun archiveMode() {
+    private fun archiveMode() {
         AppHelper.requestFocusInTouch(binding.llSideBarArchiveMode)
         ma.enableSpecialMode(SpecialMode.ARCHIVE)
     }
