@@ -14,7 +14,7 @@ import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.FragmentMainMenuBinding
 import com.a2t.myapplication.description.ui.DescriptionActivity
 import com.a2t.myapplication.main.ui.activity.MainActivity
-import com.a2t.myapplication.main.ui.utilities.AppHelper
+import com.a2t.myapplication.utilities.AppHelper
 
 class MainMenuFragment: Fragment() {
     private var _binding: FragmentMainMenuBinding? = null

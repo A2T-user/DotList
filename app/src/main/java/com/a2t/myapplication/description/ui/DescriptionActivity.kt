@@ -11,7 +11,7 @@ import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.a2t.myapplication.databinding.ActivityDescriptionBinding
 import com.a2t.myapplication.databinding.DescriptionContentBinding
-import com.a2t.myapplication.main.ui.utilities.AppHelper
+import com.a2t.myapplication.utilities.AppHelper
 
 
 class DescriptionActivity : AppCompatActivity() {

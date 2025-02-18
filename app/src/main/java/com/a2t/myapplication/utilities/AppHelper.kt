@@ -1,4 +1,4 @@
-package com.a2t.myapplication.main.ui.utilities
+package com.a2t.myapplication.utilities
 
 import android.view.View
 

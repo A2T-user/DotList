@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.a2t.myapplication.App
-import com.a2t.myapplication.main.ui.utilities.AlarmHelper
+import com.a2t.myapplication.utilities.AlarmHelper
 
 class NotificationWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
 
