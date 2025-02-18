@@ -390,10 +390,10 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         // Каждой кнопке панели присваиваем слушателей
         for (btn in btnMenuFormat) {
             btn.setOnClickListener {
-                contextMenuFormatManager.clickBtn(btn.id, adapter.currentItem!!, adapter.currentHolderPosition)
+                contextMenuFormatManager.clickBtn(btn.id)
             }
             btn.setOnLongClickListener {
-                contextMenuFormatManager.longClickBtn(btn.id, adapter.records)
+                contextMenuFormatManager.longClickBtn(btn.id)
                 true
             }
         }
