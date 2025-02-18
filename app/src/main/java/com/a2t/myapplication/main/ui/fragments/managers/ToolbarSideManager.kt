@@ -1,4 +1,4 @@
-package com.a2t.myapplication.main.ui.fragments
+package com.a2t.myapplication.main.ui.fragments.managers
 
 import android.widget.Toast
 import androidx.core.view.isVisible
@@ -8,6 +8,8 @@ import com.a2t.myapplication.databinding.FragmentToolbarSideBinding
 import com.a2t.myapplication.main.presentation.MainViewModel
 import com.a2t.myapplication.main.ui.activity.MainActivity
 import com.a2t.myapplication.main.ui.activity.model.SpecialMode
+import com.a2t.myapplication.main.ui.fragments.TextFragment
+import com.a2t.myapplication.main.ui.fragments.ToolbarSideFragment
 import com.a2t.myapplication.main.ui.fragments.models.TextFragmentMode
 import com.a2t.myapplication.main.ui.utilities.AppHelper
 

@@ -40,6 +40,9 @@ import com.a2t.myapplication.description.ui.DescriptionActivity
 import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.presentation.MainViewModel
 import com.a2t.myapplication.main.ui.ActionEditText
+import com.a2t.myapplication.main.ui.activity.managers.ContextMenuFormatManager
+import com.a2t.myapplication.main.ui.activity.managers.ContextMenuMoveManager
+import com.a2t.myapplication.main.ui.activity.managers.ModesToolbarManager
 import com.a2t.myapplication.main.ui.activity.model.SpecialMode
 import com.a2t.myapplication.main.ui.activity.recycler.MainAdapter
 import com.a2t.myapplication.main.ui.activity.recycler.MainAdapterCallback

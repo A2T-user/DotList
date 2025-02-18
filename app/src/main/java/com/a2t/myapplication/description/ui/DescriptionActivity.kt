@@ -13,7 +13,6 @@ import com.a2t.myapplication.databinding.ActivityDescriptionBinding
 import com.a2t.myapplication.databinding.DescriptionContentBinding
 import com.a2t.myapplication.main.ui.utilities.AppHelper
 
-const val CURRENT_TAB = "current_tab"
 
 class DescriptionActivity : AppCompatActivity() {
     private lateinit var descBackPressedCallback: OnBackPressedCallback
@@ -23,6 +22,10 @@ class DescriptionActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
     lateinit var currentScrollView: ScrollView
     private lateinit var gestureDetector: GestureDetector
+
+    companion object {
+        const val CURRENT_TAB = "current_tab"
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {

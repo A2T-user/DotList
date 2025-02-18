@@ -1,8 +1,9 @@
-package com.a2t.myapplication.main.ui.activity
+package com.a2t.myapplication.main.ui.activity.managers
 
 import com.a2t.myapplication.R
 import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.presentation.MainViewModel
+import com.a2t.myapplication.main.ui.activity.MainActivity
 import com.a2t.myapplication.main.ui.activity.recycler.MainAdapter
 
 class ContextMenuFormatManager(

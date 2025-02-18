@@ -12,6 +12,7 @@ import com.a2t.myapplication.App
 import com.a2t.myapplication.databinding.FragmentToolbarSideBinding
 import com.a2t.myapplication.main.presentation.MainViewModel
 import com.a2t.myapplication.main.ui.activity.MainActivity
+import com.a2t.myapplication.main.ui.fragments.managers.ToolbarSideManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel

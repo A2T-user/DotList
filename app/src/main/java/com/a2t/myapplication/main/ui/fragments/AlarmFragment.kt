@@ -39,12 +39,7 @@ import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-const val ALARM_TIME = "ALARM_TIME"
-const val ALARM_DATE = "ALARM_DATE"
-const val ALARM_DATE_TIME = "ALARM_DATE_TIME"
-const val ALARM_TEXT = "ALARM_TEXT"
-
-class AlarmFragment : Fragment() {
+class AlarmFragment: Fragment() {
 
     private val mainViewModel: MainViewModel by activityViewModel()
     private var _binding: FragmentAlarmBinding? = null
@@ -59,6 +54,13 @@ class AlarmFragment : Fragment() {
     private val offset = calendar.timeZone.rawOffset
     private var nameJob = lifecycleScope.launch {}
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
+
+    companion object {
+        const val ALARM_TIME = "ALARM_TIME"
+        const val ALARM_DATE = "ALARM_DATE"
+        const val ALARM_DATE_TIME = "ALARM_DATE_TIME"
+        const val ALARM_TEXT = "ALARM_TEXT"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
