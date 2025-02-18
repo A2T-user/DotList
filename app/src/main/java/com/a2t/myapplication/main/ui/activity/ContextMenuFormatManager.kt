@@ -10,31 +10,112 @@ class ContextMenuFormatManager(
     private val adapter: MainAdapter,
     private val mainViewModel: MainViewModel
 ) {
-    fun clickBtn(btnId: Int, item: ListRecord, position: Int) {
+    fun clickBtn(btnId: Int) {
         when (btnId) {
-            R.id.btnTextColor_1 -> changingTextFormatRecord(item, position, 1, null, null)
-            R.id.btnTextColor_2 -> changingTextFormatRecord(item, position, 2, null, null)
-            R.id.btnTextColor_3 -> changingTextFormatRecord(item, position, 3, null, null)
-            R.id.btnTextStyle_B -> changingTextFormatRecord(item, position, null, 1, null)
-            R.id.btnTextStyle_I -> changingTextFormatRecord(item, position, null, 2, null)
-            R.id.btnTextStyle_BI -> changingTextFormatRecord(item, position, null, 3, null)
-            R.id.btnTextStyle_U -> changingTextFormatRecord(item, position, null, null, 1)
-            R.id.btnTextRegular -> changingTextFormatRecord(item, position, 0, 0, 0)
+            R.id.btnTextColor_1 -> changingTextFormatRecord(
+                adapter.currentItem!!,
+                adapter.currentHolderPosition,
+                1,
+                null,
+                null
+            )
+            R.id.btnTextColor_2 -> changingTextFormatRecord(adapter.currentItem!!,
+                adapter.currentHolderPosition,
+                2,
+                null,
+                null
+            )
+            R.id.btnTextColor_3 -> changingTextFormatRecord(adapter.currentItem!!,
+                adapter.currentHolderPosition,
+                3
+                , null
+                , null
+            )
+            R.id.btnTextStyle_B -> changingTextFormatRecord(adapter.currentItem!!,
+                adapter.currentHolderPosition,
+                null,
+                1,
+                null
+            )
+            R.id.btnTextStyle_I -> changingTextFormatRecord(adapter.currentItem!!,
+                adapter.currentHolderPosition,
+                null,
+                2,
+                null
+            )
+            R.id.btnTextStyle_BI -> changingTextFormatRecord(adapter.currentItem!!,
+                adapter.currentHolderPosition,
+                null,
+                3,
+                null
+            )
+            R.id.btnTextStyle_U -> changingTextFormatRecord(adapter.currentItem!!,
+                adapter.currentHolderPosition,
+                null,
+                null,
+                1
+            )
+            R.id.btnTextRegular -> changingTextFormatRecord(adapter.currentItem!!,
+                adapter.currentHolderPosition,
+                0,
+                0,
+                0
+            )
             else -> {}
         }
     }
 
-    fun longClickBtn(btnId: Int, records: List<ListRecord>) {
+    fun longClickBtn(btnId: Int) {
         when (btnId) {
-            R.id.btnTextColor_1 -> changingTextFormatAllRecords(records, 1, null, null)
-            R.id.btnTextColor_2 -> changingTextFormatAllRecords(records, 2, null, null)
-            R.id.btnTextColor_3 -> changingTextFormatAllRecords(records, 3, null, null)
-            R.id.btnTextStyle_B -> changingTextFormatAllRecords(records, null, 1, null)
-            R.id.btnTextStyle_I -> changingTextFormatAllRecords(records, null, 2, null)
-            R.id.btnTextStyle_BI -> changingTextFormatAllRecords(records, null, 3, null)
-            R.id.btnTextStyle_U -> changingTextFormatAllRecords(records, null, null, 1)
+            R.id.btnTextColor_1 -> changingTextFormatAllRecords(
+                adapter.records,
+                1,
+                null,
+                null
+            )
+            R.id.btnTextColor_2 -> changingTextFormatAllRecords(
+                adapter.records,
+                2,
+                null,
+                null
+            )
+            R.id.btnTextColor_3 -> changingTextFormatAllRecords(
+                adapter.records,
+                3,
+                null,
+                null
+            )
+            R.id.btnTextStyle_B -> changingTextFormatAllRecords(
+                adapter.records,
+                null,
+                1,
+                null
+            )
+            R.id.btnTextStyle_I -> changingTextFormatAllRecords(
+                adapter.records,
+                null,
+                2,
+                null
+            )
+            R.id.btnTextStyle_BI -> changingTextFormatAllRecords(
+                adapter.records,
+                null,
+                3,
+                null
+            )
+            R.id.btnTextStyle_U -> changingTextFormatAllRecords(
+                adapter.records,
+                null,
+                null,
+                1
+            )
             R.id.btnTextRegular -> {
-                changingTextFormatAllRecords(records, 0, 0, 0)
+                changingTextFormatAllRecords(
+                    adapter.records,
+                    0,
+                    0,
+                    0
+                )
                 ma.requestMenuFocus()
             }
             else -> {}
