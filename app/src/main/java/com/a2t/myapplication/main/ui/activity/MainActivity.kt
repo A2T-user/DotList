@@ -1,6 +1,5 @@
 package com.a2t.myapplication.main.ui.activity
 
-import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Canvas
@@ -630,7 +629,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         ) {
             var isSwipe = false
             var isMove = false
-            override fun isLongPressDragEnabled(): Boolean {        // Запретить Drag по LongPress (перетаскивание за контроллер)
+            override fun isLongPressDragEnabled(): Boolean {        // Запретить Drag по LongClick (перетаскивание за контроллер)
                 return false
             }
             // Разрешить Swipe
@@ -1078,14 +1077,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             }
             ScrollState.END -> {      // Прокрутка остановлена
                 this.scrollState = scrollState
-                // Анимация появления tvZOOM
-                binding.tvZoom.visibility = View.VISIBLE // Делаем видимым перед анимацией
-                binding.tvZoom.alpha = 0f // Устанавливаем начальное значение alpha
-                binding.tvZoom.animate()
-                    .alpha(1f) // Конечное значение alpha
-                    .setDuration(1500) // Длительность анимации в миллисекундах
-                    .setListener(object : AnimatorListenerAdapter() {})
-                    .start()
+                AppHelper.animationShowAlpha(binding.tvZoom, 1500)// Анимация появления tvZOOM
             }
         }
         scrollJob.cancel()

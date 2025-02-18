@@ -17,7 +17,7 @@
       android:translateX="-380"
       android:translateY="-100">
     <path
-        android:fillColor="@color/blue_icon"
+        android:fillColor="?attr/colorMainText"
         android:pathData="M40,142L301,261ZM593,920Q569,920 547,911Q525,902 508,885L304,680L334,649Q350,633 371.5,627.5Q393,622 414,628L480,647L480,320Q480,303 491.5,291.5Q503,280 520,280Q537,280 548.5,291.5Q560,303 560,320L560,753L463,726L565,828Q570,833 577.5,836.5Q585,840 593,840L760,840Q793,840 816.5,816.5Q840,793 840,760L840,600Q840,583 851.5,571.5Q863,560 880,560Q897,560 908.5,571.5Q920,583 920,600L920,760Q920,826 873,873Q826,920 760,920L593,920ZM600,640L600,480Q600,463 611.5,451.5Q623,440 640,440Q657,440 668.5,451.5Q680,463 680,480L680,640L600,640ZM720,640L720,520Q720,503 731.5,491.5Q743,480 760,480Q777,480 788.5,491.5Q800,503 800,520L800,640L720,640ZM700,720L700,720L700,720Q700,720 700,720Q700,720 700,720L700,720Q700,720 700,720Q700,720 700,720L700,720L700,720Z"/>
   </group>
   <group android:scaleX="10"
@@ -25,9 +25,9 @@
       android:translateX="30"
       android:translateY="500">
     <path
-        android:fillColor="@color/red_icon"
+        android:fillColor="@color/blue_icon"
         android:strokeWidth="2"
-        android:strokeColor="@color/red_icon"
+        android:strokeColor="@color/blue_icon"
         android:pathData="M20,12l-1.41,-1.41L13,16.17V4h-2v12.17l-5.58,-5.59L4,12l8,8 8,-8z"/>
   </group>
   <group android:scaleX="10"
@@ -35,9 +35,9 @@
       android:translateX="30"
       android:translateY="300">
     <path
-        android:fillColor="@color/red_icon"
+        android:fillColor="@color/blue_icon"
         android:strokeWidth="2"
-        android:strokeColor="@color/red_icon"
+        android:strokeColor="@color/blue_icon"
         android:pathData="M20,12l-1.41,-1.41L13,16.17V4h-2v12.17l-5.58,-5.59L4,12l8,8 8,-8z"/>
   </group>
 </vector>
