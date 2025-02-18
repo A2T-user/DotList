@@ -409,29 +409,23 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 floatingBarBackPressedCallback.isEnabled = false
             }
         }
-        // Кнопка ВЫРЕЗАТЬ
-        contextMenuMoveBinding.btnCut.setOnClickListener { view ->
-            contextMenuMoveManager.btnClick(view, "cut")
-        }
-        contextMenuMoveBinding.btnCut.setOnLongClickListener { view ->
-            contextMenuMoveManager.btnLongClick(view, "cut")
-            true
-        }
-        // Кнопка КОПИРОВАТЬ
-        contextMenuMoveBinding.btnCopy.setOnClickListener { view ->
-            contextMenuMoveManager.btnClick(view, "copy")
-        }
-        contextMenuMoveBinding.btnCopy.setOnLongClickListener { view ->
-            contextMenuMoveManager.btnLongClick(view, "copy")
-            true
-        }
-        // Кнопка ОТМЕНА
-        contextMenuMoveBinding.btnBack.setOnClickListener { view ->
-            contextMenuMoveManager.btnClick(view, "cancel")
-        }
-        contextMenuMoveBinding.btnBack.setOnLongClickListener { view ->
-            contextMenuMoveManager.btnLongClick(view, "cancel")
-            true
+
+        // Получаем список кнопок панели
+        val btnMenuMove = listOf(
+            contextMenuMoveBinding.btnCut,
+            contextMenuMoveBinding.btnCopy,
+            contextMenuMoveBinding.btnBack
+        )
+
+        // Каждой кнопке панели присваиваем слушателей
+        for (btn in btnMenuMove) {
+            btn.setOnClickListener {
+                contextMenuMoveManager.clickBtn(btn.id)
+            }
+            btn.setOnLongClickListener {
+                contextMenuMoveManager.longClickBtn(btn.id)
+                true
+            }
         }
     }
 
