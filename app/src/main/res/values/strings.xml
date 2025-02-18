@@ -51,8 +51,7 @@
     <string name="insert">Вставить</string>
     <string name="delete">Удалить</string>
     <string name="restore">Восстановить</string>
-    <string name="nothing_selected">Не выбрано ни одной записи</string>
-    <string name="recursion_error">Операция отклонена!\nПопытка поместить папку саму в себя или во вложенную в нее папку приводит к рекурсии.</string>
+    <string name="recursion_error">Операция отклонена!\nПопытка ВСТАВИТЬ папку саму в себя или во вложенную в нее папку приводит к рекурсии или замкнутой ссылке.</string>
     <string name="ok">OK</string>
 
     <!-- НАСТРОЙКИ -->
