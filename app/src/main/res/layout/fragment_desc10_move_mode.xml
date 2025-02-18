@@ -83,6 +83,27 @@
                 style="@style/RegularText"
                 android:text="@string/desc_move_mode_text5"/>
 
+            <TextView
+                android:id="@+id/tv_text6"
+                style="@style/RegularText"
+                android:text="@string/desc_move_mode_text6"/>
+
+            <TextView
+                android:id="@+id/tv_text7"
+                style="@style/RegularText"
+                android:text="@string/desc_move_mode_text7"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/tv_text8"
+                style="@style/RegularText"
+                android:text="@string/desc_move_mode_text8"
+                android:visibility="gone"/>
+
+            <TextView
+                style="@style/RegularText"
+                android:text="@string/desc_move_mode_text9"/>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
