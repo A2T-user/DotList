@@ -19,43 +19,50 @@ class ContextMenuFormatManager(
                 null,
                 null
             )
-            R.id.btnTextColor_2 -> changingTextFormatRecord(adapter.currentItem!!,
+            R.id.btnTextColor_2 -> changingTextFormatRecord(
+                adapter.currentItem!!,
                 adapter.currentHolderPosition,
                 2,
                 null,
                 null
             )
-            R.id.btnTextColor_3 -> changingTextFormatRecord(adapter.currentItem!!,
+            R.id.btnTextColor_3 -> changingTextFormatRecord(
+                adapter.currentItem!!,
                 adapter.currentHolderPosition,
-                3
-                , null
-                , null
+                3,
+                null,
+                null
             )
-            R.id.btnTextStyle_B -> changingTextFormatRecord(adapter.currentItem!!,
+            R.id.btnTextStyle_B -> changingTextFormatRecord(
+                adapter.currentItem!!,
                 adapter.currentHolderPosition,
                 null,
                 1,
                 null
             )
-            R.id.btnTextStyle_I -> changingTextFormatRecord(adapter.currentItem!!,
+            R.id.btnTextStyle_I -> changingTextFormatRecord(
+                adapter.currentItem!!,
                 adapter.currentHolderPosition,
                 null,
                 2,
                 null
             )
-            R.id.btnTextStyle_BI -> changingTextFormatRecord(adapter.currentItem!!,
+            R.id.btnTextStyle_BI -> changingTextFormatRecord(
+                adapter.currentItem!!,
                 adapter.currentHolderPosition,
                 null,
                 3,
                 null
             )
-            R.id.btnTextStyle_U -> changingTextFormatRecord(adapter.currentItem!!,
+            R.id.btnTextStyle_U -> changingTextFormatRecord(
+                adapter.currentItem!!,
                 adapter.currentHolderPosition,
                 null,
                 null,
                 1
             )
-            R.id.btnTextRegular -> changingTextFormatRecord(adapter.currentItem!!,
+            R.id.btnTextRegular -> changingTextFormatRecord(
+                adapter.currentItem!!,
                 adapter.currentHolderPosition,
                 0,
                 0,
