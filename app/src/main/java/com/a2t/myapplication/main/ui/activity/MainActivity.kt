@@ -325,7 +325,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ НИЖНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // Получаем список View панели
-        val btns = listOf(
+        val btnsModesToolbar = listOf(
             modesToolbarBinding.root,
             modesToolbarBinding.btnHelp,
             modesToolbarBinding.btnCloseToolbar,
@@ -335,7 +335,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         val modesToolbarManager = ModesToolbarManager(this, mainViewModel)
         // Каждой View панели присваиваем слушателя
         var isSwipe = false
-        for (btn in btns) {
+        for (btn in btnsModesToolbar) {
             btn.setOnTouchListener { _, event ->
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
@@ -364,7 +364,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ КОНТЕКСТНОЕ МЕНЮ ФОРМАТ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        val contextMenuFormatManager = ContextMenuFormatManager(adapter, mainViewModel)
+        val contextMenuFormatManager = ContextMenuFormatManager(this, adapter, mainViewModel)
         // Потеря фокуса контекст.меню приводит к скрытию меню
         contextMenuFormatBinding.llContextMenuFormat.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
             if (!hasFocus) {
@@ -375,69 +375,27 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             }
         }
 
-        contextMenuFormatBinding.btnTextColor1.setOnClickListener {
-            contextMenuFormatManager.changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, 1, null, null)
-        }
-        contextMenuFormatBinding.btnTextColor1.setOnLongClickListener {
-            contextMenuFormatManager.changingTextFormatAllRecords(adapter.records, 1, null, null)
-            true
-        }
+        // Получаем список кнопок панели
+        val btnMenuFormat = listOf(
+            contextMenuFormatBinding.btnTextColor1,
+            contextMenuFormatBinding.btnTextColor2,
+            contextMenuFormatBinding.btnTextColor3,
+            contextMenuFormatBinding.btnTextStyleB,
+            contextMenuFormatBinding.btnTextStyleI,
+            contextMenuFormatBinding.btnTextStyleBI,
+            contextMenuFormatBinding.btnTextStyleU,
+            contextMenuFormatBinding.btnTextRegular
+        )
 
-        contextMenuFormatBinding.btnTextColor2.setOnClickListener {
-            contextMenuFormatManager.changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, 2, null, null)
-        }
-        contextMenuFormatBinding.btnTextColor2.setOnLongClickListener {
-            contextMenuFormatManager.changingTextFormatAllRecords(adapter.records, 2, null, null)
-            true
-        }
-
-        contextMenuFormatBinding.btnTextColor3.setOnClickListener {
-            contextMenuFormatManager.changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, 3, null, null)
-        }
-        contextMenuFormatBinding.btnTextColor3.setOnLongClickListener {
-            contextMenuFormatManager.changingTextFormatAllRecords(adapter.records, 3, null, null)
-            true
-        }
-
-        contextMenuFormatBinding.btnTextStyleB.setOnClickListener {
-            contextMenuFormatManager.changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, null, 1, null)
-        }
-        contextMenuFormatBinding.btnTextStyleB.setOnLongClickListener {
-            contextMenuFormatManager.changingTextFormatAllRecords(adapter.records, null, 1, null)
-            true
-        }
-
-        contextMenuFormatBinding.btnTextStyleI.setOnClickListener {
-            contextMenuFormatManager.changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, null, 2, null)
-        }
-        contextMenuFormatBinding.btnTextStyleI.setOnLongClickListener {
-            contextMenuFormatManager.changingTextFormatAllRecords(adapter.records, null, 2, null)
-            true
-        }
-
-        contextMenuFormatBinding.btnTextStyleBI.setOnClickListener {
-            contextMenuFormatManager.changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, null, 3, null)
-        }
-        contextMenuFormatBinding.btnTextStyleBI.setOnLongClickListener {
-            contextMenuFormatManager.changingTextFormatAllRecords(adapter.records, null, 3, null)
-            true
-        }
-
-        contextMenuFormatBinding.btnTextStyleU.setOnClickListener {
-            contextMenuFormatManager.changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, null, null, 1)
-        }
-        contextMenuFormatBinding.btnTextStyleU.setOnLongClickListener {
-            contextMenuFormatManager.changingTextFormatAllRecords(adapter.records, null, null, 1)
-            true
-        }
-
-        contextMenuFormatBinding.btnTextRegular.setOnClickListener {
-            contextMenuFormatManager.changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, 0, 0, 0)
-        }
-        contextMenuFormatBinding.btnTextRegular.setOnLongClickListener {
-            requestMenuFocus()
-            contextMenuFormatManager.changingTextFormatAllRecords(adapter.records, 0, 0, 0)
-            true
+        // Каждой кнопке панели присваиваем слушателей
+        for (btn in btnMenuFormat) {
+            btn.setOnClickListener {
+                contextMenuFormatManager.clickBtn(btn.id, adapter.currentItem!!, adapter.currentHolderPosition)
+            }
+            btn.setOnLongClickListener {
+                contextMenuFormatManager.longClickBtn(btn.id, adapter.records)
+                true
+            }
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ КОНТЕКСТНОЕ МЕНЮ MOVE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
