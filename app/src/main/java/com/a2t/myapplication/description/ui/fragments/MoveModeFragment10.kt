@@ -50,6 +50,11 @@ class MoveModeFragment10 : Fragment() {
         // Контекстное меню
          contextMenu.llContextMenuMove.isVisible = true
 
+        binding.tvText6.setOnClickListener {
+            binding.tvText7.isVisible = true
+            binding.tvText8.isVisible = true
+        }
+
     }
 
     override fun onDestroyView() {

@@ -63,33 +63,39 @@
                 android:visibility="gone"/>
 
             <LinearLayout
-                android:id="@+id/ll_btn_scroll"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/shadow_circle"
-                android:paddingStart="2dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="6dp"
-                android:layout_gravity="end|bottom"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="70dp"
-                android:visibility="visible">
+                android:layout_gravity="bottom">
 
-                <ImageView
-                    android:id="@+id/iv_btn_scroll"
+                <LinearLayout
+                    android:id="@+id/ll_btn_scroll"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:alpha="0.7"
-                    android:background="@drawable/circle_color_bar"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_scroll_down"
-                    tools:ignore="contentDescription" />
+                    android:orientation="vertical"
+                    android:background="@drawable/shadow_circle"
+                    android:paddingStart="2dp"
+                    android:paddingEnd="5dp"
+                    android:paddingBottom="6dp"
+                    android:layout_gravity="end|bottom"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="20dp"
+                    android:visibility="visible">
 
-            </LinearLayout>
+                    <ImageView
+                        android:id="@+id/iv_btn_scroll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.7"
+                        android:background="@drawable/circle_color_bar"
+                        android:padding="12dp"
+                        android:src="@drawable/ic_scroll_down"
+                        tools:ignore="contentDescription" />
 
-            <!-- МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
-            <include
+                </LinearLayout>
+
+                <!-- МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
+                <include
                     android:id="@+id/smallToolbar"
                     layout="@layout/toolbar_small"
                     android:layout_width="wrap_content"
@@ -97,6 +103,21 @@
                     android:layout_gravity="bottom|end"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"/>
+
+                <!-- НИЖНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:animateLayoutChanges="true">
+
+                    <include
+                        android:id="@+id/modesToolbar"
+                        layout="@layout/toolbar_modes"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/container_view"
@@ -111,19 +132,6 @@
 
         </FrameLayout>
 
-        <!-- НИЖНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:orientation="horizontal"
-            android:animateLayoutChanges="true">
-
-            <include
-                android:id="@+id/modesToolbar"
-                layout="@layout/toolbar_modes"/>
-
-        </LinearLayout>
     </LinearLayout>
 
     <!-- КОНТЕКСТНОЕ МЕНЮ ФОРМАТ -->
