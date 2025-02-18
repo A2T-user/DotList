@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.App
 import com.a2t.myapplication.R
 import com.a2t.myapplication.main.ui.ActionEditText
-import com.a2t.myapplication.main.ui.utilities.AlarmHelper
+import com.a2t.myapplication.utilities.AlarmHelper
 import com.a2t.myapplication.main.domain.model.ListRecord
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
