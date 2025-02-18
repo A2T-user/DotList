@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
-import android.widget.Toast
 import com.a2t.myapplication.R
 import com.a2t.myapplication.description.ui.DescriptionActivity
 import com.a2t.myapplication.main.domain.model.ListRecord
@@ -79,48 +78,33 @@ class ModesToolbarManager(
     private fun getMainBuffer(): ArrayList<ListRecord> = mainViewModel.mainBuffer
 
     private fun actionPasteRecords() {
-        if (getMainBuffer().size + getMoveBuffer().size > 0) {
-            ma.showProgressbar(true)
-            val pasteIds = mutableListOf<Long>()
-            getMainBuffer().forEach { if (it.isDir) pasteIds.add(it.id) }
-            getMoveBuffer().forEach { if (it.isDir) pasteIds.add(it.id) }
-            if (pasteIds.isNotEmpty()) {
-                mainViewModel.pasteRecords(getIdCurrentDir(), pasteIds,
-                    {
-                        ma.showProgressbar(false)
-                        showRecursionError()
-                    },
-                    {
-                        pasteRecords()
-                        ma.showProgressbar(false)
-                    }
-                )
-            } else {
-                pasteRecords()
-                ma.showProgressbar(false)
-            }
+        ma.showProgressbar(true)
+        val pasteIds = mutableListOf<Long>()
+        getMainBuffer().forEach { if (it.isDir) pasteIds.add(it.id) }
+        getMoveBuffer().forEach { if (it.isDir) pasteIds.add(it.id) }
+        if (pasteIds.isNotEmpty()) {
+            mainViewModel.pasteRecords(getIdCurrentDir(), pasteIds,
+                {
+                    ma.showProgressbar(false)
+                    showRecursionError()
+                },
+                {
+                    pasteRecords()
+                    ma.showProgressbar(false)
+                }
+            )
         } else {
-            Toast.makeText(context, context.getString(R.string.nothing_selected),
-                Toast.LENGTH_SHORT).show()
+            pasteRecords()
+            ma.showProgressbar(false)
         }
     }
 
     private fun actionDeleteRecords() {
-        if (getMainBuffer().size > 0) {
-            ma.deleteRecords(getMainBuffer())
-        } else {
-            Toast.makeText(context, context.getString(R.string.nothing_selected),
-                Toast.LENGTH_SHORT).show()
-        }
+        ma.deleteRecords(getMainBuffer())
     }
 
     private fun actionRestoreRecords() {
-        if (getMainBuffer().size > 0) {
-            restoreRecords(getMainBuffer())
-        } else {
-            Toast.makeText(context, context.getString(R.string.nothing_selected),
-                Toast.LENGTH_SHORT).show()
-        }
+        restoreRecords(getMainBuffer())
     }
 
     @SuppressLint("InflateParams")

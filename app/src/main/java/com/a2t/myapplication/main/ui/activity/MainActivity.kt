@@ -530,6 +530,9 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         mainViewModel.specialMode = mode
         enableSpecialMode()
         goToDir(animOpenNewDir)
+        val switchOn = adapter.records.size > 1
+        modesToolbarBinding.btnSelectAll.isEnabled = switchOn
+        modesToolbarBinding.btnSelectAll.alpha = if (switchOn) 1.0f else 0.3f
     }
 
     // Показать панель инструментов специального режима
@@ -1097,7 +1100,10 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     override fun showNumberOfSelectedRecords() {
         val number = getMainBuffer().size + getMoveBuffer().size
         modesToolbarBinding.countRecords.text = number.toString()
-        modesToolbarBinding.countRecords.isVisible = number > 0
+        val switchOn = number > 0
+        modesToolbarBinding.countRecords.isVisible = switchOn
+        modesToolbarBinding.btnAction.isEnabled = switchOn
+        modesToolbarBinding.btnAction.alpha = if (switchOn) 1.0f else 0.3f
     }
 
     override fun onScrollStateChanged(scrollState: ScrollState) {
