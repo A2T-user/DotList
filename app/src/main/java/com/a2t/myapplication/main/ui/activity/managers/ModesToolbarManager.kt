@@ -1,4 +1,4 @@
-package com.a2t.myapplication.main.ui.activity
+package com.a2t.myapplication.main.ui.activity.managers
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -8,6 +8,8 @@ import com.a2t.myapplication.R
 import com.a2t.myapplication.description.ui.DescriptionActivity
 import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.presentation.MainViewModel
+import com.a2t.myapplication.main.ui.activity.CURRENT_TAB
+import com.a2t.myapplication.main.ui.activity.MainActivity
 import com.a2t.myapplication.main.ui.activity.model.SpecialMode
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
