@@ -54,6 +54,7 @@ import com.a2t.myapplication.main.ui.utilities.AlarmHelper
 import com.a2t.myapplication.main.ui.utilities.AppHelper
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.internal.ViewUtils.dpToPx
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -71,6 +72,7 @@ const val EYE_ANIMATION_DELEY = 5000L
 const val NUMBER_OF_OPERATIO_ZOOM = 5
 const val STEP_ZOOM = 0.5f                                     // Шаг изменения размера шрифта
 const val CURRENT_TAB = "current_tab"
+private const val HIDE_CONTEXT_MENU_DEBOUNCE_DELAY = 3000L                 // Задержка закрытия контекстного меню
 
 class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChangedListener {
     lateinit var mainBackPressedCallback: OnBackPressedCallback
@@ -117,6 +119,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private lateinit var velocityTracker: VelocityTracker
     private lateinit var specialModeGestureDetector: GestureDetector
     private var isLeftHandControl: Boolean = false
+    private var hideContextMenuJob: Job? = null
 
     @SuppressLint("ClickableViewAccessibility", "InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -363,7 +366,11 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ КОНТЕКСТНОЕ МЕНЮ ФОРМАТ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        val contextMenuFormatManager = ContextMenuFormatManager(this, adapter, mainViewModel)
+        val contextMenuFormatManager = ContextMenuFormatManager(
+            this,
+            adapter,
+            mainViewModel
+        )
         // Потеря фокуса контекст.меню приводит к скрытию меню
         contextMenuFormatBinding.llContextMenuFormat.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
             if (!hasFocus) {
@@ -855,6 +862,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         contextMenu.requestFocus()
         mainBackPressedCallback.isEnabled = false
         floatingBarBackPressedCallback.isEnabled = true
+        hideContextMenuDebounce()
     }
     // По скольку метод getLocationOnScreen возвращает значение Y в системе координат с началом отсчета
     // в верхнем левом углу экрана, а контекстное меню вставляется в контейнер с началом отсчета
@@ -1128,6 +1136,14 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
     fun showProgressbar (isShow: Boolean) {
         binding.progressBar.isVisible = isShow
+    }
+
+    fun hideContextMenuDebounce() {
+        hideContextMenuJob?.cancel()
+        hideContextMenuJob = lifecycleScope.launch {
+            delay(HIDE_CONTEXT_MENU_DEBOUNCE_DELAY)
+            requestMenuFocus()
+        }
     }
 
     override fun onNewIntent(intent: Intent) {

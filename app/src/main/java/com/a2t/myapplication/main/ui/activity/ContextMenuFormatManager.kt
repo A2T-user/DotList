@@ -1,6 +1,7 @@
 package com.a2t.myapplication.main.ui.activity
 
 import com.a2t.myapplication.R
+import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.presentation.MainViewModel
 import com.a2t.myapplication.main.ui.activity.recycler.MainAdapter
 
@@ -11,14 +12,14 @@ class ContextMenuFormatManager(
 ) {
     fun clickBtn(btnId: Int) {
         when (btnId) {
-            R.id.btnTextColor_1 -> changingTextFormatRecord(1, null, null)
-            R.id.btnTextColor_2 -> changingTextFormatRecord(2, null, null)
-            R.id.btnTextColor_3 -> changingTextFormatRecord(3, null, null)
-            R.id.btnTextStyle_B -> changingTextFormatRecord(null, 1, null)
-            R.id.btnTextStyle_I -> changingTextFormatRecord(null, 2, null)
-            R.id.btnTextStyle_BI -> changingTextFormatRecord(null, 3, null)
-            R.id.btnTextStyle_U -> changingTextFormatRecord(null, null, 1)
-            R.id.btnTextRegular -> changingTextFormatRecord(0, 0, 0)
+            R.id.btnTextColor_1 -> changingTextFormatCurrentRecord(1, null, null)
+            R.id.btnTextColor_2 -> changingTextFormatCurrentRecord(2, null, null)
+            R.id.btnTextColor_3 -> changingTextFormatCurrentRecord(3, null, null)
+            R.id.btnTextStyle_B -> changingTextFormatCurrentRecord(null, 1, null)
+            R.id.btnTextStyle_I -> changingTextFormatCurrentRecord(null, 2, null)
+            R.id.btnTextStyle_BI -> changingTextFormatCurrentRecord(null, 3, null)
+            R.id.btnTextStyle_U -> changingTextFormatCurrentRecord(null, null, 1)
+            R.id.btnTextRegular -> changingTextFormatCurrentRecord(0, 0, 0)
             else -> {}
         }
     }
@@ -38,19 +39,25 @@ class ContextMenuFormatManager(
             }
             else -> {}
         }
+        if (btnId != R.id.btnTextRegular) ma.hideContextMenuDebounce()
     }
 
-    private fun changingTextFormatRecord(color: Int?, style: Int?, under: Int?) {
-        if (color != null) adapter.currentItem!!.textColor = color
-        if (style != null) adapter.currentItem!!.textStyle = style
-        if (under != null) adapter.currentItem!!.textUnder = under
-        mainViewModel.updateRecord(adapter.currentItem!!) {}
-        adapter.notifyItemChanged(adapter.currentHolderPosition)
+    private fun changingTextFormatCurrentRecord(color: Int?, style: Int?, under: Int?) {
+        changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, color, style, under)
+        ma.hideContextMenuDebounce()
     }
 
     private fun changingTextFormatAllRecords(color: Int?, style: Int?, under: Int?) {
         adapter.records.forEachIndexed { index, listRecord ->
-            changingTextFormatRecord(color, style, under)
+            changingTextFormatRecord(listRecord, index, color, style, under)
         }
+    }
+
+    private fun changingTextFormatRecord(item: ListRecord, position: Int, color: Int?, style: Int?, under: Int?) {
+        if (color != null) item.textColor = color
+        if (style != null) item.textStyle = style
+        if (under != null) item.textUnder = under
+        mainViewModel.updateRecord(item) {}
+        adapter.notifyItemChanged(position)
     }
 }
