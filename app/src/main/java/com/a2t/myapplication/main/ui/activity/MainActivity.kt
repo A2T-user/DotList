@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.view.GestureDetector
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -391,11 +390,9 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         // Каждой кнопке панели присваиваем слушателей
         for (btn in btnMenuFormat) {
             btn.setOnClickListener {
-                Log.e("МОЁ", "setOnClickListener")
                 contextMenuFormatManager.clickBtn(btn.id, adapter.currentItem!!, adapter.currentHolderPosition)
             }
             btn.setOnLongClickListener {
-                Log.e("МОЁ", "setOnLongClickListener")
                 contextMenuFormatManager.longClickBtn(btn.id, adapter.records)
                 true
             }

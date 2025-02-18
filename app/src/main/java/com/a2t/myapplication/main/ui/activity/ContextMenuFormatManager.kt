@@ -1,6 +1,5 @@
 package com.a2t.myapplication.main.ui.activity
 
-import android.util.Log
 import com.a2t.myapplication.R
 import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.presentation.MainViewModel
@@ -12,7 +11,6 @@ class ContextMenuFormatManager(
     private val mainViewModel: MainViewModel
 ) {
     fun clickBtn(btnId: Int, item: ListRecord, position: Int) {
-        Log.e("МОЁ", "clickBtn")
         when (btnId) {
             R.id.btnTextColor_1 -> changingTextFormatRecord(item, position, 1, null, null)
             R.id.btnTextColor_2 -> changingTextFormatRecord(item, position, 2, null, null)
