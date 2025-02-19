@@ -11,6 +11,7 @@
     <color name="blue_icon">#00B1FF</color>
     <color name="color_hint">#7eb5c5</color>
     <color name="edit_text_accent">#50ffffff</color>
+    <color name="zoom_color">#7d7d7d</color>
 
     <!-- Светлая тема -->
     <color name="light_background">#f0f0f0</color>   <!-- a4cded -->
