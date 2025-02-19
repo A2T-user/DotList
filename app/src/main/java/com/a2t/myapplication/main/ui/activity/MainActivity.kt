@@ -71,8 +71,8 @@ const val K_MAX_SHIFT_LEFT = -0.3f
 const val ANIMATION_DELEY = 300L
 const val EYE_ANIMATION_DELEY = 5000L
 // Что бы избежать инерции, будем выполнять изменение шрифта не каждый раз, а один раз
-// на NUMBER_OF_OPERATIO_ZOOM срабатываний
-const val NUMBER_OF_OPERATIO_ZOOM = 5
+// на NUMBER_OF_OPERATIO_ZOOM срабатываний TouchListener
+const val NUMBER_OF_OPERATIO_ZOOM = 8
 const val STEP_ZOOM = 0.5f                                     // Шаг изменения размера шрифта
 const val CURRENT_TAB = "current_tab"
 private const val HIDE_CONTEXT_MENU_DEBOUNCE_DELAY = 3000L                 // Задержка закрытия контекстного меню
@@ -267,7 +267,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         // ПРОКРУТКА
         recycler.addOnScrollListener(MyScrollListener(this))
 
-        binding.llBtnScroll.setOnClickListener {
+        binding.ivBtnScroll.setOnClickListener {
             when(scrollState) {
                 ScrollState.DOWN -> recycler.smoothScrollToPosition(adapter.itemCount - 1)
                 ScrollState.UP -> recycler.smoothScrollToPosition(0)
@@ -1073,13 +1073,13 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             ScrollState.DOWN -> {           // Прокрутка вниз
                 this.scrollState = scrollState
                 binding.ivBtnScroll.setImageResource(R.drawable.ic_scroll_down)
-                binding.llBtnScroll.isVisible = true
+                binding.ivBtnScroll.isVisible = true
                 binding.tvZoom.visibility = View.GONE
             }
             ScrollState.UP -> {             // Прокрутка вверх
                 this.scrollState = scrollState
                 binding.ivBtnScroll.setImageResource(R.drawable.ic_scroll_up)
-                binding.llBtnScroll.isVisible = true
+                binding.ivBtnScroll.isVisible = true
                 binding.tvZoom.visibility = View.GONE
             }
             ScrollState.STOPPED -> {
@@ -1094,7 +1094,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         scrollJob.cancel()
         scrollJob = lifecycleScope.launch {
             delay(1000)
-            binding.llBtnScroll.isVisible = false
+            binding.ivBtnScroll.isVisible = false
         }
     }
 
