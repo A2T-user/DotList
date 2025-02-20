@@ -65,7 +65,7 @@ const val EYE_ANIMATION_DELEY = 5000L
 // Что бы избежать инерции, будем выполнять изменение шрифта не каждый раз, а один раз
 // на NUMBER_OF_OPERATIO_ZOOM срабатываний TouchListener
 const val NUMBER_OF_OPERATIO_ZOOM = 8
-const val STEP_ZOOM = 0.5f                                     // Шаг изменения размера шрифта
+const val STEP_ZOOM = 0.3f                                     // Шаг изменения размера шрифта
 const val CURRENT_TAB = "current_tab"
 private const val HIDE_CONTEXT_MENU_DEBOUNCE_DELAY = 3000L                 // Задержка закрытия контекстного меню
 
@@ -85,7 +85,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private lateinit var contextMenuFormatBinding: ContextMenuFormatBinding
     private lateinit var contextMenuMoveBinding: ContextMenuMoveBinding
     private lateinit var modesToolbarBinding: ToolbarModesBinding
-    private var isZOOMode = false                                  // Режим ZOOM
     private var oldDist = 1f                                       // Расстояние между пальцами начальное
     private var newDist = 0f                                               // конечное, жест ZOOM
     private var sizeGrandText = 20f
@@ -212,6 +211,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         // Изменение высоты шрифта
+        var isZOOMode = false                                  // Режим ZOOM
         var counter = 0 // Счетчик срабатываний Zoom
         recycler.setOnTouchListener{ _: View?, event: MotionEvent ->
             requestMenuFocus()
@@ -219,14 +219,12 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
                     isZOOMode = false
                 }
-
                 MotionEvent.ACTION_POINTER_DOWN -> {
                     val dx = event.getX(0) - event.getX(1)
                     val dy = event.getY(0) - event.getY(1)
                     oldDist = hypot(dx.toDouble(), dy.toDouble()).toFloat()
                     isZOOMode = true
                 }
-
                 MotionEvent.ACTION_MOVE -> {
                     counter++
                     if (counter == NUMBER_OF_OPERATIO_ZOOM) {
@@ -403,11 +401,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         // Получаем список кнопок панели
-        val btnMenuMove = listOf(
-            contextMenuMoveBinding.btnCut,
-            contextMenuMoveBinding.btnCopy,
-            contextMenuMoveBinding.btnBack
-        )
+        val btnMenuMove = listOf(contextMenuMoveBinding.btnCut, contextMenuMoveBinding.btnCopy, contextMenuMoveBinding.btnBack)
 
         // Каждой кнопке панели присваиваем слушателей
         for (btn in btnMenuMove) {
@@ -513,6 +507,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
     }
 
+    // Иконка панели инструментов специального режима
     private fun showIconMode() {
         when(getSpecialMode()) {
             SpecialMode.MOVE -> {
@@ -778,30 +773,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
     }
 
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            lifecycleScope.launch {
-                delay(5000)
-                isClickAllowed = true
-            }
-        }
-        return current
-    }
-
-    private fun sideBarDebounce(): Boolean {
-        val current = isSideBarOpenAllowed
-        if (isSideBarOpenAllowed) {
-            isSideBarOpenAllowed = false
-            lifecycleScope.launch {
-                delay(1000)
-                isSideBarOpenAllowed = true
-            }
-        }
-        return current
-    }
-
     // Удаление выбранных записей, если у выбранных записей есть вложенные - выдать предупреждение
     @SuppressLint("InflateParams")
     override fun deleteRecords(records: List<ListRecord>) {
@@ -899,18 +870,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         adapter.currentHolderPosition = -1
     }
 
-    fun getSpecialMode(): SpecialMode = mainViewModel.specialMode
-
-    override fun getIdCurrentDir(): Long = mainViewModel.idDir
-
-    override fun getMoveBuffer(): ArrayList<ListRecord> = mainViewModel.moveBuffer
-
-    override fun getMainBuffer(): ArrayList<ListRecord> = mainViewModel.mainBuffer
-
-    override fun passRecordToAlarmFragment(record: ListRecord) {
-        mainViewModel.record = record
-    }
-
+    // Показать количество выбранных записей
     override fun showNumberOfSelectedRecords() {
         val number = getMainBuffer().size + getMoveBuffer().size
         modesToolbarBinding.countRecords.text = number.toString()
@@ -920,6 +880,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         modesToolbarBinding.btnAction.alpha = if (switchOn) 1.0f else 0.3f
     }
 
+    // Отслеживание состояния прокрутки
     override fun onScrollStateChanged(scrollState: ScrollState) {
         when (scrollState) {
             ScrollState.DOWN -> {           // Прокрутка вниз
@@ -934,11 +895,11 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 binding.ivBtnScroll.isVisible = true
                 binding.tvZoom.visibility = View.GONE
             }
-            ScrollState.STOPPED -> {
+            ScrollState.STOPPED -> {        // Прокрутка остановлена
                 this.scrollState = scrollState
                 binding.tvZoom.visibility = View.GONE
             }
-            ScrollState.END -> {      // Прокрутка остановлена
+            ScrollState.END -> {            // Конец списка
                 this.scrollState = scrollState
                 AppHelper.animationShowAlpha(binding.tvZoom, 1500)// Анимация появления tvZOOM
             }
@@ -950,6 +911,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
     }
 
+    // Удаление устаревших напоминаний
     private fun deleteOldAlarm(startTime: Long) {
         val time = startTime + 24 * 60 * 60 * 1000
         lifecycleScope.launch {
@@ -961,12 +923,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
     }
 
-    fun getRecords () = adapter.records
-
-    override fun setSpecialMode(mode: SpecialMode) {
-        mainViewModel.specialMode = mode
-    }
-
+    // Перенастройка актимити под управление левой рукой
     @SuppressLint("RestrictedApi")
     fun installHandControl() {
         isLeftHandControl = App.appSettings.isLeftHandControl
@@ -993,12 +950,54 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         binding.progressBar.isVisible = isShow
     }
 
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            lifecycleScope.launch {
+                delay(5000)
+                isClickAllowed = true
+            }
+        }
+        return current
+    }
+
+    private fun sideBarDebounce(): Boolean {
+        val current = isSideBarOpenAllowed
+        if (isSideBarOpenAllowed) {
+            isSideBarOpenAllowed = false
+            lifecycleScope.launch {
+                delay(1000)
+                isSideBarOpenAllowed = true
+            }
+        }
+        return current
+    }
+
     fun hideContextMenuDebounce() {
         hideContextMenuJob?.cancel()
         hideContextMenuJob = lifecycleScope.launch {
             delay(HIDE_CONTEXT_MENU_DEBOUNCE_DELAY)
             requestMenuFocus()
         }
+    }
+
+    fun getRecords () = adapter.records
+
+    override fun setSpecialMode(mode: SpecialMode) {
+        mainViewModel.specialMode = mode
+    }
+
+    fun getSpecialMode(): SpecialMode = mainViewModel.specialMode
+
+    override fun getIdCurrentDir(): Long = mainViewModel.idDir
+
+    override fun getMoveBuffer(): ArrayList<ListRecord> = mainViewModel.moveBuffer
+
+    override fun getMainBuffer(): ArrayList<ListRecord> = mainViewModel.mainBuffer
+
+    override fun passRecordToAlarmFragment(record: ListRecord) {
+        mainViewModel.record = record
     }
 
     override fun onNewIntent(intent: Intent) {
