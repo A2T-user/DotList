@@ -18,5 +18,16 @@ class AppHelper {
                 .setDuration(duration) // Длительность анимации в миллисекундах
                 .start()
         }
+
+        fun animationHideAlpha(view: View, duration: Long) {
+            view.animate()
+                .alpha(0f) // Конечное значение alpha
+                .setDuration(duration) // Длительность анимации в миллисекундах
+                .withEndAction {
+                    view.visibility = View.GONE // Делаем видимым перед анимацией
+                    view.alpha = 1f
+                }
+                .start()
+        }
     }
 }

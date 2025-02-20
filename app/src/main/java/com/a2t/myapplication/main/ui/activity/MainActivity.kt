@@ -369,15 +369,11 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ КОНТЕКСТНОЕ МЕНЮ ФОРМАТ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        val contextMenuFormatManager = ContextMenuFormatManager(
-            this,
-            adapter,
-            mainViewModel
-        )
+        val contextMenuFormatManager = ContextMenuFormatManager(this, adapter, mainViewModel)
         // Потеря фокуса контекст.меню приводит к скрытию меню
         contextMenuFormatBinding.llContextMenuFormat.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
             if (!hasFocus) {
-                v?.isVisible = false
+                AppHelper.animationHideAlpha(v!!, 500)
                 cancelCurrentHolder()
                 mainBackPressedCallback.isEnabled = true
                 floatingBarBackPressedCallback.isEnabled = false
@@ -412,7 +408,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         // Потеря фокуса контекст.меню приводит к скрытию меню
         contextMenuMoveBinding.llContextMenuMove.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
             if (!hasFocus) {
-                v?.isVisible = false
+                AppHelper.animationHideAlpha(v!!, 500)
                 cancelCurrentHolder()
                 mainBackPressedCallback.isEnabled = true
                 floatingBarBackPressedCallback.isEnabled = false
