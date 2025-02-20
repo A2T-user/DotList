@@ -2,8 +2,6 @@ package com.a2t.myapplication.main.ui.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Canvas
-import android.graphics.Rect
 import android.os.Bundle
 import android.view.GestureDetector
 import android.view.Gravity
@@ -23,11 +21,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ItemAnimator
 import com.a2t.myapplication.App
 import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.ActivityMainBinding
@@ -39,11 +34,11 @@ import com.a2t.myapplication.databinding.ToolbarTopBinding
 import com.a2t.myapplication.description.ui.DescriptionActivity
 import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.presentation.MainViewModel
-import com.a2t.myapplication.main.ui.ActionEditText
 import com.a2t.myapplication.main.ui.activity.managers.ContextMenuFormatManager
 import com.a2t.myapplication.main.ui.activity.managers.ContextMenuMoveManager
 import com.a2t.myapplication.main.ui.activity.managers.ModesToolbarManager
 import com.a2t.myapplication.main.ui.activity.model.SpecialMode
+import com.a2t.myapplication.main.ui.activity.recycler.CustomizerRecyclerView
 import com.a2t.myapplication.main.ui.activity.recycler.MainAdapter
 import com.a2t.myapplication.main.ui.activity.recycler.MainAdapterCallback
 import com.a2t.myapplication.main.ui.activity.recycler.MainViewHolder
@@ -61,13 +56,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.Collections
 import kotlin.math.abs
 import kotlin.math.hypot
 
 
-const val K_MAX_SHIFT_RIGHT = 0.2f
-const val K_MAX_SHIFT_LEFT = -0.3f
 const val ANIMATION_DELEY = 300L
 const val EYE_ANIMATION_DELEY = 5000L
 // Что бы избежать инерции, будем выполнять изменение шрифта не каждый раз, а один раз
@@ -85,7 +77,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     val adapter = MainAdapter(this)
     private lateinit var recycler: RecyclerView
     private var mIth: ItemTouchHelper? = null
-    private var mIthScb: ItemTouchHelper.Callback? = null
     private var nameDir = "R:"
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
@@ -98,10 +89,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private var oldDist = 1f                                       // Расстояние между пальцами начальное
     private var newDist = 0f                                               // конечное, жест ZOOM
     private var sizeGrandText = 20f
-    private var widthScreen = 0                                    // Ширина экрана
+    var widthScreen = 0                                    // Ширина экрана
     private var heightScreen = 0                                   // Ширина экрана
-    private var maxShiftToRight = 0f                               // Величина максимального смещения при свайпе в право
-    private var maxShiftToLeft = 0f                                // Величина максимального смещения при свайпе в лево
     private var heighContextMenu = 0                               // Высота контекстного меню
     private lateinit var animationMoveMode: Animation
     private lateinit var animationDeleteMode: Animation
@@ -147,8 +136,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         heightScreen = resources.displayMetrics.heightPixels
         val dpSize = this.resources.displayMetrics.density              // Размер dp
         heighContextMenu = (58 * dpSize).toInt()                        // Высота контекстного меню в px
-        maxShiftToRight = widthScreen * K_MAX_SHIFT_RIGHT               // Величина максимального смещения при свайпе в право
-        maxShiftToLeft = widthScreen * K_MAX_SHIFT_LEFT                 // Величина максимального смещения при свайпе в лево
         App.getTextSizeLiveData().observe(this) { size ->
             sizeGrandText = size
             topToolbarBinding.pathDir.textSize = 0.75f * sizeGrandText
@@ -597,146 +584,15 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         binding.sideBarFlag.isVisible = false
     }
 
-    private fun getItemById(id: Long, records: List<ListRecord>): ListRecord? {
-        return records.find { it.id == id }
-    }
-
-    private fun updateNppList(list: ArrayList<ListRecord>) {
+    fun updateNppList(list: ArrayList<ListRecord>) {
         list.forEachIndexed { index, item -> item.npp = index }
-        mainViewModel.updateRecords(list) {}// Записать изменения в БД
+        mainViewModel.updateRecords(list) {}                        // Записать изменения в БД
     }
 
     private fun initializingRecyclerView() {
-        recycler.adapter = adapter
-        recycler.setLayoutManager(object : LinearLayoutManager(this) {
-            // Разрешаем скольжение тоько при старте редактирования записи
-            override fun requestChildRectangleOnScreen(
-                parent: RecyclerView,
-                child: View,
-                rect: Rect,
-                immediate: Boolean,
-                focusedChildVisible: Boolean
-            ): Boolean {
-                if (currentFocus is ActionEditText)
-                    super.requestChildRectangleOnScreen(parent, child, rect, immediate, focusedChildVisible)
-                return false
-            }
-        })
-        val itemAnimator: ItemAnimator = DefaultItemAnimator()
-        itemAnimator.moveDuration = 300
-        itemAnimator.removeDuration = 100
-        recycler.setItemAnimator(itemAnimator)
-        recycler.scheduleLayoutAnimation()
-        recycler.layoutAnimation = animOpenNewDir
-        recycler.invalidate()
-        mIthScb = object : ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-        ) {
-            var isSwipe = false
-            var isMove = false
-            override fun isLongPressDragEnabled(): Boolean {        // Запретить Drag по LongClick (перетаскивание за контроллер)
-                return false
-            }
-            // Разрешить Swipe
-            override fun isItemViewSwipeEnabled(): Boolean {
-                return getSpecialMode() == SpecialMode.NORMAL            // Swipe будет только в нормальном режиме
-            }
-            // Сделать свайп грубее
-            override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
-                return 1.2f                //по умолчанию 0.5f - перемещение на 1/2 экрана
-            }
-            override fun getSwipeEscapeVelocity(defaultValue: Float): Float {
-                return 100 * defaultValue   // Увеличиваем минимальную скорость свайпа
-            }
-            // Премещает FOREGROUND, оставляя BACKGROUND на месте
-            override fun onChildDraw(
-                c: Canvas, recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder, dX: Float,
-                dY: Float, actionState: Int, isCurrentlyActive: Boolean
-            ) {
-                // Перемещение только Foreground, Background остается на месте
-                val holder = viewHolder as MainViewHolder
-                val foregroundView = holder.llForeground
-                val item = getItemById(holder.id, adapter.records)
-                val moveX = foregroundView.x
-                val distX: Float
-                if (item != null) {
-                    if (!item.isNew  && getSpecialMode() == SpecialMode.NORMAL) {
-                        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-                            distX = if (isCurrentlyActive) {
-                                if (abs(moveX.toDouble()) < 0.5 * widthScreen) {
-                                    dX
-                                } else if (moveX >= 0) {
-                                    0.5f * widthScreen
-                                } else {
-                                    -0.5f * widthScreen
-                                }
-                            } else {
-                                if (moveX > 0.0f) {
-                                    if (moveX < 0.5f * maxShiftToRight) 0.0f else maxShiftToRight
-                                } else {
-                                    if (moveX > 0.5f * maxShiftToLeft) 0.0f else maxShiftToLeft
-                                }
-                            }
-                            getDefaultUIUtil().onDraw(c, recyclerView, foregroundView, distX, 0.0f, actionState, isCurrentlyActive)
-                            isSwipe = true
-                        } else {
-                            getDefaultUIUtil().onDraw(c, recyclerView, foregroundView, 0.0f, dY, actionState, isCurrentlyActive)
-                        }
-                    }
-                }
-            }
-            // Перетаскивание
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                val listDir = adapter.records
-                val fromPos: Int = listDir.indexOfFirst { it.id == (viewHolder as MainViewHolder).id }
-                val toPos: Int = listDir.indexOfFirst { it.id == (target as MainViewHolder).id }
-                if (toPos < listDir.size - 1) {
-                    isSwipe = false
-                    isMove = true
-                    if (fromPos < toPos) {                             // Направление перемещения
-                        for (i in fromPos until toPos) {         // Премещение элементов
-                            Collections.swap(listDir, i, i + 1)     // массива в новые позиции
-                        }
-                    } else {
-                        for (i in fromPos downTo toPos + 1) {     // Премещение элементов
-                            Collections.swap(listDir, i, i - 1)      // массива в новые позиции
-                        }
-                    }
-                    updateNppList(listDir) // Обновить порядковые номера записей в массиве и БД
-                    // Сообщение Recicler, что элемент перемещен
-                    adapter.notifyItemMoved(fromPos, toPos)
-                    if (fromPos > toPos) {
-                        adapter.notifyItemRangeChanged(toPos, fromPos - toPos + 1)
-                    } else {
-                        adapter.notifyItemRangeChanged(fromPos, toPos - fromPos + 1)
-                    }
-                }
-                return isMove
-            }
-            // Смахивание
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
-            // Перерисовывает ViewHolder после манипуляций
-            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-                super.clearView(recyclerView, viewHolder)
-                if (isSwipe) {
-                    // Переводим фокус на background
-                    val backgroundView =
-                        (viewHolder as MainViewHolder).llBackground
-                    if (!backgroundView.hasFocus()) backgroundView.requestFocus()
-                } else {
-                    returnHolderToOriginalState(viewHolder)
-                }
-                // Сортировка по меткам
-                if (isMove) correctingPositionOfRecordByCheck(viewHolder as MainViewHolder)
-            }
-        }
-        mIth = ItemTouchHelper(mIthScb!!)
+        val customizerRecyclerView = CustomizerRecyclerView(this, recycler, adapter)
+        customizerRecyclerView.setupRecyclerView()
+        mIth = customizerRecyclerView.createItemTouchHelper()
         mIth!!.attachToRecyclerView(recycler)
     }
 
