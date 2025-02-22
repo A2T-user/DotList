@@ -85,7 +85,7 @@ class ModesToolbarManager(
         getMainBuffer().forEach { if (it.isDir) pasteIds.add(it.id) }
         getMoveBuffer().forEach { if (it.isDir) pasteIds.add(it.id) }
         if (pasteIds.isNotEmpty()) {
-            mainViewModel.pasteRecords(getIdCurrentDir(), pasteIds,
+            mainViewModel.checkingRecursion(getIdCurrentDir(), pasteIds,
                 {
                     ma.showProgressbar(false)
                     showRecursionError()

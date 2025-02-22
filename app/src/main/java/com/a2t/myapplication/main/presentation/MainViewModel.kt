@@ -179,7 +179,7 @@ class MainViewModel(
         }
     }
     // Возвращает список id родительских папок для определения рекурсии
-    fun pasteRecords(idCurrentDir: Long, pasteIds: List<Long>, callbackMain: () -> Unit, callbackIo: () -> Unit) {
+    fun checkingRecursion(idCurrentDir: Long, pasteIds: List<Long>, callbackMain: () -> Unit, callbackIo: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val parentDirIds = mutableListOf(idCurrentDir)
             selectionParentDirIdForRecursion(idCurrentDir, parentDirIds)
