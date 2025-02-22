@@ -85,7 +85,7 @@ class ModesToolbarManager(
         getMainBuffer().forEach { if (it.isDir) pasteIds.add(it.id) }
         getMoveBuffer().forEach { if (it.isDir) pasteIds.add(it.id) }
         if (pasteIds.isNotEmpty()) {
-            mainViewModel.pasteRecords(getIdCurrentDir(), pasteIds,
+            mainViewModel.checkingRecursion(getIdCurrentDir(), pasteIds,
                 {
                     ma.showProgressbar(false)
                     showRecursionError()
@@ -121,6 +121,16 @@ class ModesToolbarManager(
 
     private fun pasteRecords() {
         // Перенос записей
+        var maxNpp = getMaxNpp(ma.getRecords())
+        getMoveBuffer().forEachIndexed { index, listRecord ->
+            listRecord.idDir = getIdCurrentDir()
+            maxNpp++
+            listRecord.npp = maxNpp
+        }
+        getMainBuffer().forEachIndexed { index, listRecord ->
+            maxNpp++
+            listRecord.npp = maxNpp
+        }
         getMoveBuffer().forEach { it.idDir = getIdCurrentDir() }
         mainViewModel.updateRecords(getMoveBuffer()) {
             // Копирование
@@ -128,6 +138,14 @@ class ModesToolbarManager(
                 ma.completionSpecialMode()
             }
         }
+    }
+
+    private fun getMaxNpp(records: List<ListRecord>): Int {
+        var maxNpp = 0
+        for (record in records) {
+            if(record.npp > maxNpp) maxNpp = record.npp
+        }
+        return maxNpp
     }
 
     @SuppressLint("InflateParams")
