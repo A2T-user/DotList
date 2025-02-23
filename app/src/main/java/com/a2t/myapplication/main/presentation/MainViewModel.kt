@@ -41,13 +41,7 @@ class MainViewModel(
     fun insertRecords(records: List<ListRecord>) {
         mainInteractor.insertRecords(records)
     }
-    // Добавление новой записи (для копирования)
-    private fun insertRecordToCopy(record: ListRecord, callback: (Long) -> Unit) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val id = mainInteractor.insertRecord(record)
-            callback(id)
-        }
-    }
+
     // Обновление записи
     fun updateRecord(record: ListRecord, callback: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -254,11 +248,10 @@ class MainViewModel(
     private fun copyRecords(records: List<ListRecord>, idDir: Long) {
         records.forEach { record ->
             val cloneRecord = record.copy(id = 0, idDir = idDir)
-            insertRecordToCopy(cloneRecord){ newId ->
-                if (record.isDir) {
-                    val selectionRecords = mainInteractor.selectionSubordinateRecordsToDelete(record.id)
-                    copyRecords(selectionRecords, newId)
-                }
+            val newId = mainInteractor.insertRecord(cloneRecord)
+            if (record.isDir) {
+                val selectionRecords = mainInteractor.selectionSubordinateRecordsToDelete(record.id)
+                copyRecords(selectionRecords, newId)
             }
         }
     }
