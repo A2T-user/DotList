@@ -67,6 +67,17 @@ class MainViewModel(
         }
     }
 
+    // Обновление записей при вставке
+    fun pasteRecords(moveBuffer: List<ListRecord>, mainBuffer: List<ListRecord>, callback: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mainInteractor.updateRecords(moveBuffer)
+            copyRecords(mainBuffer, idDir)
+            withContext(Dispatchers.Main) {
+                callback()
+            }
+        }
+    }
+
     suspend fun getRecords(callback: (List<ListRecord>) -> Unit) {
         viewModelScope.launch {
             var records = listOf<ListRecord>()
@@ -239,15 +250,7 @@ class MainViewModel(
             }
         }
     }
-    // Копирование записей
-    fun copyRecords (records: List<ListRecord>, callback: () -> Unit) {
-        viewModelScope.launch(Dispatchers.IO) {
-            copyRecords(records, idDir)
-            withContext(Dispatchers.Main) {
-                callback()
-            }
-        }
-    }
+
     private fun copyRecords(records: List<ListRecord>, idDir: Long) {
         records.forEach { record ->
             val cloneRecord = record.copy(id = 0, idDir = idDir)

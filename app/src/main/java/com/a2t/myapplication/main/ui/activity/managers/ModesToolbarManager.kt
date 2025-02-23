@@ -132,11 +132,8 @@ class ModesToolbarManager(
             listRecord.npp = maxNpp
         }
         getMoveBuffer().forEach { it.idDir = getIdCurrentDir() }
-        mainViewModel.updateRecords(getMoveBuffer()) {
-            // Копирование
-            mainViewModel.copyRecords(getMainBuffer()){
-                ma.completionSpecialMode()
-            }
+        mainViewModel.pasteRecords(getMoveBuffer(), getMainBuffer()) {
+            ma.completionSpecialMode()
         }
     }
 
