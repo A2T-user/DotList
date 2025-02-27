@@ -111,6 +111,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private lateinit var specialModeGestureDetector: GestureDetector
     private var isLeftHandControl: Boolean = false
     private var hideContextMenuJob: Job? = null
+    private var isBackPressedOnce = false // Флаг для отслеживания нажатия Back
 
     @SuppressLint("ClickableViewAccessibility", "InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -162,12 +163,16 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                         if (getIdCurrentDir() > 0) {
                             normBackPressed()
                         } else {                                    // Выход по двойному нажатию Back
-                            Toast.makeText(this@MainActivity, R.string.text_exit, Toast.LENGTH_SHORT).show() // Сообщение
-                            mainBackPressedCallback.isEnabled = false
-                            // Сбросить первое касание через 2 секунды
-                            lifecycleScope.launch {
-                                delay(2000)
-                                mainBackPressedCallback.isEnabled = true
+                            if (isBackPressedOnce) {
+                                finish()                            // Завершаем активность
+                            } else {
+                                isBackPressedOnce = true            // Устанавливаем флаг
+                                Toast.makeText(this@MainActivity, R.string.text_exit, Toast.LENGTH_SHORT).show()
+                                // Запускаем корутину для сброса флага через 2 секунды
+                                lifecycleScope.launch {
+                                    delay(2000)
+                                    isBackPressedOnce = false       // Сбрасываем флаг
+                                }
                             }
                         }
                     }
