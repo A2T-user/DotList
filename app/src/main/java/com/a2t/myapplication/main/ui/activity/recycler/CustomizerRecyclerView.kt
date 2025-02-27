@@ -2,6 +2,7 @@ package com.a2t.myapplication.main.ui.activity.recycler
 
 import android.graphics.Canvas
 import android.graphics.Rect
+import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -62,7 +63,7 @@ class CustomizerRecyclerView(
             val maxShiftToLeft = widthScreen * K_MAX_SHIFT_LEFT                 // Величина максимального смещения при свайпе в лево
             var isSwipe = false
             var isMove = false
-            override fun isLongPressDragEnabled(): Boolean {        // Запретить Drag по LongClick (перетаскивание за контроллер)
+            override fun isLongPressDragEnabled(): Boolean {        // Запретить Drag по LongClick (у нас перетаскивание за контроллер)
                 return false
             }
             // Разрешить Swipe
@@ -88,6 +89,7 @@ class CustomizerRecyclerView(
                 val item = getItemById(holder.id, adapter.records)
                 val moveX = foregroundView.x
                 val distX: Float
+                Log.e("МОЁ", "maxShiftToRight = " + maxShiftToRight + "maxShiftToLeft = " + maxShiftToLeft)
                 if (item != null) {
                     if (!item.isNew  && ma.getSpecialMode() == SpecialMode.NORMAL) {
                         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {

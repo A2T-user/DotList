@@ -2,6 +2,7 @@ package com.a2t.myapplication.main.ui.activity.recycler
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -111,7 +112,17 @@ class MainAdapter(
                 // ############################################## РЕАКЦИЯ ОБЪЕКТОВ BACKGROUND ###################################################
                 // Потеря фокуса background приводит к откату сдвига Foreground
                 holder.llBackground.setOnFocusChangeListener{ _: View?, hasFocus: Boolean ->
-                    if (!hasFocus) mac.returnHolderToOriginalState(holder)
+                    if (!hasFocus) {
+                        mac.returnHolderToOriginalState(holder)
+                        Log.e("МОЁ", "Подлжка ПОТЕРЯ фокуса")
+                    } else {
+                        Log.e("МОЁ", "Подлжка ПОЛУЧЕНИЕ фокуса")
+                    }
+                    val currentFocus = (mac as MainActivity).currentFocus
+                    if (currentFocus == null) Log.e("МОЁ", "Нет объектов с фокусом")
+                    currentFocus?.let {
+                        Log.e("МОЁ", "Текущий объект с фокусом: ${mac.resources.getResourceEntryName(it.id)}")
+                    }
                 }
 
                 holder.ivBtnDel.setOnClickListener {            // Удалить запись
