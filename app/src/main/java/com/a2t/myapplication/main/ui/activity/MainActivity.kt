@@ -242,6 +242,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                                 if (sizeGrandText > 27) sizeGrandText = 27f
                             }
                             app.setTextSize(sizeGrandText)
+                            oldDist = newDist
                         }
                     }
                 }
@@ -468,9 +469,15 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         mainViewModel.specialMode = mode
         enableSpecialMode()
         goToDir(animOpenNewDir)
-        val switchOn = adapter.records.size > 1
-        modesToolbarBinding.btnSelectAll.isEnabled = switchOn
-        modesToolbarBinding.btnSelectAll.alpha = if (switchOn) 1.0f else 0.3f
+    }
+
+    private fun enableSelectAllButtons (mode: SpecialMode, records: List<ListRecord>) {
+        if (mode == SpecialMode.DELETE || mode == SpecialMode.RESTORE) {
+            val switchOn = records.isNotEmpty()
+            modesToolbarBinding.btnSelectAll.isEnabled = switchOn
+            modesToolbarBinding.btnSelectAll.alpha = if (switchOn) 1.0f else 0.3f
+        }
+
     }
 
     // Показать панель инструментов специального режима
@@ -648,6 +655,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         mainViewModel.getRecords { records ->
             fillingRecycler(records, animationController)
             updateFieldsOfSmallToolbar()
+            enableSelectAllButtons(getSpecialMode(), records)
             binding.progressBar.isVisible = false
         }
 
