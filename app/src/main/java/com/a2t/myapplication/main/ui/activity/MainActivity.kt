@@ -86,10 +86,10 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private lateinit var contextMenuFormatBinding: ContextMenuFormatBinding
     private lateinit var contextMenuMoveBinding: ContextMenuMoveBinding
     private lateinit var modesToolbarBinding: ToolbarModesBinding
-    private var oldDist = 1f                                       // Расстояние между пальцами начальное
-    private var newDist = 0f                                               // конечное, жест ZOOM
+    private var oldDist = 1f                                        // Расстояние между пальцами начальное
+    private var newDist = 0f                                        // конечное, жест ZOOM
     private var sizeGrandText = 20f
-    var widthScreen = 0                                    // Ширина экрана
+    var widthScreen = 0                                             // Ширина экрана
     private var heightScreen = 0                                   // Ширина экрана
     private var heighContextMenu = 0                               // Высота контекстного меню
     private lateinit var animationMoveMode: Animation
@@ -279,7 +279,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             if (clickDebounce()) fullPathDir(getIdCurrentDir())
         }
         // ??????????????????? ПОИСК БАГОВ ??????????????????????????????????????????????????????????????????????????
-        topToolbarBinding.btnMenu.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
+        topToolbarBinding.btnMenu.setOnFocusChangeListener{ _: View?, hasFocus: Boolean ->
             if (hasFocus) {
                 Log.e("МОЁ", "Кнопка МЕНЮ ПОЛУЧЕНИЕ фокуса")
             } else {
