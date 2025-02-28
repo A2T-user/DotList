@@ -2,7 +2,6 @@ package com.a2t.myapplication.main.ui.activity.recycler
 
 import android.graphics.Canvas
 import android.graphics.Rect
-import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -89,7 +88,6 @@ class CustomizerRecyclerView(
                 val item = getItemById(holder.id, adapter.records)
                 val moveX = foregroundView.x
                 val distX: Float
-                Log.e("МОЁ", "maxShiftToRight = " + maxShiftToRight + "maxShiftToLeft = " + maxShiftToLeft)
                 if (item != null) {
                     if (!item.isNew  && ma.getSpecialMode() == SpecialMode.NORMAL) {
                         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
