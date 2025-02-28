@@ -10,16 +10,19 @@ class MyScrollListener(private val listener: OnScrollStateChangedListener) : Rec
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
 
-        scrollState = if (dy > 0) {
-            ScrollState.DOWN // Прокрутка вниз
-        } else if (dy < 0) {
-            ScrollState.UP // Прокрутка вверх
-        } else {
-            ScrollState.STOPPED // Прокрутка остановлена
+        scrollState = when {
+            dy > 0 -> ScrollState.DOWN // Прокрутка вниз
+            dy < 0 -> ScrollState.UP // Прокрутка вверх
+            else -> ScrollState.STOPPED // Прокрутка остановлена
         }
 
         val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-        if (layoutManager.findLastCompletelyVisibleItemPosition() == layoutManager.itemCount - 1) scrollState = ScrollState.END
+        val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+        val itemCount = layoutManager.itemCount
+
+        if (lastVisibleItemPosition == itemCount - 1) {
+            scrollState = ScrollState.END // Убедитесь, что это срабатывает
+        }
 
         listener.onScrollStateChanged(scrollState)
     }
