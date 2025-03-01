@@ -2,6 +2,7 @@ package com.a2t.myapplication.main.ui.activity.recycler
 
 import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.main.domain.model.ListRecord
+import com.a2t.myapplication.main.ui.activity.MainActivity
 import com.a2t.myapplication.main.ui.activity.model.SpecialMode
 
 interface MainAdapterCallback {
@@ -10,7 +11,7 @@ interface MainAdapterCallback {
     fun getIdCurrentDir(): Long
     fun insertNewRecord(item: ListRecord)
     fun updateRecord(record: ListRecord)
-    fun requestMenuFocus()
+    fun requestMenuFocus(ma: MainActivity, s: String)
     fun correctingPositionOfRecordByCheck(viewHolder: MainViewHolder)
     fun returnHolderToOriginalState(viewHolder: RecyclerView.ViewHolder)
     fun showContextMenuFormat(viewHolder: MainViewHolder)

@@ -1,12 +1,15 @@
 package com.a2t.myapplication.utilities
 
+import android.app.Activity
+import android.util.Log
 import android.view.View
 
 class AppHelper {
     companion object {
-        fun requestFocusInTouch(view: View) {
+        fun requestFocusInTouch(view: View, ma: Activity) {
             view.isFocusableInTouchMode = true
             view.requestFocus()
+            Log.e("МОЁ", "Текущий объект с фокусом: ${ma.resources.getResourceEntryName(view.id)}")
             view.isFocusableInTouchMode = false
         }
 
