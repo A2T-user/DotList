@@ -86,7 +86,7 @@ class MainAdapter(
 
         // Касание колокольчика показывает время установки напоминания
         holder.ivBell.setOnTouchListener { _: View?, event: MotionEvent ->
-            mac.requestMenuFocus(mac as MainActivity, "Adapter Касание колокольчика")
+            mac.requestMenuFocus("Adapter Касание колокольчика")
             when (event.action and MotionEvent.ACTION_MASK) {
                 MotionEvent.ACTION_DOWN -> holder.llBellFull.isVisible = true                           // Выводит на экран сообщение о напоминании
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> holder.llBellFull.isVisible = false // Скрывает сообщение о напоминании
@@ -133,19 +133,19 @@ class MainAdapter(
                 }
 
                 holder.ivBtnEdit.setOnClickListener {            // Редактировать запись
-                    mac.requestMenuFocus(mac as MainActivity, "Adapter кнопка ivBtnEdit подложки")
+                    mac.requestMenuFocus("Adapter кнопка ivBtnEdit подложки")
                     startEditMode(item, holder)
                 }
                 holder.ivBtnBell.setOnClickListener {            // Создать/редактировать напоминание
                     selectCurrentHolder(item, position)
-                    mac.requestMenuFocus(mac as MainActivity, "Adapter кнопка ivBtnBell подложки")
+                    mac.requestMenuFocus("Adapter кнопка ivBtnBell подложки")
                     mac.passRecordToAlarmFragment(item)
-                    mac.fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
+                    (mac as MainActivity).fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
                         .add(R.id.container_view, AlarmFragment())
                         .addToBackStack("alarmFragment").commit()
                 }
                 holder.ivBtnDir.setOnClickListener {            // строка <-> папка
-                    mac.requestMenuFocus(mac as MainActivity, "Adapter кнопка ivBtnDir подложки")
+                    mac.requestMenuFocus("Adapter кнопка ivBtnDir подложки")
                     item.isDir = !item.isDir
                     holder.bind(item)
                     mac.updateRecord(item)
@@ -230,7 +230,7 @@ class MainAdapter(
                 }
 
                 holder.llForeground.setOnClickListener {
-                    mac.requestMenuFocus(mac as MainActivity, "Adapter клик по llForeground Режим MOVE")
+                    mac.requestMenuFocus("Adapter клик по llForeground Режим MOVE")
                     if (item.isDir) {
                         isKeyboardON = false
                         mac.goToChildDir(item.id)
@@ -293,7 +293,7 @@ class MainAdapter(
                 }
 
                 holder.llForeground.setOnClickListener {
-                    mac.requestMenuFocus(mac as MainActivity, "Adapter клик по llForeground Режим ARCHIVE")
+                    mac.requestMenuFocus("Adapter клик по llForeground Режим ARCHIVE")
                     if (item.isDir) {
                         isKeyboardON = false
                         mac.goToChildDir(item.id)
@@ -414,7 +414,7 @@ class MainAdapter(
     }
 
     private fun clickCheckbox(holder: MainViewHolder, item: ListRecord) {
-        mac.requestMenuFocus(mac as MainActivity, "Adapter метод clickCheckbox")
+        mac.requestMenuFocus("Adapter метод clickCheckbox")
         item.isChecked = holder.checkbox.isChecked
         item.lastEditTime = System.currentTimeMillis()
         holder.bind(item)
