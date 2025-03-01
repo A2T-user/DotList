@@ -42,13 +42,13 @@ class MainMenuFragment: Fragment() {
         binding.tvVersion.text = getString(R.string.version, version)
 
         binding.tvDescription.setOnClickListener { v ->
-            AppHelper.requestFocusInTouch(v)
+            AppHelper.requestFocusInTouch(v, requireActivity())
             val intent = Intent(requireContext(), DescriptionActivity::class.java)
             startActivity(intent)
         }
 
         binding.tvSettings.setOnClickListener { v ->
-            AppHelper.requestFocusInTouch(v)
+            AppHelper.requestFocusInTouch(v, requireActivity())
             (requireActivity() as MainActivity).fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
                 .add(R.id.container_view, SettingsFragment())
                 .addToBackStack("settingsFragment").commit()

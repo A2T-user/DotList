@@ -36,7 +36,7 @@ class ContextMenuMoveManager(
             adapter.notifyItemChanged(adapter.currentHolderPosition)
             ma.showNumberOfSelectedRecords()
         }
-        ma.requestMenuFocus()
+        ma.requestMenuFocus(ma, "ContextMenuMoveManager метод changeStateRecord")
     }
 
     private fun changeStateAllRecords(option: String) {
@@ -45,7 +45,7 @@ class ContextMenuMoveManager(
             adapter.notifyItemChanged(index)
         }
         ma.showNumberOfSelectedRecords()
-        ma.requestMenuFocus()
+        ma.requestMenuFocus(ma, "ContextMenuMoveManager метод changeStateRecord")
     }
 
     private fun changeStateItem(item: ListRecord, option: String) {

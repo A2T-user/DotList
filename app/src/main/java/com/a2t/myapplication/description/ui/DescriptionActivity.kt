@@ -37,7 +37,7 @@ class DescriptionActivity : AppCompatActivity() {
         // $$$$$$$$$$$$$$$$$$$$$$   Реакция на нажатие системной кнопки BACK   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         descBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                AppHelper.requestFocusInTouch(descriptionContentBinding.descGeneral1)
+                AppHelper.requestFocusInTouch(descriptionContentBinding.descGeneral1, this@DescriptionActivity)
             }
         }
 
@@ -110,7 +110,7 @@ class DescriptionActivity : AppCompatActivity() {
         }
 
         binding.fon.setOnTouchListener { v, _ ->
-            AppHelper.requestFocusInTouch(v)
+            AppHelper.requestFocusInTouch(v, this@DescriptionActivity)
             true
         }
 
@@ -146,7 +146,7 @@ class DescriptionActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     private fun createListeners (view: View, position: Int) {
         view.setOnClickListener { v ->
-            AppHelper.requestFocusInTouch(v)
+            AppHelper.requestFocusInTouch(v, this@DescriptionActivity)
             goToTab(position, true)
         }
         view.setOnTouchListener { _, event ->
@@ -156,7 +156,7 @@ class DescriptionActivity : AppCompatActivity() {
 
     private fun goToTab(position: Int, showAnimation: Boolean) {
         if (position in 1..15) {
-            AppHelper.requestFocusInTouch(binding.fon)
+            AppHelper.requestFocusInTouch(binding.fon, this@DescriptionActivity)
             viewPager.setCurrentItem(position - 1, showAnimation)
 
         }

@@ -76,19 +76,19 @@ class ToolbarSideManager (
 
     // Кнопка не спящий режим
     private fun noSleepMode() {
-        AppHelper.requestFocusInTouch(binding.llSideBarNoSleep)
+        AppHelper.requestFocusInTouch(binding.llSideBarNoSleep, ma)
         ma.noSleepModeON()
     }
 
     // Кнопка Удалить метки
     private fun delMark() {
-        AppHelper.requestFocusInTouch(binding.llSideBarDelMark)
+        AppHelper.requestFocusInTouch(binding.llSideBarDelMark, ma)
         ma.deleteAllMarks()
     }
 
     // Кнопка Переслать
     private fun sendList() {
-        AppHelper.requestFocusInTouch(binding.llSideBarSend)
+        AppHelper.requestFocusInTouch(binding.llSideBarSend, ma)
         if (ma.adapter.records.size > 1) {
             mainViewModel.textFragmentMode = TextFragmentMode.SEND
             mainViewModel.idCurrentDir = ma.getIdCurrentDir()
@@ -104,7 +104,7 @@ class ToolbarSideManager (
 
     // Кнопка Конвертировать
     private fun convertText() {
-        AppHelper.requestFocusInTouch(binding.llSideBarConvertText)
+        AppHelper.requestFocusInTouch(binding.llSideBarConvertText, ma)
         mainViewModel.textFragmentMode = TextFragmentMode.CONVERT
         mainViewModel.idCurrentDir = ma.getIdCurrentDir()
         mainViewModel.mainRecords.clear()
@@ -116,25 +116,25 @@ class ToolbarSideManager (
 
     // Кнопка режима Переноса
     private fun moveMode() {
-        AppHelper.requestFocusInTouch(binding.llSideBarMoveMode)
+        AppHelper.requestFocusInTouch(binding.llSideBarMoveMode, ma)
         ma.enableSpecialMode(SpecialMode.MOVE)
     }
 
     // Кнопка режима Удаления
     private fun delMode() {
-        AppHelper.requestFocusInTouch(binding.llSideBarDelMode)
+        AppHelper.requestFocusInTouch(binding.llSideBarDelMode, ma)
         ma.enableSpecialMode(SpecialMode.DELETE)
     }
 
     // Кнопка режима Восстановления
     private fun restMode() {
-        AppHelper.requestFocusInTouch(binding.llSideBarRestMode)
+        AppHelper.requestFocusInTouch(binding.llSideBarRestMode, ma)
         ma.enableSpecialMode(SpecialMode.RESTORE)
     }
 
     // Кнопка режима Архив
     private fun archiveMode() {
-        AppHelper.requestFocusInTouch(binding.llSideBarArchiveMode)
+        AppHelper.requestFocusInTouch(binding.llSideBarArchiveMode, ma)
         ma.enableSpecialMode(SpecialMode.ARCHIVE)
     }
 }

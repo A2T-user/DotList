@@ -36,7 +36,7 @@ class ContextMenuFormatManager(
             R.id.btnTextStyle_U -> changingTextFormatAllRecords(null, null, 1)
             R.id.btnTextRegular -> {
                 changingTextFormatAllRecords(0, 0, 0)
-                ma.requestMenuFocus()
+                ma.requestMenuFocus(ma, "ContextMenuFormatManager метод longClickBtn")
             }
             else -> {}
         }
