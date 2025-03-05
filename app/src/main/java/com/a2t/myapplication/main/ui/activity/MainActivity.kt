@@ -926,6 +926,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             }
             ScrollState.END -> {            // Конец списка
                 this.scrollState = scrollState
+                binding.ivBtnScroll.isVisible = false
                 AppHelper.animationShowAlpha(binding.tvZoom, 1000)// Анимация появления tvZOOM
             }
         }
