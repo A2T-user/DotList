@@ -81,7 +81,8 @@
                     android:layout_marginBottom="20dp"
                     android:padding="12dp"
                     android:src="@drawable/ic_scroll_down"
-                    tools:ignore="contentDescription" />
+                    tools:ignore="contentDescription"
+                    android:visibility="gone"/>
 
                 <!-- МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
                 <include
