@@ -43,6 +43,43 @@ class DescriptionActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         colorAccent = ContextCompat.getColor(this, R.color.white_alpha)
+        // Список кнопок панели оглавление
+        btns = listOf(
+            descriptionContentBinding.descGeneral1,
+            descriptionContentBinding.records2,
+            descriptionContentBinding.lines3,
+            descriptionContentBinding.dirs4,
+            descriptionContentBinding.nav5,
+            descriptionContentBinding.size6,
+            descriptionContentBinding.alarms7,
+            descriptionContentBinding.mainTb8,
+            descriptionContentBinding.sideTb9,
+            descriptionContentBinding.moveMode10,
+            descriptionContentBinding.delMode11,
+            descriptionContentBinding.restMode12,
+            descriptionContentBinding.archive13,
+            descriptionContentBinding.convert14,
+            descriptionContentBinding.send15
+        )
+
+        // Список точек индикатора положения окна
+        points = listOf(
+            binding.point1,
+            binding.point2,
+            binding.point3,
+            binding.point4,
+            binding.point5,
+            binding.point6,
+            binding.point7,
+            binding.point8,
+            binding.point9,
+            binding.point10,
+            binding.point11,
+            binding.point12,
+            binding.point13,
+            binding.point14,
+            binding.point15,
+        )
 
         // $$$$$$$$$$$$$$$$$$$$$$   Реакция на нажатие системной кнопки BACK   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         descBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -125,48 +162,11 @@ class DescriptionActivity : AppCompatActivity() {
             true
         }
 
-        // Получаем список кнопок панели
-        btns = listOf(
-            descriptionContentBinding.descGeneral1,
-            descriptionContentBinding.records2,
-            descriptionContentBinding.lines3,
-            descriptionContentBinding.dirs4,
-            descriptionContentBinding.nav5,
-            descriptionContentBinding.size6,
-            descriptionContentBinding.alarms7,
-            descriptionContentBinding.mainTb8,
-            descriptionContentBinding.sideTb9,
-            descriptionContentBinding.moveMode10,
-            descriptionContentBinding.delMode11,
-            descriptionContentBinding.restMode12,
-            descriptionContentBinding.archive13,
-            descriptionContentBinding.convert14,
-            descriptionContentBinding.send15
-        )
-        // Каждой кнопке панели присваиваем слушателя
+        // Каждой кнопке панели присваиваем слушателей
         btns.forEachIndexed { index, btn ->
             createListeners(btn, index + 1)
 
         }
-
-        // Список точек индикатора прокрутки
-        points = listOf(
-            binding.point1,
-            binding.point2,
-            binding.point3,
-            binding.point4,
-            binding.point5,
-            binding.point6,
-            binding.point7,
-            binding.point8,
-            binding.point9,
-            binding.point10,
-            binding.point11,
-            binding.point12,
-            binding.point13,
-            binding.point14,
-            binding.point15,
-        )
     }
 
     private fun closeDescriptionContent() {
