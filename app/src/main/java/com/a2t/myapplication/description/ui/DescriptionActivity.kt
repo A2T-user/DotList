@@ -1,14 +1,19 @@
 package com.a2t.myapplication.description.ui
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.GestureDetector
 import android.view.View
+import android.widget.ImageView
 import android.widget.ScrollView
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
+import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.ActivityDescriptionBinding
 import com.a2t.myapplication.databinding.DescriptionContentBinding
 import com.a2t.myapplication.utilities.AppHelper
@@ -22,6 +27,9 @@ class DescriptionActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
     lateinit var currentScrollView: ScrollView
     private lateinit var gestureDetector: GestureDetector
+    private lateinit var btns: List<TextView>
+    private lateinit var points: List<ImageView>
+    private var colorAccent: Int = 0
 
     companion object {
         const val CURRENT_TAB = "current_tab"
@@ -33,6 +41,8 @@ class DescriptionActivity : AppCompatActivity() {
         _binding = ActivityDescriptionBinding.inflate(layoutInflater)
         descriptionContentBinding = binding.descContent
         setContentView(binding.root)
+
+        colorAccent = ContextCompat.getColor(this, R.color.white_alpha)
 
         // $$$$$$$$$$$$$$$$$$$$$$   Реакция на нажатие системной кнопки BACK   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         descBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -92,6 +102,7 @@ class DescriptionActivity : AppCompatActivity() {
                         binding.goToNext.alpha = 1f
                     }
                 }
+                showCurrentParagraph(position)
             }
         })
 
@@ -115,7 +126,7 @@ class DescriptionActivity : AppCompatActivity() {
         }
 
         // Получаем список кнопок панели
-        val btns = listOf(
+        btns = listOf(
             descriptionContentBinding.descGeneral1,
             descriptionContentBinding.records2,
             descriptionContentBinding.lines3,
@@ -135,7 +146,27 @@ class DescriptionActivity : AppCompatActivity() {
         // Каждой кнопке панели присваиваем слушателя
         btns.forEachIndexed { index, btn ->
             createListeners(btn, index + 1)
+
         }
+
+        // Список точек индикатора прокрутки
+        points = listOf(
+            binding.point1,
+            binding.point2,
+            binding.point3,
+            binding.point4,
+            binding.point5,
+            binding.point6,
+            binding.point7,
+            binding.point8,
+            binding.point9,
+            binding.point10,
+            binding.point11,
+            binding.point12,
+            binding.point13,
+            binding.point14,
+            binding.point15,
+        )
     }
 
     private fun closeDescriptionContent() {
@@ -154,11 +185,17 @@ class DescriptionActivity : AppCompatActivity() {
         }
     }
 
+    fun showCurrentParagraph (position: Int) {
+        btns.forEach { it.setForeground(null) }
+        btns[position].foreground = ColorDrawable(colorAccent)
+        points.forEach { it.alpha = 0.3f }
+        points[position].alpha = 1.0f
+    }
+
     private fun goToTab(position: Int, showAnimation: Boolean) {
         if (position in 1..15) {
             AppHelper.requestFocusInTouch(binding.fon, this@DescriptionActivity)
             viewPager.setCurrentItem(position - 1, showAnimation)
-
         }
     }
 

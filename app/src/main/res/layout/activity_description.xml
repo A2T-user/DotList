@@ -19,7 +19,7 @@
         android:gravity="center_vertical"
         android:layout_gravity="bottom|center"
         android:background="@drawable/circle_color_bar"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="40dp">
 
         <ImageView
             android:id="@+id/go_to_desc_content"
@@ -61,6 +61,77 @@
             app:layout_constraintStart_toEndOf="@+id/go_to_desc_content"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center|bottom"
+        android:background="@drawable/shadow_circle"
+        android:layout_marginBottom="12dp"
+        android:layout_marginHorizontal="24dp">
+
+        <ImageView android:id="@+id/point1"
+            tools:ignore="contentDescription"
+            style="@style/PointStyle"/>
+
+        <ImageView android:id="@+id/point2"
+            tools:ignore="contentDescription"
+            style="@style/PointStyle"/>
+
+        <ImageView android:id="@+id/point3"
+            tools:ignore="contentDescription"
+            style="@style/PointStyle"/>
+
+        <ImageView android:id="@+id/point4"
+            tools:ignore="contentDescription"
+            style="@style/PointStyle"/>
+
+        <ImageView android:id="@+id/point5"
+            tools:ignore="contentDescription"
+            style="@style/PointStyle"/>
+
+        <ImageView android:id="@+id/point6"
+            tools:ignore="contentDescription"
+            style="@style/PointStyle"/>
+
+        <ImageView android:id="@+id/point7"
+            tools:ignore="contentDescription"
+            style="@style/PointStyle"/>
+
+        <ImageView android:id="@+id/point8"
+            tools:ignore="contentDescription"
+            style="@style/PointStyle"/>
+
+        <ImageView android:id="@+id/point9"
+            tools:ignore="contentDescription"
+            style="@style/PointStyle"/>
+
+        <ImageView android:id="@+id/point10"
+            tools:ignore="contentDescription"
+            style="@style/PointStyle"/>
+
+        <ImageView android:id="@+id/point11"
+            tools:ignore="contentDescription"
+            style="@style/PointStyle"/>
+
+        <ImageView android:id="@+id/point12"
+            tools:ignore="contentDescription"
+            style="@style/PointStyle"/>
+
+        <ImageView android:id="@+id/point13"
+            tools:ignore="contentDescription"
+            style="@style/PointStyle"/>
+
+        <ImageView android:id="@+id/point14"
+            tools:ignore="contentDescription"
+            style="@style/PointStyle"/>
+
+        <ImageView android:id="@+id/point15"
+            tools:ignore="contentDescription"
+            style="@style/PointStyle"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/fon"
