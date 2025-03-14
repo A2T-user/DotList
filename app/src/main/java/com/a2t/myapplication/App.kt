@@ -91,12 +91,17 @@ class App : Application() {
             putBoolean(SORTING_CHECKS, appSettings.sortingChecks)
             putBoolean(CROSSED_OUT_ON, appSettings.crossedOutOn)
             putBoolean(NOTIFICATION_ON, appSettings.notificationOn)
+            putFloat(TEXT_SIZE, appSettings.textSize)
             putBoolean(LEFT_HAND_CONTROL, appSettings.isLeftHandControl)
         }
     }
 
     fun setTextSize (size: Float) {
-        pref.edit { putFloat(TEXT_SIZE, size) }
         textSizeLiveData.postValue(size)
+        appSettings.textSize = size
+    }
+
+    fun saveTextSize () {
+        pref.edit { putFloat(TEXT_SIZE, appSettings.textSize) }
     }
 }

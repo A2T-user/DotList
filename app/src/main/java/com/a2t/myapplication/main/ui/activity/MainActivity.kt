@@ -222,8 +222,12 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         recycler.setOnTouchListener{ _: View?, event: MotionEvent ->
             requestMenuFocus("ZOOM")
             when(event.action and MotionEvent.ACTION_MASK) {
-                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
+                MotionEvent.ACTION_DOWN -> {
                     isZOOMode = false
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
+                    isZOOMode = false
+                    app.saveTextSize()
                 }
                 MotionEvent.ACTION_POINTER_DOWN -> {
                     val dx = event.getX(0) - event.getX(1)
