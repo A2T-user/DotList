@@ -65,7 +65,7 @@ const val ANIMATION_DELEY = 300L
 const val EYE_ANIMATION_DELEY = 5000L
 // Что бы избежать инерции, будем выполнять изменение шрифта не каждый раз, а один раз
 // на NUMBER_OF_OPERATIO_ZOOM срабатываний TouchListener
-const val NUMBER_OF_OPERATIO_ZOOM = 8
+const val NUMBER_OF_OPERATIO_ZOOM = 5
 const val STEP_ZOOM = 0.3f                                     // Шаг изменения размера шрифта
 const val CURRENT_TAB = "current_tab"
 private const val HIDE_CONTEXT_MENU_DEBOUNCE_DELAY = 3000L                 // Задержка закрытия контекстного меню
