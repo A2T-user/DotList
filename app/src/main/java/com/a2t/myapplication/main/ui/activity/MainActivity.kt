@@ -65,7 +65,7 @@ const val ANIMATION_DELEY = 300L
 const val EYE_ANIMATION_DELEY = 5000L
 // Что бы избежать инерции, будем выполнять изменение шрифта не каждый раз, а один раз
 // на NUMBER_OF_OPERATIO_ZOOM срабатываний TouchListener
-const val NUMBER_OF_OPERATIO_ZOOM = 8
+const val NUMBER_OF_OPERATIO_ZOOM = 5
 const val STEP_ZOOM = 0.3f                                     // Шаг изменения размера шрифта
 const val CURRENT_TAB = "current_tab"
 private const val HIDE_CONTEXT_MENU_DEBOUNCE_DELAY = 3000L                 // Задержка закрытия контекстного меню
@@ -217,29 +217,29 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         // Изменение высоты шрифта
-        var isZOOMode = false                                  // Режим ZOOM
+        var isZoom = false                                  // Режим ZOOM
         var counter = 0 // Счетчик срабатываний Zoom
         recycler.setOnTouchListener{ _: View?, event: MotionEvent ->
             requestMenuFocus("ZOOM")
             when(event.action and MotionEvent.ACTION_MASK) {
                 MotionEvent.ACTION_DOWN -> {
-                    isZOOMode = false
+                    isZoom = false
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
-                    isZOOMode = false
+                    isZoom = false
                     app.saveTextSize()
                 }
                 MotionEvent.ACTION_POINTER_DOWN -> {
                     val dx = event.getX(0) - event.getX(1)
                     val dy = event.getY(0) - event.getY(1)
                     oldDist = hypot(dx.toDouble(), dy.toDouble()).toFloat()
-                    isZOOMode = true
+                    isZoom = true
                 }
                 MotionEvent.ACTION_MOVE -> {
                     counter++
                     if (counter == NUMBER_OF_OPERATIO_ZOOM) {
                         counter = 0 // Обнуляем счетчик
-                        if (isZOOMode) {
+                        if (isZoom) {
                             val dx = event.getX(0) - event.getX(1)
                             val dy = event.getY(0) - event.getY(1)
                             newDist = hypot(dx.toDouble(), dy.toDouble()).toFloat()
@@ -257,7 +257,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                     }
                 }
             }
-            isZOOMode
+            isZoom
         }
 
         // ПРОКРУТКА
