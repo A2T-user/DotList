@@ -188,8 +188,7 @@ class DescriptionActivity : AppCompatActivity() {
     fun showCurrentParagraph (position: Int) {
         btns.forEach { it.setForeground(null) }
         btns[position].foreground = ColorDrawable(colorAccent)
-        points.forEach { it.alpha = 0.3f }
-        points[position].alpha = 1.0f
+        points.forEachIndexed { index, point -> point.alpha = if (index == position) 1.0f else 0.3f }
     }
 
     private fun goToTab(position: Int, showAnimation: Boolean) {
