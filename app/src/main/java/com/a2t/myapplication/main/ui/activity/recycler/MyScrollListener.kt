@@ -21,7 +21,7 @@ class MyScrollListener(private val listener: OnScrollStateChangedListener) : Rec
         val itemCount = layoutManager.itemCount
 
         if (lastVisibleItemPosition == itemCount - 1) {
-            scrollState = ScrollState.END // Убедитесь, что это срабатывает
+            scrollState = ScrollState.END
         }
 
         listener.onScrollStateChanged(scrollState)
