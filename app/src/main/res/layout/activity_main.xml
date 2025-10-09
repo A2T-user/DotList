@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".main.ui.activity.MainActivity">
 
+    <!-- КОНТЕКСТНОЕ МЕНЮ ФОРМАТ -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,16 +27,16 @@
                 android:id="@+id/tv_zoom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="160dp"
                 android:layout_gravity="center_horizontal|bottom"
-                android:gravity="center"
-                app:drawableTopCompat="@drawable/ic_zoom"
+                android:layout_marginBottom="160dp"
                 android:drawablePadding="0dp"
+                android:gravity="center"
                 android:text="@string/zoom"
-                android:textStyle="bold"
-                android:textSize="24sp"
                 android:textColor="@color/zoom_color"
-                android:visibility="gone"/>
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:drawableTopCompat="@drawable/ic_zoom" />
 
             <!-- РЕЦИКЛЕР -->
             <androidx.recyclerview.widget.RecyclerView
@@ -56,33 +57,34 @@
                 android:id="@+id/iv_eye"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_eye"
                 android:layout_gravity="top|center_horizontal"
                 android:layout_marginTop="150dp"
                 android:alpha="0.3"
-                tools:ignore="contentDescription"
-                android:visibility="gone"/>
+                android:src="@drawable/ic_eye"
+                android:visibility="gone"
+                tools:ignore="contentDescription" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_gravity="bottom"
                 android:animateLayoutChanges="true"
-                android:layout_gravity="bottom">
+                android:orientation="vertical">
 
+                <!-- Кнопка прпокрутки -->
                 <ImageView
                     android:id="@+id/iv_btn_scroll"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:alpha="0.7"
-                    android:background="@drawable/circle_color_bar"
                     android:layout_gravity="end|bottom"
                     android:layout_marginEnd="8dp"
                     android:layout_marginBottom="20dp"
+                    android:alpha="0.7"
+                    android:background="@drawable/circle_color_bar"
                     android:padding="12dp"
                     android:src="@drawable/ic_scroll_down"
-                    tools:ignore="contentDescription"
-                    android:visibility="gone"/>
+                    android:visibility="visible"
+                    tools:ignore="contentDescription" />
 
                 <!-- МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
                 <include
@@ -92,18 +94,18 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|end"
                     android:layout_marginEnd="2dp"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="10dp" />
 
                 <!-- НИЖНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:animateLayoutChanges="true">
+                    android:animateLayoutChanges="true"
+                    android:orientation="horizontal">
 
                     <include
                         android:id="@+id/modesToolbar"
-                        layout="@layout/toolbar_modes"/>
+                        layout="@layout/toolbar_modes" />
 
                 </LinearLayout>
 
@@ -124,7 +126,6 @@
 
     </LinearLayout>
 
-    <!-- КОНТЕКСТНОЕ МЕНЮ ФОРМАТ -->
     <include
         android:id="@+id/contextMenuFormat"
         layout="@layout/context_menu_format"

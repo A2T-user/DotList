@@ -1,5 +1,7 @@
 <resources>
     <style name="Base.Theme.DotListWhite" parent="Base.Theme.DotList">
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+
         <item name="android:colorBackground">@color/dark_background</item>
         <item name="colorBar">@color/dark_color_bar
         </item>                         <!-- Фон панелей-->
