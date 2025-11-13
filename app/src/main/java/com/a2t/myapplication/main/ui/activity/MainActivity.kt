@@ -225,7 +225,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 MotionEvent.ACTION_DOWN -> {
                     isZoom = false
                 }
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
+                MotionEvent.ACTION_UP -> {
                     isZoom = false
                     app.saveTextSize()
                 }
@@ -236,23 +236,25 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                     isZoom = true
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    counter++
-                    if (counter == NUMBER_OF_OPERATIO_ZOOM) {
-                        counter = 0 // Обнуляем счетчик
-                        if (isZoom) {
-                            val dx = event.getX(0) - event.getX(1)
-                            val dy = event.getY(0) - event.getY(1)
-                            newDist = hypot(dx.toDouble(), dy.toDouble()).toFloat()
-                            val coef = newDist / oldDist
-                            if (coef < 1f) {
-                                sizeGrandText -= STEP_ZOOM
-                                if (sizeGrandText < 18) sizeGrandText = 18f
-                            } else if (coef > 1f) {
-                                sizeGrandText += STEP_ZOOM
-                                if (sizeGrandText > 27) sizeGrandText = 27f
+                    if (event.pointerCount >= 2) {
+                        counter++
+                        if (counter == NUMBER_OF_OPERATIO_ZOOM) {
+                            counter = 0 // Обнуляем счетчик
+                            if (isZoom) {
+                                val dx = event.getX(0) - event.getX(1)
+                                val dy = event.getY(0) - event.getY(1)
+                                newDist = hypot(dx.toDouble(), dy.toDouble()).toFloat()
+                                val coef = newDist / oldDist
+                                if (coef < 1f) {
+                                    sizeGrandText -= STEP_ZOOM
+                                    if (sizeGrandText < 18) sizeGrandText = 18f
+                                } else if (coef > 1f) {
+                                    sizeGrandText += STEP_ZOOM
+                                    if (sizeGrandText > 27) sizeGrandText = 27f
+                                }
+                                app.setTextSize(sizeGrandText)
+                                oldDist = newDist
                             }
-                            app.setTextSize(sizeGrandText)
-                            oldDist = newDist
                         }
                     }
                 }

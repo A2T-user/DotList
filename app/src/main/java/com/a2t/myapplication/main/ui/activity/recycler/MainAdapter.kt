@@ -152,12 +152,7 @@ class MainAdapter(
                 }
                 // ############################################## РЕАКЦИЯ ОБЪЕКТОВ FOREGROUND ###################################################
                 holder.llForeground.setOnClickListener {
-                    if (item.isDir) {
-                        isKeyboardON = false
-                        mac.goToChildDir(item.id)
-                    } else {
-                        if (!item.isEdit) startEditMode(item, holder)
-                    }
+                    holdersResponseToClick(holder, item)
                 }
                 // Открытие меню форматирования текста
                 holder.llForeground.setOnLongClickListener{
@@ -441,6 +436,15 @@ class MainAdapter(
         currentHolderIdLiveData.postValue(item.id)
         currentItem = item
         currentHolderPosition = position
+    }
+
+    private fun holdersResponseToClick (holder: MainViewHolder, item: ListRecord) {
+        if (item.isDir) {
+            isKeyboardON = false
+            mac.goToChildDir(item.id)
+        } else {
+            if (!item.isEdit) startEditMode(item, holder)
+        }
     }
 
     override fun getItemCount() = records.size
