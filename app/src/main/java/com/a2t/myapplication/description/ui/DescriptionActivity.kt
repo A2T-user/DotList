@@ -191,7 +191,7 @@ class DescriptionActivity : AppCompatActivity() {
         points.forEachIndexed { index, point -> point.alpha = if (index == position) 1.0f else 0.3f }
     }
 
-    private fun goToTab(position: Int, showAnimation: Boolean) {
+    fun goToTab(position: Int, showAnimation: Boolean) {
         if (position in 1..15) {
             AppHelper.requestFocusInTouch(binding.fon, this@DescriptionActivity)
             viewPager.setCurrentItem(position - 1, showAnimation)

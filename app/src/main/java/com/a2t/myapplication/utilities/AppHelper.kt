@@ -9,7 +9,6 @@ class AppHelper {
         fun requestFocusInTouch(view: View, ma: Activity) {
             view.isFocusableInTouchMode = true
             view.requestFocus()
-            Log.e("МОЁ", "Текущий объект с фокусом: ${ma.resources.getResourceEntryName(view.id)}")
             view.isFocusableInTouchMode = false
         }
 

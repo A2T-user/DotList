@@ -24,8 +24,26 @@ class SideToolbarFragment9 : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        (requireActivity() as DescriptionActivity).currentScrollView = binding.scrollView
+        var descriptionActivity = requireActivity() as DescriptionActivity
+        descriptionActivity.currentScrollView = binding.scrollView
+        binding.linkSend.setOnClickListener {
+            descriptionActivity.goToTab(15, true)
+        }
+        binding.linkConvert.setOnClickListener {
+            descriptionActivity.goToTab(14, true)
+        }
+        binding.linkMoveMode.setOnClickListener {
+            descriptionActivity.goToTab(10, true)
+        }
+        binding.linkDelMode.setOnClickListener {
+            descriptionActivity.goToTab(11, true)
+        }
+        binding.linkRestMode.setOnClickListener {
+            descriptionActivity.goToTab(12, true)
+        }
+        binding.linkArchiveMode.setOnClickListener {
+            descriptionActivity.goToTab(13, true)
+        }
     }
 
     override fun onDestroyView() {
