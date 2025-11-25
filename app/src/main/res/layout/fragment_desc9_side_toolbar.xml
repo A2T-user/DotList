@@ -69,6 +69,7 @@
                     style="@style/IVSideBarStyle" />
 
                 <TextView
+                    android:id="@+id/link_send"
                     style="@style/RegularDescText"
                     android:text="@string/desc_side_tb_text3" />
 
@@ -82,6 +83,7 @@
                     style="@style/IVSideBarStyle" />
 
                 <TextView
+                    android:id="@+id/link_convert"
                     style="@style/RegularDescText"
                     android:text="@string/desc_side_tb_text4" />
 
@@ -97,6 +99,7 @@
                     style="@style/IVSideBarStyle" />
 
                 <TextView
+                    android:id="@+id/link_move_mode"
                     style="@style/RegularDescText"
                     android:text="@string/desc_side_tb_text6" />
 
@@ -110,6 +113,7 @@
                     style="@style/IVSideBarStyle" />
 
                 <TextView
+                    android:id="@+id/link_del_mode"
                     style="@style/RegularDescText"
                     android:text="@string/desc_side_tb_text7" />
 
@@ -123,6 +127,7 @@
                     style="@style/IVSideBarStyle" />
 
                 <TextView
+                    android:id="@+id/link_rest_mode"
                     style="@style/RegularDescText"
                     android:text="@string/desc_side_tb_text8" />
 
@@ -136,6 +141,7 @@
                     style="@style/IVSideBarStyle" />
 
                 <TextView
+                    android:id="@+id/link_archive_mode"
                     style="@style/RegularDescText"
                     android:text="@string/desc_side_tb_text9" />
 

@@ -111,13 +111,13 @@
     <string name="desc_side_tb_text01">\u0009Если этот режим выключен, через положенное время устройство уйдет в спящий режим. Иногда бывает полезно (например, для сбора чемодана по списку) отключить спящий режим. Для этого и служит эта кнопка.\n
         \u0009Этот режим не оптимален с точки зрения расхода аккумулятора. Поэтому он действует только в текущей папке. Если Вы выйдете из папки, он отключится автоматически. Анимация напомнит о том, что этот неэкономичный режим включен.
     </string>
-    <string name="desc_side_tb_text3">переслать список. Описание см. \u00A7 15</string>
-    <string name="desc_side_tb_text4">конвертировать текст в список. Описание см. \u00A7 14</string>
+    <string name="desc_side_tb_text3">переслать список. <font color='#4eb6ff'><u>Описание см. \u00A7 15</u></font></string>
+    <string name="desc_side_tb_text4">конвертировать текст в список. <font color='#4eb6ff'><u>Описание см. \u00A7 14</u></font></string>
     <string name="desc_side_tb_text5">удалить \u2713, отменяет \u2713 во всех записях текущей папки</string>
-    <string name="desc_side_tb_text6">режим переноса/копирования записей. Описание см. \u00A7 10</string>
-    <string name="desc_side_tb_text7">режим удаления. Описание см. \u00A7 11</string>
-    <string name="desc_side_tb_text8">режим восстановления недавно удаленных записей. Описание см. \u00A7 12</string>
-    <string name="desc_side_tb_text9">режим архив. Описание см. \u00A7 13</string>
+    <string name="desc_side_tb_text6">режим переноса/копирования записей. <font color='#4eb6ff'><u>Описание см. \u00A7 10</u></font></string>
+    <string name="desc_side_tb_text7">режим удаления. <font color='#4eb6ff'><u>Описание см. \u00A7 11</u></font></string>
+    <string name="desc_side_tb_text8">режим восстановления недавно удаленных записей. <font color='#4eb6ff'><u>Описание см. \u00A7 12</u></font></string>
+    <string name="desc_side_tb_text9">режим архив. <font color='#4eb6ff'><u>Описание см. \u00A7 13</u></font></string>
 
     <!-- 10. РЕЖИМ ПЕРЕНОСА ИНФОРМАЦИИ -->
     <string name="desc_move_mode_title">\u00A710. РЕЖИМ ПЕРЕНОСА ИНФОРМАЦИИ</string>
