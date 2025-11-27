@@ -15,6 +15,7 @@ import com.a2t.myapplication.databinding.FragmentMainMenuBinding
 import com.a2t.myapplication.description.ui.DescriptionActivity
 import com.a2t.myapplication.main.ui.activity.MainActivity
 import com.a2t.myapplication.utilities.AppHelper
+import java.util.Locale
 
 class MainMenuFragment: Fragment() {
     private var _binding: FragmentMainMenuBinding? = null
@@ -55,7 +56,8 @@ class MainMenuFragment: Fragment() {
         }
 
         binding.tvPrivacyPolicy.setOnClickListener {
-            val uriPP = "https://s89577.see.ru"
+            val locale = Locale.getDefault()
+            val uriPP = if (locale.language == "ru") "https://dot-list.tb.ru/dot_list" else "https://dot-list-en.tb.ru"
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(uriPP))
             startActivity(browserIntent)
         }
