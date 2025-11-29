@@ -19,107 +19,107 @@
     <string name="btn_format_style_text_bi">BI</string>
     <string name="btn_format_style_text_u"><u>U</u></string>
 
-    <string name="hint_btn_format_color">Цвет шрифта</string>
-    <string name="hint_btn_format_style_b">Жирный</string>
-    <string name="hint_btn_format_style_i">Наклон</string>
-    <string name="hint_btn_format_style_bi">Жирный+Наклон</string>
-    <string name="hint_btn_format_style_u">Подчеркнутый</string>
-    <string name="btn_back_text">Возвращает стандартные параметры шрифта</string>
+    <string name="hint_btn_format_color">Font color</string>
+    <string name="hint_btn_format_style_b">Bold</string>
+    <string name="hint_btn_format_style_i">Italic</string>
+    <string name="hint_btn_format_style_bi">Bold+Italic</string>
+    <string name="hint_btn_format_style_u">Underlined</string>
+    <string name="btn_back_text">Restores default font parameters</string>
 
     <!-- КОНТЕКСТНОЕ МЕНЮ ПЕРЕМЕЩЕНИЕ -->
-    <string name="cut">Вырезать</string>
-    <string name="copy">Копировать</string>
-    <string name="back">Отмена</string>
+    <string name="cut">Cut</string>
+    <string name="copy">Copy</string>
+    <string name="back">Cancel</string>
 
     <!-- БОКОВАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
-    <string name="side_bar_open">Свернуть</string>
-    <string name="side_bar_send">Переслать список</string>
-    <string name="side_bar_convert_text">Конвертировать текст\n в список</string>
-    <string name="side_bar_no_sleep">Режим БЕЗ СНА</string>
-    <string name="side_bar_del_mark">Удалить \u0020\u0020\u2713</string>
-    <string name="side_bar_del_mode">Удалить несколько\nзаписей</string>
-    <string name="side_bar_rest_mode">Восстановить\nудаленные записи</string>
-    <string name="side_bar_move_mode">Перенос/копирование\nзаписей</string>
-    <string name="side_bar_archive_mode">Управление Архивом</string>
+    <string name="side_bar_open">Collapse</string>
+    <string name="side_bar_send">Send list</string>
+    <string name="side_bar_convert_text">Convert text\n to list</string>
+    <string name="side_bar_no_sleep">NO SLEEP MODE</string>
+    <string name="side_bar_del_mark">Delete \u0020\u0020\u2713</string>
+    <string name="side_bar_del_mode">Delete multiple\nrecords</string>
+    <string name="side_bar_rest_mode">Restore deleted\nrecords</string>
+    <string name="side_bar_move_mode">Move/copy\nrecords</string>
+    <string name="side_bar_archive_mode">Archive management</string>
 
-    <string name="del_mark_text">Будут удалены метки всех записей текущей папки</string>
-    <string name="no_marks">В текущей папке нет \u2713</string>
+    <string name="del_mark_text">\u2713 of all records in the current folder will be deleted</string>
+    <string name="no_marks">No \u2713 in the current folder</string>
 
     <!-- ПАНЕЛЬ ИНСТРУМЕНТОВ РЕЖИМЫ -->
-    <string name="mode_hint">Этот режим действует только в текущей папке</string>
-    <string name="select_all">Выбрать все</string>
-    <string name="insert">Вставить</string>
-    <string name="delete">Удалить</string>
-    <string name="restore">Восстановить</string>
-    <string name="recursion_error">Операция отклонена!\nПопытка ВСТАВИТЬ папку саму в себя или во вложенную в нее папку приводит к рекурсии или замкнутой ссылке.</string>
+    <string name="mode_hint">This mode applies only to the current folder</string>
+    <string name="select_all">Select all</string>
+    <string name="insert">Insert</string>
+    <string name="delete">Delete</string>
+    <string name="restore">Restore</string>
+    <string name="recursion_error">Operation rejected!\nAttempting to INSERT a folder into itself or into a nested folder leads to recursion or a circular reference.</string>
     <string name="ok">OK</string>
 
     <!-- НАСТРОЙКИ -->
-    <string name="settings">НАСТРОЙКИ</string>
-    <string name="theme"><u>Тема</u></string>
-    <string name="light_theme"><b>Всегда светлая тема</b></string>
-    <string name="dark_theme"><b>Всегда темная тема</b></string>
-    <string name="system_theme"><b>Системная тема</b>\n<font size="14">меняется согласно настройкам телефона</font></string>
-    <string name="edit"><u>Редактирование</u></string>
-    <string name="text_size">Размер шрифта</string>
-    <string name="edit_empty_dir">при открытии пустой папки, запускается редактирование новой строки</string>
-    <string name="sort_title"><u>Отметка о выполнении</u></string>
-    <string name="sort_text">после установки \u2713, запись перемещается в нижнюю часть списка</string>
-    <string name="strike_text">после установки \u2713, текст основного поля зачеркивается</string>
-    <string name="restore_period"><u>Период восстановления</u></string>
-    <string name="restore_period_text">срок хранения удаленной записи (1–7 дней). По истечении этого срока ее восстановление становится не возможным.</string>
-    <string name="notifications"><u>Напоминания</u></string>
-    <string name="show_notification">выдавть уведомление при наступлении времени напоминания</string>
-    <string name="special_features"><u>Специальные возможности</u></string>
-    <string name="left_hand_control">В какой руке вам удобнее держать телефон</string>
+    <string name="settings">SETTINGS</string>
+    <string name="theme"><u>Theme</u></string>
+    <string name="light_theme"><b>Always light theme</b></string>
+    <string name="dark_theme"><b>Always dark theme</b></string>
+    <string name="system_theme"><b>System theme</b>\n<font size="14">changes according to phone settings</font></string>
+    <string name="edit"><u>Editing</u></string>
+    <string name="text_size">Font size</string>
+    <string name="edit_empty_dir">when opening an empty folder, editing a new line starts</string>
+    <string name="sort_title"><u>Completion mark</u></string>
+    <string name="sort_text">after setting \u2713, the entry moves to the bottom of the list</string>
+    <string name="strike_text">after setting \u2713, the main field text is struck through</string>
+    <string name="restore_period"><u>Restore period</u></string>
+    <string name="restore_period_text">storage period for deleted entries (1–7 days). After this period expires, restoration becomes impossible.</string>
+    <string name="notifications"><u>Reminders</u></string>
+    <string name="show_notification">show notification when reminder time arrives</string>
+    <string name="special_features"><u>Special features</u></string>
+    <string name="left_hand_control">In which hand is it more convenient for you to hold the phone</string>
 
-    <string name="record_hint">Новая строка</string>
+    <string name="record_hint">New line</string>
     <string name="note_hint">1</string>
 
-    <string name="text_exit">Нажмите еще раз, чтобы выйти</string>
+    <string name="text_exit">Press again to exit</string>
 
-    <string name="del_attempt">Попытка удалить записей: %1$s.\nТакже будет удалено вложенных записей: %2$s</string>
-    <string name="del_archive">,\nвключая архивных папок: %1$s</string>
-    <string name="negative_btn">Отмена</string>
+    <string name="del_attempt">Attempt to delete records: %1$s.\nAlso, nested records will be deleted: %2$s</string>
+    <string name="del_archive">,\nincluding archived folders: %1$s</string>
+    <string name="negative_btn">Cancel</string>
 
-    <string name="rest_attempt">Попытка восстановить записей: %1$s</string>
-    <string name="rest_subordinate">.\nТакже будет восстановлено вложенных записей: %1$s</string>
+    <string name="rest_attempt">Attempt to restore records: %1$s</string>
+    <string name="rest_subordinate">.\nAlso, nested records will be restored: %1$s</string>
 
-    <string name="title_conversion">Конвертация</string>
-    <string name="title_send">Поделиться</string>
-    <string name="convert_text_hint">Введите или вставьте текст, который Вы хотите конвертировать в список</string>
-    <string name="convert_text_hint2">Новые строки будут добавлены в <font color='#eabf11'><b><u>текущую папку</u></b></font></string>
-    <string name="btn_send_text">Отправить</string>
-    <string name="btn_convert_text">Конвертировать</string>
-    <string name="something_went_wrong">Что то пошло не так</string>
-    <string name="send_text_empty">Нет текста для отправки</string>
-    <string name="convert_text_empty">Нет текста для конвертации</string>
-    <string name="mail_service">Выберите почтовый сервис:</string>
-    <string name="dir_empty">Пересылать нечго.\nПапка пуста!</string>
+    <string name="title_conversion">Conversion</string>
+    <string name="title_send">Share</string>
+    <string name="convert_text_hint">Enter or paste the text you want to convert to a list</string>
+    <string name="convert_text_hint2">New lines will be added to the <font color='#eabf11'><b><u>current folder</u></b></font></string>
+    <string name="btn_send_text">Send</string>
+    <string name="btn_convert_text">Convert</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="send_text_empty">No text to send</string>
+    <string name="convert_text_empty">No text to convert</string>
+    <string name="mail_service">Select mail service:</string>
+    <string name="dir_empty">Nothing to send.\nFolder is empty!</string>
 
-    <string name="description">Описание приложения</string>
-    <string name="set_string">Настройки</string>
-    <string name="privacy_policy">Политика конфеденциальности</string>
-    <string name="feedback">Написать в поддержку</string>
+    <string name="description">App description</string>
+    <string name="set_string">Settings</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="feedback">Write to support</string>
 
-    <string name="notification">Напоминание</string>
-    <string name="notifi_hint">Введите краткий текст напоминания,\nустановите дату и время</string>
-    <string name="notifi_name_hint">Текст напоминания</string>
-    <string name="notifi_date_hint">Дата</string>
-    <string name="notifi_time_hint">Время</string>
-    <string name="notifi_save">Сохранить</string>
+    <string name="notification">Reminder</string>
+    <string name="notifi_hint">Enter a brief reminder text,\nset date and time</string>
+    <string name="notifi_name_hint">Reminder text</string>
+    <string name="notifi_date_hint">Date</string>
+    <string name="notifi_time_hint">Time</string>
+    <string name="notifi_save">Save</string>
 
-    <string name="date_time_err">Время напоминания должно быть болше текущего хотябы на пару минут</string>
-    <string name="now">Сейчас:   %1$s</string>
-    <string name="select_date">Выберите дату</string>
-    <string name="select_time">Выберите время</string>
-    <string name="text_err">Текст напоминания не может быть пустым</string>
-    <string name="notifi_title">Вы просили напомнить:</string>
-    <string name="ban_notifications">Вы не будете получать уведомления с напоминаниями</string>
+    <string name="date_time_err">Reminder time must be at least a couple of minutes ahead of current time</string>
+    <string name="now">Now:   %1$s</string>
+    <string name="select_date">Select date</string>
+    <string name="select_time">Select time</string>
+    <string name="text_err">Reminder text cannot be empty</string>
+    <string name="notifi_title">You asked to remind:</string>
+    <string name="ban_notifications">You will not receive reminder notifications</string>
     
-    <string name="first_launch_message">Ознакомьтесь со всеми возможностями приложения.\nВ дальнейшем открыть описание приложкения можно в меню на верхней панели инструментов.\nОткрыть описание?</string>
-    <string name="first_launch_positive_button">Да</string>
-    <string name="first_launch_neutral_button">Не сейчас</string>
+    <string name="first_launch_message">Familiarize yourself with all app features.\nLater, you can open the app description in the menu on the top toolbar.\nOpen description?</string>
+    <string name="first_launch_positive_button">Yes</string>
+    <string name="first_launch_neutral_button">Not now</string>
 
     <string name="zoom">ZOOM</string>
 </resources>
