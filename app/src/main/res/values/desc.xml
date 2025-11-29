@@ -1,222 +1,219 @@
 <resources>
-    <string name="description_content"><u>СОДЕРЖАНИЕ</u></string>
+    <string name="description_content"><u>CONTENT</u></string>
     
     <!-- 1. ОБЩИЕ СВЕДЕНИЯ И ТЕРМИНЫ -->
-    <string name="desc_general_title">\u00A71. ОБЩИЕ СВЕДЕНИЯ И ТЕРМИНЫ</string>
-    <string name="desc_general_text1">\u0009Приложение <font color='#4eb6ff'><b>\u2022list</b></font> создает структурированные списки. Структура списков похожа на файловую структуру компьютера. Единицы информации  –  строки и папки.\n
-        \u0009Строки, собранные в папку и есть список. Помимо строк в папку могут быть вложены папки,  имеющие ту же структуру (список в списке) и т.д. Количество уровней вложенности не ограничено.\n
-        \u0009<u>Термины:</u>\n
-        <font color='#4eb6ff'><b>Запись</b></font> – общее название для строк и папок.\n
-        <font color='#4eb6ff'><b>Корневая папка</b></font> – папка, включающая в себя все прочие записи приложения <font color='#4eb6ff'><b>\u2022list</b></font>, в приложении обозначается "R:" (от root directory).\n
-        <font color='#4eb6ff'><b>Дочерняя папка/строка</b></font> – папка/строка, вложенная в текущую папку.\n
-        <font color='#4eb6ff'><b>Родительская папка</b></font> – папка, в которую вложена текущая папка/строка.
-</string>
+    <string name="desc_general_title">\u00A71. GENERAL INFORMATION AND TERMS</string>
+    <string name="desc_general_text1">\u0009The <font color='#4eb6ff'><b>\u2022list</b></font> app creates structured lists. The structure of lists is similar to the file structure of a computer. Units of information are lines and folders.\n
+        \u0009Lines collected in a folder form a list. In addition to lines, folders can be nested in the folder, having the same structure (list in list) and so on. The number of nesting levels is unlimited.\n
+        \u0009<u>Terms:</u>\n
+        <font color='#4eb6ff'><b>Record</b></font> – general name for lines and folders.\n
+        <font color='#4eb6ff'><b>Root folder</b></font> – folder that includes all other entries of the <font color='#4eb6ff'><b>\u2022list</b></font> app, denoted in the app as "R:" (from root directory).\n
+        <font color='#4eb6ff'><b>Child folder/line</b></font> – folder/line nested in the current folder.\n
+        <font color='#4eb6ff'><b>Parent folder</b></font> – folder in which the current folder/line is nested.
+        </string>
 
     <!-- 2. ЗАПИСИ -->
-    <string name="main_field">Основное поле</string>
+    <string name="main_field">Main field</string>
     <string name="one">1</string>
-    <string name="desc_records_title">\u00A72. ЗАПИСИ</string>
-    <string name="desc_records_text1">\u0009Каждая запись имеет два слоя – передний план и подложка.</string>
-    <string name="desc_records_text2">\u0009<u>На переднем плане имеется:</u></string>
-    <string name="desc_records_text3"><font color='#4eb6ff'><b>Чекбокс</b></font>. В нем вы можете поставить \u2713 о выполнении данного пункта</string>
-    <string name="desc_records_text4">Для визуального отличия папки от строки, у папки под чекбокс появляется одна из иконок:</string>
-    <string name="desc_records_text5">пустая папка</string>
-    <string name="desc_records_text6">не пустая папка</string>
-    <string name="desc_records_text7">во всех записях этой папки установлены \u2713</string>
-    <string name="desc_records_text8">\u0009Под чекбокс расположено поле <font color='#4eb6ff'><b>дата/время</b></font> последнего изменения записи. Если изменения были произведены сегодня, в этом поле выводится время изменения, если ранее – дата.\n
-        \u0009<font color='#4eb6ff'><b>Основное поле</b></font> – в это поле вводится содержание  пункта. Это поле обязательно должно быть заполнено. Если оставить его пустым, запись сохранена не будет\n
-        \u0009<font color='#4eb6ff'><b>1</b></font> - поле <font color='#4eb6ff'><b>примечание</b></font>. Сюда можно ввести любую дополнительную текстовую информацию – “1,5 кг“, “5 пар“, “100$“, “2x50$“ и т.п. или оставить поле пустым\n
-        \u0009В пустых полях появляются <font color='#4eb6ff'>надписи голубого цвета</font> - это <font color='#4eb6ff'><b>пояснительный текст</b></font>. Не путайте со значением по умолчанию!\n
-        <font color='#be0000'><b>ВНИМАНИЕ!</b></font> <font color='#4eb6ff'><b>\u2022list</b></font> допускает наличие двух и более записей с одинаковым содержимым в одной папке.\n\n
-        \u0009<font color='#4eb6ff'><b>Индикатор-колокольчик</b></font>. Появляется, если для записи установлено напоминание:
+    <string name="desc_records_title">\u00A72. RECORDS</string>
+    <string name="desc_records_text1">\u0009Each record has two layers – foreground and background.</string>
+    <string name="desc_records_text2">\u0009<u>On the foreground there is:</u></string>
+    <string name="desc_records_text3"><font color='#4eb6ff'><b>Checkbox</b></font>. In it, you can put \u2713 for the completion of this item</string>
+    <string name="desc_records_text4">To visually distinguish a folder from a line, one of the icons appears under the checkbox for the folder:</string>
+    <string name="desc_records_text5">empty folder</string>
+    <string name="desc_records_text6">non-empty folder</string>
+    <string name="desc_records_text7">\u2713 are set in all entries of this folder</string>
+    <string name="desc_records_text8">\u0009Under the checkbox is the <font color='#4eb6ff'><b>date/time</b></font> field of the last modification of the entry. If changes were made today, this field displays the time of change, if earlier – the date.\n
+        \u0009<font color='#4eb6ff'><b>Main field</b></font> – the content of the item is entered into this field. This field must be filled. If left empty, the entry will not be saved\n
+        \u0009<font color='#4eb6ff'><b>1</b></font> - <font color='#4eb6ff'><b>note</b></font> field. Here you can enter any additional text information – “1.5 kg“, “5 pairs“, “100“, “2x50$“ etc. or leave the field empty\n
+        \u0009In empty fields, <font color='#4eb6ff'>blue inscriptions</font> appear - this is <font color='#4eb6ff'><b>hint text</b></font>. Do not confuse with the default value!\n
+        <font color='#be0000'><b>ATTENTION!</b></font> <font color='#4eb6ff'><b>\u2022list</b></font> allows the presence of two or more entries with the same content in one folder.\n\n
+        \u0009<font color='#4eb6ff'><b>Bell indicator</b></font>. Appears if a reminder is set for the entry:
     </string>
-    <string name="desc_records_text9">Напоминание установлено на завтра или более позднюю дату</string>
-    <string name="desc_records_text10">Напоминание установлено на сегодня</string>
-    <string name="desc_records_text11">Время напоминания истекло</string>
-    <string name="desc_records_text12">Коснувшись этого индикатора можно узнать дату и время, установленного напоминания.</string>
-    <string name="desc_records_text13"><font color='#4eb6ff'><b>Контроллер перетаскивания</b></font>. Коснувшись его можно перетащить запись вверх или вниз по списку</string>
-    <string name="desc_records_text14">\u0009На <font color='#4eb6ff'><b>подложке</b></font> расположены кнопки. Чтобы получить к ним доступ сдвиньте запись.\n
-        \u0009При сдвиге вправо открывается кнопка:
+    <string name="desc_records_text9">Reminder is set for tomorrow or a later date</string>
+    <string name="desc_records_text10">Reminder is set for today</string>
+    <string name="desc_records_text11">Reminder time has expired</string>
+    <string name="desc_records_text12">By touching this indicator, you can find out the date and time of the set reminder.</string>
+    <string name="desc_records_text13"><font color='#4eb6ff'><b>Drag controller</b></font>. By touching it, you can drag the record up or down the list</string>
+    <string name="desc_records_text14">\u0009On the <font color='#4eb6ff'><b>background</b></font> there are buttons. To access them, swipe the record.\n
+        \u0009When swiping to the right, the button opens:
     </string>
-    <string name="desc_records_text15">удаление записи. Если это папка, то она удаляется со всеми вложенными в нее записями</string>
-    <string name="desc_records_text16">\u0009При сдвиге влево открывается до трех кнопок, в зависимости от содержимого записи:\n
-        \u0009<u>для всех записей</u>
+    <string name="desc_records_text15">delete the record. If it\'s a folder, it will be deleted along with all nested entries.</string>
+    <string name="desc_records_text16">\u0009When swiping left, up to three buttons open, depending on the content of the entry:\n
+        \u0009<u>for all records</u>
     </string>
-    <string name="desc_records_text17">установка напоминания</string>
-    <string name="desc_records_text18">или, если напоминание для этой записи уже установлено</string>
-    <string name="desc_records_text19">редактирование напоминания</string>
-    <string name="desc_records_text20"><u>\u0009для строк</u></string>
-    <string name="desc_records_text21">преобразование строки в папку</string>
-    <string name="desc_records_text22"><u>\u0009для папок</u></string>
-    <string name="desc_records_text23">преобразование папки в строку (если эта папка пуста)</string>
-    <string name="desc_records_text24">редактирование записи</string>
-    <string name="desc_records_text25">\u0009Если вы хотите выделить какую либо запись (например, как наиболее важную), нажмите и удерживайте ее ~ 1 секунду. На экране появится контекстное меню.</string>
-    <string name="desc_records_text26">\u0009Используйте это меню, чтобы выбрать цвет и/или стиль шрифта и/или подчеркивание для этой записи. Правая кнопка “T“ сбрасывает настройки шрифта.\n
-        \u0009Если Вам необходимо установить/сбросить параметры шрифта всех записей текущей папки, нажмите и удерживайте соответствующую кнопку контекстного меню в течение ~1 секунды.
+    <string name="desc_records_text17">setting a reminder</string>
+    <string name="desc_records_text18">or, if a reminder for this entry is already set</string>
+    <string name="desc_records_text19">editing the reminder</string>
+    <string name="desc_records_text20"><u>\u0009for lines</u></string>
+    <string name="desc_records_text21">converting a line to a folder</string>
+    <string name="desc_records_text22"><u>\u0009for folders</u></string>
+    <string name="desc_records_text23">converting a folder to a line (if this folder is empty)</string>
+    <string name="desc_records_text24">editing the record</string>
+    <string name="desc_records_text25">\u0009If you want to highlight any entry (for example, as the most important), press and hold it for ~1 second. A context menu will appear on the screen.</string>
+    <string name="desc_records_text26">\u0009Use this menu to select the color and/or font style and/or underline for this entry. The right button “T“ resets the font settings.\n
+        \u0009If you need to set/reset font parameters for all entries in the current folder, press and hold the corresponding context menu button for ~1 second.
     </string>
 
     <!-- 3. СТРОКИ -->
-    <string name="desc_lines_title">\u00A73. СТРОКИ</string>
-    <string name="desc_lines_text1">\u0009Для создания новой строки кликните по “Новой строке“ в нижней части списка. Для внесения изменений в текст существующей строки кликните по ней. Строка перейдет в режим редактирования и на экране появится клавиатура. Редактирование происходит непосредственно в строке. Вводите нужный текст и жмите на кнопку “OK“ клавиатуры, программа перейдет к полю примечание, вводите нужный текст или оставьте это поле пустым и жмите на кнопку “OK“. Редактирование существующей строки на этом завершится. Если Вы редактировали новую строку, программа создаст следующую новую строку и перейдет к ее редактированию, позволяя Вам легко записать в список несколько новых пунктов подряд. Если Вы хотите завершить процесс создание новых строк, оставьте основное поле пустым и нажмите на кнопку “OK“.\n
-        \u0020\u0020\u0020<font color='#be0000'><b><u>ВНИМАНИЕ!</u></b></font> На некоторых устройствах кнопка “OK“ может иметь другую подпись – “Готово“, “Done“, “Enter“, “\u2713“ и т.п.
+    <string name="desc_lines_title">\u00A73. LINES</string>
+    <string name="desc_lines_text1">\u0009To create a new line, click on “New Line“ at the bottom of the list. To make changes to the text of an existing line, click on it. The line will enter edit mode and the keyboard will appear on the screen. Editing occurs directly in the line. Enter the desired text and press the “OK“ button on the keyboard, the program will proceed to the note field, enter the desired text or leave this field empty and press “OK“. Editing an existing line ends here. If you were editing a new line, the program will create the next new line and proceed to its editing, allowing you to easily record several new items in the list in a row. If you want to complete the process of creating new lines, leave the main field empty and press the “OK“ button.\n
+        \u0020\u0020\u0020<font color='#be0000'><b><u>ATTENTION!</u></b></font> On some devices, the “OK“ button may have a different label – “Done“, “Enter“, “\u2713“ etc.
     </string>
 
     <!-- 4. ПАПКИ -->
-    <string name="desc_dirs_title">\u00A74. ПАПКИ</string>
-    <string name="desc_dirs_text1">\u0009По содержанию папка ни чем не отличается от строки. Есть только одно функциональное отличие – клик по папке открывает ее содержимое. Визуально отличить папку от строки можно по иконке слева от основного поля записи.\n
-        \u0009Любая строка может быть преобразована в папку. Сдвиньте строку влево, на подложке нажмите кнопку преобразования строки в папку.\n
-        \u0009Что бы создать новую папку, сначала создайте строку с нужным содержимым, а за тем преобразуйте ее в папку.\n
-        \u0009Возможно обратное преобразование папки в строку, при условии, что эта папка пуста. Для этого сдвиньте эту запись влево, на подложке нажмите кнопку преобразования папки в строку.
+    <string name="desc_dirs_title">\u00A74. FOLDERS</string>
+    <string name="desc_dirs_text1">\u0009In terms of content, a folder does not differ from a line. There is only one functional difference – clicking on a folder opens its contents. Visually, you can distinguish a folder from a line by the icon to the left of the main record field.\n
+        \u0009Any line can be converted to a folder. Swipe the line to the left, then on the background, press the button to convert the line to a folder.\n
+        \u0009To create a new folder, first create a line with the desired content, and then convert it to a folder.\n
+        \u0009It is possible to convert a folder back to a line, provided that this folder is empty. To do this, swipe this record to the left, then on the background, press the button to convert the folder to a line.
     </string>
 
     <!-- 5. НАВИГАЦИЯ -->
-    <string name="desc_nav_title">\u00A75. НАВИГАЦИЯ</string>
-    <string name="desc_nav_text1">\u0009При загрузке <font color='#4eb6ff'><b>\u2022list</b></font> открывает корневую папку. Вы можете перейти в любую дочернюю папку, кликнув по ней. В открывшейся папке вы также можете по клику открыть любую дочернюю папку и т.д. Возврат назад к родительской папке – клик по кнопке Back (“\u003C“) на системной панели в нижней части экрана (для старых устройств - в нижней части корпуса).\n
-        \u0009В правом нижнем углу экрана находится небольшая плавающая панель
+    <string name="desc_nav_title">\u00A75. NAVIGATION</string>
+    <string name="desc_nav_text1">\u0009After loading, <font color='#4eb6ff'><b>\u2022list</b></font> opens the root folder. You can navigate to any child folder by clicking on it. Within an open folder, you can also click on any child folder to open it, and so on. To return to the parent folder, press the "Back" button ("\u003C") in the system toolbar at the bottom of the screen (for older devices, at the bottom of the case).\n
+        \u0009In the lower right corner of the screen, there is a small floating panel
     </string>
-    <string name="desc_nav_text2">\u0009На этой панели находится всего одна кнопка</string>
-    <string name="desc_nav_text3">кнопка перехода в корневую папку</string>
-    <string name="desc_nav_text4">\u0009<u>далее следует статистика</u></string>
-    <string name="desc_nav_text5">количество строк в текущей папке</string>
-    <string name="desc_nav_text6">количество вложенных папок в текущей папке</string>
-    <string name="desc_nav_text7">суммарное количество записей в текущей папке</string>
+    <string name="desc_nav_text2">\u0009There is only one button on this panel</string>
+    <string name="desc_nav_text3">button to go to the root folder</string>
+    <string name="desc_nav_text4">\u0009<u>next is statistics</u></string>
+    <string name="desc_nav_text5">number of lines in the current folder</string>
+    <string name="desc_nav_text6">number of nested folders in the current folder</string>
+    <string name="desc_nav_text7">total number of records in the current folder</string>
 
     <!-- 6. ИЗМЕНЕНИЕ РАЗМЕРА ШРИФТА -->
-    <string name="desc_size_title">\u00A76. ИЗМЕНЕНИЕ РАЗМЕРА ШРИФТА</string>
-    <string name="desc_size_text1">\u0009Прокрутите список. В нижней его части есть пустое место (без строк). В этой области с помощью ZOOM вы можете изменять размер шрифта основных полей.\n
-        \u0009Размер шрифта можно установить и в настройках приложения.
+    <string name="desc_size_title">\u00A76. CHANGING FONT SIZE</string>
+    <string name="desc_size_text1">\u0009Scroll the list. In its lower part, there is empty space (without lines). In this area, using ZOOM, you can change the font size of the main fields.\n
+        \u0009The font size can also be set in the application settings.
     </string>
 
     <!-- 7. НАПОМИНАНИЯ -->
-    <string name="desc_alarms_title">\u00A77. НАПОМИНАНИЯ</string>
-    <string name="desc_alarms_text1">\u0009Для каждой записи можно установить напоминание. В указанную Вами дату/время приложение напомнит Вам, выдав уведомление. Клик по уведомлению открывает нужный список.\n
-        \u0009Для установки или редактирования напоминания сдвиньте запись влево и нажмите на кнопку с колокольчиком. Откроется специальное окно, в котором необходимо установить дату и время напоминания, а так же ввести текст напоминания (по умолчанию это текст из основного поля записи).
+    <string name="desc_alarms_title">\u00A77. REMINDERS</string>
+    <string name="desc_alarms_text1">\u0009You can set a reminder for each entry. At the date/time you specify, the app will remind you by issuing a notification. Clicking on the notification opens the required list.\n
+        \u0009To set or edit a reminder, swipe the entry to the left and press the bell button. A special window will open where you need to set the date and time of the reminder, as well as enter the reminder text (by default, this is the text from the main record field).
     </string>
 
     <!-- 8. ВЕРХНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
-    <string name="current_dir_name">Имя текущей папки</string>
-    <string name="desc_main_tb_title">\u00A78. ВЕРХНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ</string>
-    <string name="desc_main_tb_text1">\u0009В верхней части экрана расположена верхняя панель инструментов приложения.</string>
-    <string name="desc_main_tb_text2">\u0009На панели расположены:</string>
-    <string name="desc_main_tb_text3">кнопка открытия Главного меню приложения. Из него можно перейти в описание и настройки приложения, ознакомится с политикой конфиденциальности, написать разработчику</string>
-    <string name="desc_main_tb_text4">\u0009В центре панели расположено поле, в котором отображается имя текущей папки. Если Вам необходимо узнать полный путь к папке, кликните по этому полю.</string>
+    <string name="current_dir_name">Name of the current folder</string>
+    <string name="desc_main_tb_title">\u00A78. TOP TOOLBAR</string>
+    <string name="desc_main_tb_text1">\u0009The top toolbar of the application is located at the top of the screen.</string>
+    <string name="desc_main_tb_text2">\u0009The panel contains:</string>
+    <string name="desc_main_tb_text3">button to open the application\'s Main menu. From it, you can go to the description and settings of the application, familiarize yourself with the privacy policy, write to the developer</string>
+    <string name="desc_main_tb_text4">\u0009In the center of the panel, there is a field displaying the name of the current folder. If you need to know the full path to the folder, click on this field.</string>
 
     <!-- 9. БОКОВАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
-    <string name="desc_side_tb_title">\u00A79. БОКОВАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ</string>
-    <string name="desc_side_tb_text1">\u0009На правой границе экрана находится флажок выдвижной панели инструментов красного цвета. Проведите по нему влево. На экране появится боковая панель инструментов.\n
-        \u0009<u>На панели имеется ряд кнопок</u>:
+    <string name="desc_side_tb_title">\u00A79. SIDE TOOLBAR</string>
+    <string name="desc_side_tb_text1">\u0009On the right edge of the screen, there is a red flag of the sliding toolbar. Swipe left on it. The side toolbar will appear on the screen.\n
+        \u0009<u>The panel has a row of buttons</u>:
     </string>
-    <string name="desc_side_tb_text2">кнопка “Развернуть“. Боковую панель инструментов можно развернуть – у кнопок появятся подписи, поясняющие их назначение</string>
-    <string name="desc_side_tb_text0">включает режим БЕЗ СНА</string>
-    <string name="desc_side_tb_text01">\u0009Если этот режим выключен, через положенное время устройство уйдет в спящий режим. Иногда бывает полезно (например, для сбора чемодана по списку) отключить спящий режим. Для этого и служит эта кнопка.\n
-        \u0009Этот режим не оптимален с точки зрения расхода аккумулятора. Поэтому он действует только в текущей папке. Если Вы выйдете из папки, он отключится автоматически. Анимация напомнит о том, что этот неэкономичный режим включен.
+    <string name="desc_side_tb_text2">"Expand" button. The side toolbar can be expanded – the buttons will have labels explaining their purpose</string>
+    <string name="desc_side_tb_text0">enables NO SLEEP mode</string>
+    <string name="desc_side_tb_text01">\u0009If this mode is off, after the set time, the device will go into sleep mode. Sometimes it is useful (for example, when packing a suitcase according to a list) to disable sleep mode. This button is for that purpose.\n
+        \u0009This mode is not optimal in terms of battery consumption. Therefore, it only works in the current folder. If you leave the folder, it will turn off automatically. Animation will remind you that this uneconomical mode is enabled.
     </string>
-    <string name="desc_side_tb_text3">переслать список. <font color='#4eb6ff'><u>Описание см. \u00A7 15</u></font></string>
-    <string name="desc_side_tb_text4">конвертировать текст в список. <font color='#4eb6ff'><u>Описание см. \u00A7 14</u></font></string>
-    <string name="desc_side_tb_text5">удалить \u2713, отменяет \u2713 во всех записях текущей папки</string>
-    <string name="desc_side_tb_text6">режим переноса/копирования записей. <font color='#4eb6ff'><u>Описание см. \u00A7 10</u></font></string>
-    <string name="desc_side_tb_text7">режим удаления. <font color='#4eb6ff'><u>Описание см. \u00A7 11</u></font></string>
-    <string name="desc_side_tb_text8">режим восстановления недавно удаленных записей. <font color='#4eb6ff'><u>Описание см. \u00A7 12</u></font></string>
-    <string name="desc_side_tb_text9">режим архив. <font color='#4eb6ff'><u>Описание см. \u00A7 13</u></font></string>
+    <string name="desc_side_tb_text3">send list. <font color='#4eb6ff'><u>See \u00A7 15</u></font></string>
+    <string name="desc_side_tb_text4">convert text to list. <font color='#4eb6ff'><u>See \u00A7 14</u></font></string>
+    <string name="desc_side_tb_text5">remove \u2713, remove \u2713 in all records of the current folder</string>
+    <string name="desc_side_tb_text6">move/copy records mode. <font color='#4eb6ff'><u>See \u00A7 10</u></font></string>
+    <string name="desc_side_tb_text7">delete mode. <font color='#4eb6ff'><u>See \u00A7 11</u></font></string>
+    <string name="desc_side_tb_text8">restore recently deleted records mode. <font color='#4eb6ff'><u>See \u00A7 12</u></font></string>
+    <string name="desc_side_tb_text9">archive mode. <font color='#4eb6ff'><u>See \u00A7 13</u></font></string>
 
     <!-- 10. РЕЖИМ ПЕРЕНОСА ИНФОРМАЦИИ -->
-    <string name="desc_move_mode_title">\u00A710. РЕЖИМ ПЕРЕНОСА ИНФОРМАЦИИ</string>
-    <string name="desc_move_mode_text1">\u0009Режим переноса информации включает эта кнопка боковой панели инструментов </string>
-    <string name="desc_move_mode_text2">\u0009Приложение имеет собственный буфер обмена, в который помещаются указанные Вами записи и из которого затем они выгружаются в указанную Вами папку (эта папка должна существовать до включения режима переноса).\n
-        \u0009В режиме переноса программа блокирует любые изменения внутри папки (редактирование, перетаскивание и создание новой записи), заблокирован доступ к кнопкам на подложке, но навигация по папкам сохраняется, что позволяет Вам помещать в буфер обмена записи из любой папки программы.\n
-        \u0009В нижней части экрана появляется панель инструментов
+    <string name="desc_move_mode_title">\u00A710. INFORMATION TRANSFER MODE</string>
+    <string name="desc_move_mode_text1">\u0009Information transfer mode is activated by this button on the side toolbar</string>
+    <string name="desc_move_mode_text2">\u0009The app has its own clipboard, into which the records you specify are placed and from which they are then unloaded into the folder you specify (this folder must exist before enabling transfer mode).\n
+        \u0009In transfer mode, the program blocks any changes inside the folder (editing, dragging, and creating a new record), access to buttons on the background is blocked, but navigation through folders is preserved, allowing you to put records from any folder in the program\'s clipboard.\n
+        \u0009A toolbar appears at the bottom of the screen</string>
+    <string name="desc_move_mode_text3">\u0009In this mode, the record drag controller is replaced by a button, clicking which opens a context menu</string>
+    <string name="desc_move_mode_text4">\u0009The “Cut“ button means that after copying, the record will be deleted from the source folder (transferring the record).\n
+        \u0009The “Copy“ button - after copying, the record remains in the source folder (copying the record).\n
+        \u0009The “Cancel“ button removes the record from the clipboard.\n
+        \u0009If you need to put/remove all lines of the current folder into/from the buffer, press and hold the corresponding context menu button for ~1 second.
     </string>
-    <string name="desc_move_mode_text3">\u0009В этом режиме контроллер перетаскивания записи заменяется кнопкой, клик по которой открывает контекстное меню</string>
-    <string name="desc_move_mode_text4">\u0009Кнопка “Вырезать“ означает, что после копировании запись будет удалена из исходной папки (перенос записи).\n
-        \u0009Кнопка “Копировать“ - после копировании запись остается в исходной папке (копирование записи).\n
-        \u0009Кнопка “Отмена“ удаляет запись из буфера обмена.\n
-        \u0009Если Вам необходимо поместить/удалить в буфер все строки текущей папки, нажмите и удерживайте соответствующую кнопку контекстного меню в течение ~1 секунды.
+    <string name="desc_move_mode_text5">\u0009After pressing the “Cut“ or “Copy“ button, the record is marked with the corresponding icon.\n
+        \u0009In the top right corner of the “Paste“ button on the bottom toolbar, the number of records in the clipboard is shown in a red circle.\n
+        \u0009After you have placed all the necessary records in the clipboard, open the folder where you want to place these records and press the “Paste” button on the bottom panel. The program will perform the necessary data processing, close the transfer mode, and clear the buffer.
     </string>
-    <string name="desc_move_mode_text5">\u0009После нажатия кнопки “Вырезать“ или “Копировать“, запись помечается соответствующим значком.\n
-        \u0009В правом верхнем углу кнопки “Вставить“ нижней панели инструментов в красном кружке показывается количество записей в буфере обмена.\n
-        \u0009После того как Вы поместили все необходимые записи в буфер обмена, откройте папку в которую вы хотите поместить эти записи и нажмите кнопку “Вставить” на нижней панели. Программа произведет необходимую обработку данных, закроет режим переноса и очистит буфер.
-    </string>
-    <string name="desc_move_mode_text6">
-        \u0009Кнопка “\u2715” на нижней панели выключает режим переноса и очищает буфер.\n
-        \u0009<font color='#ff0000'><b><u>ВНИМАНИЕ!</u></b></font> Папки, помещенные в буфер обмена, копируются или переносятся вместе со всем содержимым.\n
-        \u0009<font color='#ff0000'><b><u>ВНИМАНИЕ!</u></b></font> Нельзя вставлять папку саму в себя или в ее дочернюю папку - это приведет к <font color='#00B1FF'><u>рекурсии</u></font> или <font color='#00B1FF'><u>замкнутой ссылке</u></font>.
+    <string name="desc_move_mode_text6"> \u0009The “\u2715” button on the bottom panel turns off transfer mode and clears the buffer.\n
+        \u0009<font color='#ff0000'><b><u>ATTENTION!</u></b></font> Folders placed in the clipboard are copied or transferred along with all their contents.\n
+        \u0009<font color='#ff0000'><b><u>ATTENTION!</u></b></font> You cannot paste a folder into itself or into its child folder - this will lead to <font color='#00B1FF'><u>recursion</u></font> or <font color='#00B1FF'><u>circular reference</u></font>.
     </string>
     <string name="desc_move_mode_text7">
-        \u0009При копировании папки самой в себя или ее дочернюю папку создается точная копия исходной папки. Поскольку теперь исходная папка содержит копию себя, то в копии папки также будет создана копия и в копии копия и т.д. – бесконечный цикл. Такая ситуация называется <font color='#00B1FF'>рекурсией</font>.
+        \u0009When copying a folder into itself or its child folder, an exact copy of the source folder is created. Since the source folder now contains a copy of itself, the copy of the folder will also have a copy created, and in that copy another copy, etc. – an infinite loop. This situation is called <font color='#00B1FF'>recursion</font>.
     </string>
     <string name="desc_move_mode_text8">
-        \u0009При переносе папки самой в себя или ее дочернюю папку меняется привязка папки к родительской папке, теперь ее родительской папкой будет папка назначения. А поскольку папка назначения привязана к копируемой папке, возникает <font color='#00B1FF'>замкнутая ссылка</font>: при выходе из папки  назначения вы попадаете в копируемую папку, а из копируемой папки – в папку назначения и так по кругу можно ходить до бесконечности.
+        \u0009When transferring a folder into itself or its child folder, the folder\'s attachment to the parent folder changes, and now its parent folder will be the destination folder. And since the destination folder is attached to the folder being copied, a <font color='#00B1FF'>circular reference</font> arises: when exiting the destination folder, you enter the folder being copied, and from the folder being copied – to the destination folder, and so on in a circle, you can go infinitely.
     </string>
     <string name="desc_move_mode_text9">
-        \u0009Перед вставкой <font color='#4eb6ff'><b>\u2022list</b></font> выполняет проверку и предупредит Вас в случае возникновения такой ситуации.
+        \u0009Before pasting, <font color='#4eb6ff'><b>\u2022list</b></font> performs a check and will warn you in case such a situation occurs.
     </string>
-
 
     <!-- 11. РЕЖИМ УДАЛЕНИЯ -->
-    <string name="desc_del_mode_title">\u00A711. РЕЖИМ УДАЛЕНИЯ</string>
-    <string name="desc_del_mode_text1">\u0009Режим удаления позволяет удалить несколько записей текущей папки за одну операцию. Этот режим действует только в текущей папке.\n
-        \u0009В режиме  удаления программа блокирует любые изменения внутри папки (редактирование, перетаскивание и создание новой записи), заблокированы доступ к кнопкам на подложке, переход в другую папку.
+    <string name="desc_del_mode_title">\u00A711. DELETION MODE</string>
+    <string name="desc_del_mode_text1">\u0009Deletion mode allows you to delete multiple records of the current folder in one operation. This mode works only in the current folder.\n
+        \u0009In deletion mode, the program blocks any changes inside the folder (editing, dragging, and creating a new record), access to buttons on the substrate is blocked, switching to another folder.
     </string>
-    <string name="desc_del_mode_text2">\u0009Режим удаления включает эта кнопка боковой панели инструментов  </string>
-    <string name="desc_del_mode_text3">\u0009В нижней части экрана появляется панель инструментов</string>
-    <string name="desc_del_mode_text4">\u0009В этом режиме контроллер перетаскивания записи заменяется кнопкой, нажав ее Вы выбираете запись для удаления - она помечается соответствующим значком.</string>
-    <string name="desc_del_mode_text5">\u0009Если запись выбрана ошибочно, кликните по ней повторно. Это действие отменит предыдущее.\n
-        \u0009В правом верхнем углу кнопки ”Удалить” нижней панели инструментов в красном кружке показывается количество записей помеченных для удаления.\n
-        \u0009Если Вы хотите удалить все записи текущей папки нажмите кнопку ”Выбрать все” нижней панели инструментов.\n
-        \u0009После того как Вы выбрали все необходимые записи нажмите кнопку ”Удалить” на нижней панели инструментов. Программа произведет необходимую обработку данных и закроет режим удаления.\n
-        \u0009<font color='#be0000'><b><u>ВНИМАНИЕ!</u></b></font> Папки удаляются вместе со всем содержимым.\n
-        \u0009Кнопка ”\u2715” на нижней панели выключает режим удаления.
+    <string name="desc_del_mode_text2">\u0009This button on the side toolbar enables deletion mode </string>
+    <string name="desc_del_mode_text3">\u0009A toolbar appears at the bottom of the screen</string>
+    <string name="desc_del_mode_text4">\u0009In this mode, the drag and drop controller is replaced by a button that, when clicked, selects the records to be deleted and marks them with the appropriate icon.</string>
+    <string name="desc_del_mode_text5">\u0009If the record is selected by mistake, click on it again. This action will cancel the previous one.\n
+        \u0009In the upper right corner of the "Delete" button on the bottom toolbar, in a red circle, the number of records marked for deletion is shown.\n
+        \u0009If you want to delete all records of the current folder, press the "Select All" button on the bottom toolbar.\n
+        \u0009After you have selected all the necessary records, press the "Delete" button on the bottom toolbar. The program will perform the necessary data processing and close the deletion mode.\n
+        \u0009<font color='#be0000'><b><u>ATTENTION!</u></b></font> Folders are deleted along with all their contents.\n
+        \u0009The "\u2715" button on the bottom panel turns off deletion mode.
     </string>
 
     <!-- 12. РЕЖИМ ВОССТАНОВЛЕНИЯ -->
-    <string name="desc_rest_mode_title">\u00A712. РЕЖИМ ВОССТАНОВЛЕНИЯ</string>
-    <string name="desc_rest_mode_text1">\u0009Удаленные Вами записи, попадают в корзину.  Там они хранятся  1–7 дней с момента удаления (этот параметр Вы можете установить в настройках). В это время их можно восстановить. По истечении срока хранения записи удаляются окончательно.\n
-        \u0009В режиме  восстановления программа блокирует любые изменения внутри папки (редактирование, перетаскивание и создание новой записи), заблокированы доступ к кнопкам на подложке, переход в другую папку.
+    <string name="desc_rest_mode_title">\u00A712. RECOVERY MODE</string>
+    <string name="desc_rest_mode_text1">\u0009The records you deleted go to the trash. They are stored there for 1-7 days from the moment of deletion (you can set this parameter in the settings). During this time, they can be restored. After the storage period expires, the records are deleted permanently.\n
+        \u0009In recovery mode, the program blocks any changes inside the folder (editing, dragging, and creating a new record), access to buttons on the substrate is blocked, switching to another folder.
     </string>
-    <string name="desc_rest_mode_text2">\u0009Режим восстановления включает эта кнопка боковой панели инструментов  </string>
-    <string name="desc_rest_mode_text3">\u0009На экране появятся удаленные записи текущей папки, которые можно восстановить.</string>
-    <string name="desc_rest_mode_text4">\u0009В этом режиме контроллер перетаскивания записи заменяется кнопкой, нажав ее Вы выбираете запись для восстановления - запись помечается соответствующим значком.</string>
-    <string name="desc_rest_mode_text5">\u0009Если запись выбрана ошибочно, кликните по ней повторно. Это действие отменит предыдущее.\n
-        \u0009В правом верхнем углу кнопки ”Восстановить” нижней панели инструментов в красном кружке показывается количество записей помеченных для восстановления.\n
-        \u0009Если Вы хотите восстановить все записи текущей папки нажмите кнопку ”Выбрать все” нижней панели инструментов.\n
-        \u0009После того как Вы выбрали все необходимые записи нажмите кнопку ”Восстановить” на нижней панели инструментов. Программа произведет необходимую обработку данных и закроет режим восстановления.\n
-        \u0009<font color='#be0000'><b><u>ВНИМАНИЕ!</u></b></font> Папки восстанавливаются вместе со всем содержимым.\n
-        \u0009Кнопка ”\u2715” на нижней панели выключает режим восстановления.
+    <string name="desc_rest_mode_text2">\u0009This button on the side toolbar enables recovery mode</string>
+    <string name="desc_rest_mode_text3">\u0009The screen will display the deleted records of the current folder that can be restored.</string>
+    <string name="desc_rest_mode_text4">\u0009In this mode, the drag and drop controller for records is replaced by a button that, when clicked, selects records for recovery and marks them with the appropriate icon.</string>
+    <string name="desc_rest_mode_text5">\u0009If the record is selected by mistake, click on it again. This action will cancel the previous one.\n
+        \u0009In the upper right corner of the "Restore" button on the bottom toolbar, in a red circle, the number of records marked for restoration is shown.\n
+        \u0009If you want to restore all records of the current folder, press the "Select All" button on the bottom toolbar.\n
+        \u0009After you have selected all the necessary records, press the "Restore" button on the bottom toolbar. The program will perform the necessary data processing and close the recovery mode.\n
+        \u0009<font color='#be0000'><b><u>ATTENTION!</u></b></font> Folders are restored along with all their contents.\n
+        \u0009The "\u2715" button on the bottom panel turns off recovery mode.
     </string>
 
     <!-- 13. РЕЖИМ АРХИВ -->
-    <string name="desc_archive_title">\u00A713. РЕЖИМ АРХИВ</string>
-    <string name="desc_archive_text1">\u0009Если какой либо список в данный момент вам не нужен, не торопитесь его удалять. Возможно он может понадобиться в будущем. Отправьте его в архив.\n
-        \u0009В режиме АРХИВ программа блокирует любые изменения внутри папки (редактирование, перетаскивание и создание новой записи), заблокирован доступ к кнопкам на подложке, но навигация по папкам сохраняется.
+    <string name="desc_archive_title">\u00A713. ARCHIVE MODE</string>
+    <string name="desc_archive_text1">\u0009If any list is currently not needed by you, do not rush to delete it. It may be needed in the future. Send it to the archive.\n
+        \u0009In ARCHIVE mode, the program blocks any changes inside the folder (editing, dragging, and creating a new record), access to buttons on the substrate is blocked, but navigation through folders is preserved.
     </string>
-    <string name="desc_archive_text2">\u0009Режим АРХИВ включает эта кнопка боковой панели инструментов </string>
-    <string name="desc_archive_text3">\u0009В этом режиме контроллер перетаскивания записей (<u>папок</u>) заменяется кнопкой:</string>
-    <string name="desc_archive_text4">эта папка помещена в архив</string>
-    <string name="desc_archive_text5">эта папка не является архивной</string>
-    <string name="desc_archive_text6">\u0009Вы можете изменить статус папки, нажав эту кнопку.\n
-        \u0009Кнопка ”\u2715” на нижней панели выключает режим АРХИВ.
+    <string name="desc_archive_text2">\u0009This button on the side toolbar enables ARCHIVE mode</string>
+    <string name="desc_archive_text3">\u0009In this mode, the record drag controller (<u>folders</u>) is replaced by a button:</string>
+    <string name="desc_archive_text4">this folder is archived</string>
+    <string name="desc_archive_text5">this folder is not archived</string>
+    <string name="desc_archive_text6">\u0009You can change the folder\'s status by pressing this button.\n
+        \u0009The "\u2715" button on the bottom panel turns off ARCHIVE mode.
     </string>
 
     <!-- 14. КОНВЕРТАЦИЯ ТЕКСТА В СПИСОК -->
-    <string name="desc_convert_title">\u00A714. КОНВЕРТАЦИЯ ТЕКСТА В СПИСОК</string>
-    <string name="desc_convert_text1">\u0009Режим конвертации включает эта кнопка боковой панели инструментов </string>
-    <string name="desc_convert_text2">\u0009<font color='#00B1FF'><b>\u2022list</b></font> добавляет строки, полученные из текста в текущий список. Поэтому сначала откройте нужный список, затем нажмите эту кнопку. Откроется окно ”Конвертация”.\n
-        \u0009В центре окна ”Конвертация” находится большое текстовое поле. В него Вы можете ввести или вставьте текст, который Вы хотите конвертировать в список.\n
-        \u0009 <font color='#00B1FF'><b>\u2022list</b></font> может преобразовать любой текст в список. Но для того чтобы результат вам понравился, текст должен быть похож на список.\n
-        \u0009Текст должен быть разбит на строки. Разделителем строк служит невидимый символ перехода на новую строку, который вставляется в текст нажатием кнопки «\u21B2» клавиатуры.\n
-        \u0009<font color='#c80000'><b><u>ВНИМАНИЕ!</u></b></font> На некоторых устройствах эта кнопка может иметь другую подпись – «Enter» и т.п.\n
-        \u0009В начале строки может стоять порядковый номер (необязательно). Порядковый номер должен быть целым числом и за ним должны стоять символы «.\u23B5» (точка+пробел). Если символы перед «.\u23B5» можно преобразовать в целое число, <font color='#00B1FF'><b>\u2022list</b></font>  считает их порядковым номером и отбрасывает. Далее в строке могут повторяться сочетания «.\u23B5», <font color='#00B1FF'><b>\u2022list</b></font> среагирует только на первое.\n
-        \u0009Если часть строки вы хотите поместить в поле ”Примечание”, эта часть должна быть в конце строки и отделена от основного поля символами «\u23B5-\u23B5» (пробел+дефис+пробел). В строке могут повторяться сочетания «\u23B5-\u23B5»,  <font color='#00B1FF'><b>\u2022list</b></font> реагирует только на последнее.\n
-        \u0009Начальные и конечные пробелы в строках отбрасываются.\n
-        \u0009В текст может содержать  пустые строки и строки, содержащие одни пробелы. <font color='#00B1FF'><b>\u2022list</b></font> их игнорирует.\n
-        \u0009После того как Вы подготовили текст нажмите кнопку ”Конвертировать” в нижней части окна. Программа произведет необходимую обработку данных и закроет режим конвертации.
+    <string name="desc_convert_title">\u00A714. TEXT TO LIST CONVERSION</string>
+    <string name="desc_convert_text1">\u0009This button on the side toolbar enables conversion mode</string>
+    <string name="desc_convert_text2">\u0009<font color='#00B1FF'><b>\u2022list</b></font> adds lines obtained from text to the current list. Therefore, first open the desired list, then press this button. The "Conversion" window will open.\n
+        \u0009In the center of the "Conversion" window there is a large text field. You can enter or paste the text you want to convert into a list.\n
+        \u0009 <font color='#00B1FF'><b>\u2022list</b></font> can convert any text into a list. But for the result to please you, the text should resemble a list.\n
+        \u0009The text should be broken into lines. The line separator is the invisible newline character, which is inserted into the text by pressing the "\u21B2" keyboard button.\n
+        \u0009<font color='#c80000'><b><u>ATTENTION!</u></b></font> On some devices, this button may have a different label – "Enter" etc.\n
+        \u0009At the beginning of the line there may be a serial number (optional). The serial number must be an integer and followed by the symbols ".\u23B5" (dot+space). If the symbols before ".\u23B5" can be converted to an integer, <font color='#00B1FF'><b>\u2022list</b></font> considers them a serial number and discards them. Further in the line, combinations ".\u23B5" may repeat, <font color='#00B1FF'><b>\u2022list</b></font> will only react to the first one.\n
+        \u0009If you want to place part of the line in the "Note" field, this part should be at the end of the line and separated from the main field by the symbols "\u23B5-\u23B5" (space+hyphen+space). The line may contain repeating combinations "\u23B5-\u23B5", <font color='#00B1FF'><b>\u2022list</b></font> reacts only to the last one.\n
+        \u0009Leading and trailing spaces in lines are discarded.\n
+        \u0009The text may contain empty lines and lines containing only spaces. <font color='#00B1FF'><b>\u2022list</b></font> ignores them.\n
+        \u0009After you have prepared the text, press the "Convert" button at the bottom of the window. The program will perform the necessary data processing and close the conversion mode.
     </string>
 
     <!-- 15. ПЕРЕСЛАТЬ СПИСОК -->
-    <string name="desc_send_title">\u00A715. ПЕРЕСЛАТЬ СПИСОК</string>
-    <string name="desc_send_text1">\u0009В этом режиме содержимое списка преобразуется в текст, который вы можете отправить любым приложением, способным отправлять текст, установленным на Вашем устройстве.</string>
-    <string name="desc_send_text2">\u0009Режим пересылки списка включает эта кнопка боковой панели инструментов </string>
-    <string name="desc_send_text3">\u0009Откроется окно ”Поделиться”. В центре окна в большом текстовом поле Вы увидите преобразованный список. Это и есть текст отправляемого сообщения. Вы можете отредактировать его (добавить комментарии, удалить не нужное и т.п.).\n
-        \u0009После подготовки текста нажмите кнопку ”Отправить” в нижней части окна. Для отправки этого сообщения Вам будет предоставлена возможность выбрать любой почтовый сервис или месенджер, установленный на вашем устройстве.
+    <string name="desc_send_title">\u00A715. SEND THE LIST</string>
+    <string name="desc_send_text1">\u0009In this mode, the list content is converted to text that you can send using any app capable of sending text installed on your device.</string>
+    <string name="desc_send_text2">\u0009This button on the side toolbar enables list forwarding mode</string>
+    <string name="desc_send_text3">\u0009The "Share" window will open. In the center of the window, in a large text field, you will see the converted list. This is the text of the message being sent. You can edit it (add comments, remove unnecessary parts, etc.).\n
+        \u0009After preparing the text, press the "Send" button at the bottom of the window. To send this message, you will be given the opportunity to select any email service or messenger installed on your device.
     </string>
 </resources>
