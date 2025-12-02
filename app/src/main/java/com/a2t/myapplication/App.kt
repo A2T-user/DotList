@@ -45,7 +45,7 @@ class App : Application() {
         Room.databaseBuilder(applicationContext, AppDatabase::class.java, "database.db")
             .fallbackToDestructiveMigration()
             .build()
-        pref = getSharedPreferences("list_preferences", Context.MODE_PRIVATE)
+        pref = getSharedPreferences("list_preferences", MODE_PRIVATE)
         getSettings()
         appSettings.launchCounter++
         pref.edit { putInt(LAUNCH_COUNTER, appSettings.launchCounter) }

@@ -1,12 +1,10 @@
 package com.a2t.myapplication.utilities
 
-import android.app.Activity
-import android.util.Log
 import android.view.View
 
 class AppHelper {
     companion object {
-        fun requestFocusInTouch(view: View, ma: Activity) {
+        fun requestFocusInTouch(view: View) {
             view.isFocusableInTouchMode = true
             view.requestFocus()
             view.isFocusableInTouchMode = false

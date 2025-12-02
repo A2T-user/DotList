@@ -3,7 +3,6 @@ package com.a2t.myapplication.main.ui.fragments
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +15,7 @@ import com.a2t.myapplication.description.ui.DescriptionActivity
 import com.a2t.myapplication.main.ui.activity.MainActivity
 import com.a2t.myapplication.utilities.AppHelper
 import java.util.Locale
+import androidx.core.net.toUri
 
 class MainMenuFragment: Fragment() {
     private var _binding: FragmentMainMenuBinding? = null
@@ -43,13 +43,13 @@ class MainMenuFragment: Fragment() {
         binding.tvVersion.text = getString(R.string.version, version)
 
         binding.tvDescription.setOnClickListener { v ->
-            AppHelper.requestFocusInTouch(v, requireActivity())
+            AppHelper.requestFocusInTouch(v)
             val intent = Intent(requireContext(), DescriptionActivity::class.java)
             startActivity(intent)
         }
 
         binding.tvSettings.setOnClickListener { v ->
-            AppHelper.requestFocusInTouch(v, requireActivity())
+            AppHelper.requestFocusInTouch(v)
             (requireActivity() as MainActivity).fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
                 .add(R.id.container_view, SettingsFragment())
                 .addToBackStack("settingsFragment").commit()
@@ -58,13 +58,13 @@ class MainMenuFragment: Fragment() {
         binding.tvPrivacyPolicy.setOnClickListener {
             val locale = Locale.getDefault()
             val uriPP = if (locale.language == "ru") "https://dot-list.tb.ru/dot_list" else "https://dot-list-en.tb.ru"
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(uriPP))
+            val browserIntent = Intent(Intent.ACTION_VIEW, uriPP.toUri())
             startActivity(browserIntent)
         }
 
         binding.tvFeedback.setOnClickListener {
             val context = requireContext()
-            val email = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"))
+            val email = Intent(Intent.ACTION_SENDTO, "mailto:".toUri())
             email.putExtra(Intent.EXTRA_EMAIL, arrayOf(context.resources.getString(R.string.e_mail)))
             email.putExtra(Intent.EXTRA_SUBJECT, context.resources.getString(R.string.app_name))
             context.startActivity(Intent.createChooser(email, context.resources.getString(R.string.mail)))

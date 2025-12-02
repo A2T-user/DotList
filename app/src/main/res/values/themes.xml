@@ -16,5 +16,7 @@
         <item name="enableEditText">@color/white</item>
         <item name="colorIcon">@color/blue_icon</item>
         <item name="colorBarAlpha">@color/light_color_bar_alpha</item>
+
+        <item name="android:windowLightStatusBar">true</item>                   <!-- Цвет шрифта и иконок статус бара-->
     </style>
 </resources>

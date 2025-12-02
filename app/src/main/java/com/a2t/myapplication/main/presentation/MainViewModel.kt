@@ -72,9 +72,9 @@ class MainViewModel(
         }
     }
 
-    suspend fun getRecords(callback: (List<ListRecord>) -> Unit) {
+    fun getRecords(callback: (List<ListRecord>) -> Unit) {
         viewModelScope.launch {
-            var records = listOf<ListRecord>()
+            var records: List<ListRecord>
             when(specialMode) {
                 SpecialMode.NORMAL, SpecialMode.MOVE, SpecialMode.DELETE -> {
                     records = if (App.appSettings.sortingChecks) {

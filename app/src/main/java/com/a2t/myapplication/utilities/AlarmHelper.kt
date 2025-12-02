@@ -7,12 +7,12 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.media.AudioAttributes
-import android.net.Uri
 import android.text.format.DateFormat
 import androidx.core.app.NotificationCompat
 import com.a2t.myapplication.R
 import com.a2t.myapplication.main.ui.activity.MainActivity
 import java.time.ZonedDateTime
+import androidx.core.net.toUri
 
 class AlarmHelper (private val context: Context) {
 
@@ -54,7 +54,7 @@ class AlarmHelper (private val context: Context) {
     }
 
     private fun createNotificationChannel() {
-        val uri = Uri.parse("android.resource://" + context.packageName + "/" + R.raw.bell)
+        val uri = ("android.resource://" + context.packageName + "/" + R.raw.bell).toUri()
         val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH).apply {
             setSound(uri, AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_NOTIFICATION)
