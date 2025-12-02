@@ -2,6 +2,7 @@ package com.a2t.myapplication.main.ui.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.GestureDetector
@@ -18,6 +19,8 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
@@ -127,6 +130,15 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         modesToolbarBinding = binding.modesToolbar
 
         setContentView(binding.root)
+
+        // Статус-бар и навигационный бар не накладываются на контент UI
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {  // API 35+
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+                insets
+            }
+        }
 
         installHandControl()
 
@@ -238,8 +250,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 MotionEvent.ACTION_MOVE -> {
                     if (event.pointerCount >= 2) {
                         counter++
-                        if (counter == NUMBER_OF_OPERATIO_ZOOM) {
-                            counter = 0 // Обнуляем счетчик
+                        if (counter % NUMBER_OF_OPERATIO_ZOOM == 0) {
                             if (isZoom) {
                                 val dx = event.getX(0) - event.getX(1)
                                 val dy = event.getY(0) - event.getY(1)
@@ -471,7 +482,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
     // Присвоение фокуса кнопке меню
     override fun requestMenuFocus(s: String) {
-        AppHelper.requestFocusInTouch(topToolbarBinding.btnMenu, this)
+        AppHelper.requestFocusInTouch(topToolbarBinding.btnMenu)
         Log.e("МОЁ", s)
     }
 
@@ -955,7 +966,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
     }
 
-    // Перенастройка актимити под управление левой рукой
+    // Перенастройка активити под управление левой рукой
     @SuppressLint("RestrictedApi")
     fun installHandControl() {
         isLeftHandControl = App.appSettings.isLeftHandControl

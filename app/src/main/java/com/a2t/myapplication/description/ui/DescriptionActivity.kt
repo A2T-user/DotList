@@ -1,7 +1,6 @@
 package com.a2t.myapplication.description.ui
 
 import android.annotation.SuppressLint
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.GestureDetector
 import android.view.View
@@ -17,6 +16,7 @@ import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.ActivityDescriptionBinding
 import com.a2t.myapplication.databinding.DescriptionContentBinding
 import com.a2t.myapplication.utilities.AppHelper
+import androidx.core.graphics.drawable.toDrawable
 
 
 class DescriptionActivity : AppCompatActivity() {
@@ -84,7 +84,7 @@ class DescriptionActivity : AppCompatActivity() {
         // $$$$$$$$$$$$$$$$$$$$$$   Реакция на нажатие системной кнопки BACK   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         descBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                AppHelper.requestFocusInTouch(descriptionContentBinding.descGeneral1, this@DescriptionActivity)
+                AppHelper.requestFocusInTouch(descriptionContentBinding.descGeneral1)
             }
         }
 
@@ -158,7 +158,7 @@ class DescriptionActivity : AppCompatActivity() {
         }
 
         binding.fon.setOnTouchListener { v, _ ->
-            AppHelper.requestFocusInTouch(v, this@DescriptionActivity)
+            AppHelper.requestFocusInTouch(v)
             true
         }
 
@@ -177,7 +177,7 @@ class DescriptionActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     private fun createListeners (view: View, position: Int) {
         view.setOnClickListener { v ->
-            AppHelper.requestFocusInTouch(v, this@DescriptionActivity)
+            AppHelper.requestFocusInTouch(v)
             goToTab(position, true)
         }
         view.setOnTouchListener { _, event ->
@@ -187,13 +187,13 @@ class DescriptionActivity : AppCompatActivity() {
 
     fun showCurrentParagraph (position: Int) {
         btns.forEach { it.setForeground(null) }
-        btns[position].foreground = ColorDrawable(colorAccent)
+        btns[position].foreground = colorAccent.toDrawable()
         points.forEachIndexed { index, point -> point.alpha = if (index == position) 1.0f else 0.3f }
     }
 
     fun goToTab(position: Int, showAnimation: Boolean) {
         if (position in 1..15) {
-            AppHelper.requestFocusInTouch(binding.fon, this@DescriptionActivity)
+            AppHelper.requestFocusInTouch(binding.fon)
             viewPager.setCurrentItem(position - 1, showAnimation)
         }
     }

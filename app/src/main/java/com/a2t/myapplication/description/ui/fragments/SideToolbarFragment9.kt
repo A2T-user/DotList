@@ -24,7 +24,7 @@ class SideToolbarFragment9 : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var descriptionActivity = requireActivity() as DescriptionActivity
+        val descriptionActivity = requireActivity() as DescriptionActivity
         descriptionActivity.currentScrollView = binding.scrollView
         binding.linkSend.setOnClickListener {
             descriptionActivity.goToTab(15, true)
