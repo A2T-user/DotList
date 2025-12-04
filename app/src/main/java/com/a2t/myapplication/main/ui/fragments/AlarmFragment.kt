@@ -314,6 +314,18 @@ class AlarmFragment: Fragment() {
         (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = false
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.alarmFragment.apply {
+            requestFocus()
+            setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    parentFragmentManager.beginTransaction().remove(this@AlarmFragment).commitAllowingStateLoss() // Закрытие фрагмента
+                }
+            }
+        }
+    }
+
     override fun onStop() {
         super.onStop()
         (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = true

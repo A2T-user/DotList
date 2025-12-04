@@ -95,7 +95,7 @@ class ToolbarSideManager (
             mainViewModel.mainRecords.clear()
             mainViewModel.mainRecords.addAll(ma.adapter.records)
             ma.fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
-                .add(R.id.container_view, TextFragment())
+                .add(R.id.main_layout, TextFragment())
                 .addToBackStack("textFragment").commit()
         } else {
             Toast.makeText(ma, ma.getString(R.string.dir_empty), Toast.LENGTH_SHORT).show()
@@ -110,7 +110,7 @@ class ToolbarSideManager (
         mainViewModel.mainRecords.clear()
         mainViewModel.mainRecords.addAll(ma.adapter.records)
         ma.fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
-            .add(R.id.container_view, TextFragment())
+            .add(R.id.main_layout, TextFragment())
             .addToBackStack("textFragment").commit()
     }
 

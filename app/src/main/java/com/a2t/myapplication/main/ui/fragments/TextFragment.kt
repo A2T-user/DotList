@@ -87,7 +87,8 @@ class TextFragment : Fragment() {
 
         // Кнопка Отмена
         binding.btnCancel.setOnClickListener {
-            view.requestFocus()
+            (requireActivity() as MainActivity).goToNormalMode()
+            completionOfFragment()
         }
 
         // Кнопка Action
@@ -232,7 +233,7 @@ class TextFragment : Fragment() {
         var result = true
         try {
             str.toInt() // Преобразуем строку в число
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             result = false   // Если строка не переобразуеся в число
         }
         return result
@@ -247,19 +248,6 @@ class TextFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = false
-    }
-
-    override fun onResume() {
-        super.onResume()
-        binding.etText.apply {
-            requestFocus()
-            setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    parentFragmentManager.beginTransaction().remove(this@TextFragment).commitAllowingStateLoss() // Закрытие фрагмента
-                    ma.showSideBarContainer(true)
-                }
-            }
-        }
     }
 
     override fun onStop() {
