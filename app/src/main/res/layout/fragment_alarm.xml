@@ -3,7 +3,6 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/alarmFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/shadow"
@@ -15,8 +14,10 @@
     tools:context=".main.ui.fragments.AlarmFragment">
 
     <LinearLayout
+        android:id="@+id/alarmFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusableInTouchMode="true"
         android:orientation="vertical"
         android:background="@drawable/floatinf_bar">
 
