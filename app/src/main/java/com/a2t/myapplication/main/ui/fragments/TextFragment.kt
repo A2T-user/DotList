@@ -58,8 +58,6 @@ class TextFragment : Fragment() {
 
         ma = requireActivity() as MainActivity
 
-        ma.showSideBarContainer(false)
-
         savedInstanceState?.let {
             binding.etText.setText(it.getString("text"))
         }
@@ -87,7 +85,7 @@ class TextFragment : Fragment() {
 
         // Кнопка Отмена
         binding.btnCancel.setOnClickListener {
-            (requireActivity() as MainActivity).goToNormalMode()
+            ma.goToNormalMode()
             completionOfFragment()
         }
 
@@ -102,7 +100,7 @@ class TextFragment : Fragment() {
                         mainViewModel.mainRecords.clear()
                         mainViewModel.textFragmentMode = null
                         mainViewModel.idCurrentDir = 0
-                        (requireActivity() as MainActivity).goToNormalMode()
+                        ma.goToNormalMode()
                         completionOfFragment()
                     }
                 } else {
