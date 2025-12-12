@@ -2,6 +2,7 @@ package com.a2t.myapplication.main.ui.activity.recycler
 
 import android.graphics.Canvas
 import android.graphics.Rect
+import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -152,9 +153,7 @@ class CustomizerRecyclerView(
             override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
                 super.clearView(recyclerView, viewHolder)
                 if (isSwipe) {
-                    // Переводим фокус на background
-                    val backgroundView =
-                        (viewHolder as MainViewHolder).llBackground
+                    val backgroundView = (viewHolder as MainViewHolder).llBackground
                     if (!backgroundView.hasFocus()) backgroundView.requestFocus()
                 } else {
                     ma.returnHolderToOriginalState(viewHolder)

@@ -1,5 +1,6 @@
 package com.a2t.myapplication.main.ui.activity.managers
 
+import androidx.core.view.isVisible
 import com.a2t.myapplication.R
 import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.presentation.MainViewModel
@@ -36,7 +37,7 @@ class ContextMenuMoveManager(
             adapter.notifyItemChanged(adapter.currentHolderPosition)
             ma.showNumberOfSelectedRecords()
         }
-        ma.requestMenuFocus("ContextMenuMoveManager метод changeStateRecord")
+        ma.contextMenuMoveBinding.llContextMenuMove.isVisible = false
     }
 
     private fun changeStateAllRecords(option: String) {
@@ -45,7 +46,7 @@ class ContextMenuMoveManager(
             adapter.notifyItemChanged(index)
         }
         ma.showNumberOfSelectedRecords()
-        ma.requestMenuFocus("ContextMenuMoveManager метод changeStateRecord")
+        ma.contextMenuMoveBinding.llContextMenuMove.isVisible = false
     }
 
     private fun changeStateItem(item: ListRecord, option: String) {

@@ -114,15 +114,8 @@ class MainAdapter(
                 holder.llBackground.setOnFocusChangeListener{ _: View?, hasFocus: Boolean ->
                     if (!hasFocus) {
                         mac.returnHolderToOriginalState(holder)
-                        Log.e("МОЁ", "Подлжка ПОТЕРЯ фокуса")
-                    } else {
-                        Log.e("МОЁ", "Подлжка ПОЛУЧЕНИЕ фокуса")
                     }
-                    val currentFocus = (mac as MainActivity).currentFocus
-                    if (currentFocus == null) Log.e("МОЁ", "Нет объектов с фокусом")
-                    currentFocus?.let {
-                        Log.e("МОЁ", "Текущий объект с фокусом: ${mac.resources.getResourceEntryName(it.id)}")
-                    }
+
                 }
 
                 holder.ivBtnDel.setOnClickListener {            // Удалить запись
@@ -137,8 +130,8 @@ class MainAdapter(
                     startEditMode(item, holder)
                 }
                 holder.ivBtnBell.setOnClickListener {            // Создать/редактировать напоминание
-                    selectCurrentHolder(item, position)
                     mac.requestMenuFocus("Adapter кнопка ivBtnBell подложки")
+                    selectCurrentHolder(item, position)
                     mac.passRecordToAlarmFragment(item)
                     (mac as MainActivity).fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
                         .add(R.id.container_view, AlarmFragment())
@@ -225,7 +218,6 @@ class MainAdapter(
                 }
 
                 holder.llForeground.setOnClickListener {
-                    mac.requestMenuFocus("Adapter клик по llForeground Режим MOVE")
                     if (item.isDir) {
                         isKeyboardON = false
                         mac.goToChildDir(item.id)
@@ -288,7 +280,6 @@ class MainAdapter(
                 }
 
                 holder.llForeground.setOnClickListener {
-                    mac.requestMenuFocus("Adapter клик по llForeground Режим ARCHIVE")
                     if (item.isDir) {
                         isKeyboardON = false
                         mac.goToChildDir(item.id)
@@ -415,7 +406,6 @@ class MainAdapter(
         holder.bind(item)
         mac.correctingPositionOfRecordByCheck(holder)
         mac.updateRecord(item)  // Сохранение в БД
-
     }
 
     override fun onViewRecycled(holder: MainViewHolder) {
@@ -441,6 +431,7 @@ class MainAdapter(
     private fun holdersResponseToClick (holder: MainViewHolder, item: ListRecord) {
         if (item.isDir) {
             isKeyboardON = false
+            mac.requestMenuFocus("MainAdapter метод holdersResponseToClick")
             mac.goToChildDir(item.id)
         } else {
             if (!item.isEdit) startEditMode(item, holder)
