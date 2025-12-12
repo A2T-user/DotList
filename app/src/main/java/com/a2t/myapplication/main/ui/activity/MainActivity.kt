@@ -168,7 +168,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         mainBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 mainBackPressedCallback.isEnabled = true
-                requestMenuFocus("MainActivity mainBackPressedCallback")
+                requestMenuFocus()
                 when (getSpecialMode()) {
                     SpecialMode.DELETE, SpecialMode.RESTORE -> {}
                     else -> {
@@ -195,7 +195,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
         floatingBarBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                requestMenuFocus("MainActivity floatingBarBackPressedCallback")
+                requestMenuFocus()
             }
         }
         floatingBarBackPressedCallback.isEnabled = false
@@ -231,7 +231,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         var isZoom = false                                  // Режим ZOOM
         var counter = 0 // Счетчик срабатываний Zoom
         recycler.setOnTouchListener{ _: View?, event: MotionEvent ->
-            requestMenuFocus("ZOOM")
+            requestMenuFocus()
             when(event.action and MotionEvent.ACTION_MASK) {
                 MotionEvent.ACTION_DOWN -> {
                     isZoom = false
@@ -292,27 +292,9 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         topToolbarBinding.pathDir.setOnClickListener {
-            requestMenuFocus("MainActivity pathDir")
+            requestMenuFocus()
             if (clickDebounce()) fullPathDir(getIdCurrentDir())
         }
-
-
-
-
-
-        // ??????????????????? ПОИСК БАГОВ ??????????????????????????????????????????????????????????????????????????
-        topToolbarBinding.btnMenu.setOnFocusChangeListener{ _: View?, hasFocus: Boolean ->
-            if (hasFocus) {
-                Log.e("МОЁ", "Кнопка МЕНЮ ПОЛУЧЕНИЕ фокуса")
-            } else {
-                Log.e("МОЁ", "Кнопка МЕНЮ ПОТЕРЯ фокуса")
-            }
-        }
-        //??????????????????????????????????????????????????????????????????????????????????????????????????????????????
-
-
-
-
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ БОКОВАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // swipe влево по флагу для открытия БОКОВОЙ ПАНЕЛИ
@@ -346,7 +328,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         smallToolbarBinding.llRootDir.setOnClickListener {
-            requestMenuFocus("MainActivity МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ")
+            requestMenuFocus()
             if (getSpecialMode() != SpecialMode.DELETE && getSpecialMode() != SpecialMode.RESTORE) {
                 if (getIdCurrentDir() != 0L) {
                     mainViewModel.idDir = 0L
@@ -489,9 +471,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     }
 
     // Присвоение фокуса кнопке меню
-    override fun requestMenuFocus(s: String) {
+    override fun requestMenuFocus() {
         AppHelper.requestFocusInTouch(topToolbarBinding.btnMenu)
-        Log.e("МОЁ", s)
     }
 
     // Показать скрыть контейнер и флажок бокового меню
@@ -648,11 +629,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     override fun returnHolderToOriginalState(viewHolder: RecyclerView.ViewHolder) {
         Log.e ("МОЁ", "returnHolderToOriginalState")
         val foregroundView = (viewHolder as MainViewHolder).llForeground
-        foregroundView.animate()
-            .translationX(0f)
-            .translationY(0f)
-            .setDuration(200) // Продолжительность анимации в мс; можно изменить
-            .start()
+        foregroundView.translationX = 0f
+        foregroundView.translationY = 0f
     }
 
     fun normBackPressed() {
@@ -1030,7 +1008,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         hideContextMenuJob?.cancel()
         hideContextMenuJob = lifecycleScope.launch {
             delay(HIDE_CONTEXT_MENU_DEBOUNCE_DELAY)
-            requestMenuFocus("MainActivity метод hideContextMenuDebounce")
+            requestMenuFocus()
         }
     }
 
@@ -1057,7 +1035,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         val id = intent.getLongExtra("IDDIR", -1L)
         if (id != -1L) {
             mainViewModel.idDir = id
-            requestMenuFocus("MainActivity метод onNewIntent")
+            requestMenuFocus()
             goToNormalMode()
         }
     }

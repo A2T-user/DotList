@@ -10,7 +10,7 @@ interface MainAdapterCallback {
     fun getIdCurrentDir(): Long
     fun insertNewRecord(item: ListRecord)
     fun updateRecord(record: ListRecord)
-    fun requestMenuFocus(s: String)
+    fun requestMenuFocus()
     fun correctingPositionOfRecordByCheck(viewHolder: MainViewHolder)
     fun returnHolderToOriginalState(viewHolder: RecyclerView.ViewHolder)
     fun showContextMenuFormat(viewHolder: MainViewHolder)
