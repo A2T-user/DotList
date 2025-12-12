@@ -23,6 +23,7 @@ class ContextMenuFormatManager(
             R.id.btnTextRegular -> changingTextFormatCurrentRecord(0, 0, 0)
             else -> {}
         }
+        ma.hideContextMenuDebounce()
     }
 
     fun longClickBtn(btnId: Int) {
@@ -34,18 +35,14 @@ class ContextMenuFormatManager(
             R.id.btnTextStyle_I -> changingTextFormatAllRecords(null, 2, null)
             R.id.btnTextStyle_BI -> changingTextFormatAllRecords(null, 3, null)
             R.id.btnTextStyle_U -> changingTextFormatAllRecords(null, null, 1)
-            R.id.btnTextRegular -> {
-                changingTextFormatAllRecords(0, 0, 0)
-                ma.requestMenuFocus("ContextMenuFormatManager метод longClickBtn")
-            }
+            R.id.btnTextRegular -> changingTextFormatAllRecords(0, 0, 0)
             else -> {}
         }
-        if (btnId != R.id.btnTextRegular) ma.hideContextMenuDebounce()
+        ma.hideContextMenuDebounce()
     }
 
     private fun changingTextFormatCurrentRecord(color: Int?, style: Int?, under: Int?) {
         changingTextFormatRecord(adapter.currentItem!!, adapter.currentHolderPosition, color, style, under)
-        ma.hideContextMenuDebounce()
     }
 
     private fun changingTextFormatAllRecords(color: Int?, style: Int?, under: Int?) {

@@ -1,6 +1,7 @@
 package com.a2t.myapplication.description.ui
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.view.GestureDetector
 import android.view.View
@@ -17,6 +18,8 @@ import com.a2t.myapplication.databinding.ActivityDescriptionBinding
 import com.a2t.myapplication.databinding.DescriptionContentBinding
 import com.a2t.myapplication.utilities.AppHelper
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 
 
 class DescriptionActivity : AppCompatActivity() {
@@ -41,6 +44,15 @@ class DescriptionActivity : AppCompatActivity() {
         _binding = ActivityDescriptionBinding.inflate(layoutInflater)
         descriptionContentBinding = binding.descContent
         setContentView(binding.root)
+
+        // Статус-бар и навигационный бар не накладываются на контент UI
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {  // API 35+
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+                insets
+            }
+        }
 
         colorAccent = ContextCompat.getColor(this, R.color.white_alpha)
         // Список кнопок панели оглавление

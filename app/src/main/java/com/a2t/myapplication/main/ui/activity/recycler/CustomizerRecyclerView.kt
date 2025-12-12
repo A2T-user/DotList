@@ -4,7 +4,6 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.view.View
 import android.view.animation.AnimationUtils
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,10 +42,7 @@ class CustomizerRecyclerView(
                 return false
             }
         })
-        recycler.itemAnimator = DefaultItemAnimator().apply {
-            moveDuration = 300
-            removeDuration = 100
-        }
+        recycler.itemAnimator = null        // Отключаем анимацию
         recycler.scheduleLayoutAnimation()
         recycler.layoutAnimation = animOpenNewDir
         recycler.invalidate()
@@ -130,6 +126,8 @@ class CustomizerRecyclerView(
                         for (i in fromPos until toPos) {         // Премещение элементов
                             Collections.swap(listDir, i, i + 1)     // массива в новые позиции
                         }
+                    } else if (fromPos == toPos) {
+                        isMove = false
                     } else {
                         for (i in fromPos downTo toPos + 1) {     // Премещение элементов
                             Collections.swap(listDir, i, i - 1)      // массива в новые позиции
@@ -151,10 +149,9 @@ class CustomizerRecyclerView(
             // Перерисовывает ViewHolder после манипуляций
             override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
                 super.clearView(recyclerView, viewHolder)
+
                 if (isSwipe) {
-                    // Переводим фокус на background
-                    val backgroundView =
-                        (viewHolder as MainViewHolder).llBackground
+                    val backgroundView = (viewHolder as MainViewHolder).llBackground
                     if (!backgroundView.hasFocus()) backgroundView.requestFocus()
                 } else {
                     ma.returnHolderToOriginalState(viewHolder)

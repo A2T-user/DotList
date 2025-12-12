@@ -87,7 +87,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private lateinit var topToolbarBinding: ToolbarTopBinding
     private lateinit var smallToolbarBinding: ToolbarSmallBinding
     private lateinit var contextMenuFormatBinding: ContextMenuFormatBinding
-    private lateinit var contextMenuMoveBinding: ContextMenuMoveBinding
+    lateinit var contextMenuMoveBinding: ContextMenuMoveBinding
     private lateinit var modesToolbarBinding: ToolbarModesBinding
     private var oldDist = 1f                                        // Расстояние между пальцами начальное
     private var newDist = 0f                                        // конечное, жест ZOOM
@@ -168,10 +168,9 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         mainBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 mainBackPressedCallback.isEnabled = true
+                requestMenuFocus()
                 when (getSpecialMode()) {
-                    SpecialMode.DELETE, SpecialMode.RESTORE -> {
-
-                    }
+                    SpecialMode.DELETE, SpecialMode.RESTORE -> {}
                     else -> {
                         if (getIdCurrentDir() > 0) {
                             normBackPressed()
@@ -196,7 +195,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
         floatingBarBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                requestMenuFocus("MainActivity floatingBarBackPressedCallback")
+                requestMenuFocus()
             }
         }
         floatingBarBackPressedCallback.isEnabled = false
@@ -232,7 +231,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         var isZoom = false                                  // Режим ZOOM
         var counter = 0 // Счетчик срабатываний Zoom
         recycler.setOnTouchListener{ _: View?, event: MotionEvent ->
-            requestMenuFocus("ZOOM")
+            requestMenuFocus()
             when(event.action and MotionEvent.ACTION_MASK) {
                 MotionEvent.ACTION_DOWN -> {
                     isZoom = false
@@ -293,18 +292,9 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         topToolbarBinding.pathDir.setOnClickListener {
+            requestMenuFocus()
             if (clickDebounce()) fullPathDir(getIdCurrentDir())
         }
-
-        // ??????????????????? ПОИСК БАГОВ ??????????????????????????????????????????????????????????????????????????
-        topToolbarBinding.btnMenu.setOnFocusChangeListener{ _: View?, hasFocus: Boolean ->
-            if (hasFocus) {
-                Log.e("МОЁ", "Кнопка МЕНЮ ПОЛУЧЕНИЕ фокуса")
-            } else {
-                Log.e("МОЁ", "Кнопка МЕНЮ ПОТЕРЯ фокуса")
-            }
-        }
-        //??????????????????????????????????????????????????????????????????????????????????????????????????????????????
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ БОКОВАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // swipe влево по флагу для открытия БОКОВОЙ ПАНЕЛИ
@@ -338,7 +328,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         smallToolbarBinding.llRootDir.setOnClickListener {
-            requestMenuFocus("MainActivity МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ")
+            requestMenuFocus()
             if (getSpecialMode() != SpecialMode.DELETE && getSpecialMode() != SpecialMode.RESTORE) {
                 if (getIdCurrentDir() != 0L) {
                     mainViewModel.idDir = 0L
@@ -481,9 +471,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     }
 
     // Присвоение фокуса кнопке меню
-    override fun requestMenuFocus(s: String) {
+    override fun requestMenuFocus() {
         AppHelper.requestFocusInTouch(topToolbarBinding.btnMenu)
-        Log.e("МОЁ", s)
     }
 
     // Показать скрыть контейнер и флажок бокового меню
@@ -638,13 +627,14 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
     // Вызывается из адаптера для возврата Foreground в исходное положение
     override fun returnHolderToOriginalState(viewHolder: RecyclerView.ViewHolder) {
+        Log.e ("МОЁ", "returnHolderToOriginalState")
         val foregroundView = (viewHolder as MainViewHolder).llForeground
-        ItemTouchHelper.Callback.getDefaultUIUtil().clearView(foregroundView)
+        foregroundView.translationX = 0f
+        foregroundView.translationY = 0f
     }
 
     fun normBackPressed() {
         adapter.isKeyboardON = false            // Если нажат Back, клавиатура точно скрыта
-        requestMenuFocus("MainActivity Метод normBackPressed")
         noSleepModeOff()                        // Выключение режима БЕЗ СНА
         goToParentDir()                         // Переход к родительской папке
     }
@@ -657,7 +647,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
     // Возврат в режим NORMAL
     fun goToNormalMode() {
-        requestMenuFocus("MainActivity метод goToNormalMode")
         mainViewModel.specialMode = SpecialMode.NORMAL
         enableSpecialMode()
         goToDir(animOpenNewDir)
@@ -666,13 +655,11 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private fun goToParentDir() {
         mainViewModel.getParentDirId(getIdCurrentDir()) { ids ->
             mainViewModel.idDir = ids[0]
-            requestMenuFocus("MainActivity метод goToParentDir")
             goToDir(animOpenParentDir)
         }
     }
 
     override fun goToChildDir(id: Long) {
-        requestMenuFocus("MainActivity метод goToChildDir")
         mainViewModel.idDir = id
         goToDir(animOpenChildDir)
     }
@@ -834,8 +821,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 MaterialAlertDialogBuilder(this)
                     .setCustomTitle(dialogView)
                     .setMessage(mess)
-                    .setNeutralButton(getString(R.string.negative_btn)) { _, _ ->
-                        requestMenuFocus("MainActivity метод deleteRecords") }
+                    .setNeutralButton(getString(R.string.negative_btn)) { d, _ ->
+                        d.dismiss() }
                     .setPositiveButton(getString(R.string.delete)) { _, _ ->
                         deleteRecordsAfterSelection(records, mutableRecords)
                     }
@@ -1021,7 +1008,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         hideContextMenuJob?.cancel()
         hideContextMenuJob = lifecycleScope.launch {
             delay(HIDE_CONTEXT_MENU_DEBOUNCE_DELAY)
-            requestMenuFocus("MainActivity метод hideContextMenuDebounce")
+            requestMenuFocus()
         }
     }
 
@@ -1045,10 +1032,10 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-
         val id = intent.getLongExtra("IDDIR", -1L)
         if (id != -1L) {
             mainViewModel.idDir = id
+            requestMenuFocus()
             goToNormalMode()
         }
     }
