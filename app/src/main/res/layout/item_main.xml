@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginBottom="1dp"
+        android:layout_marginBottom="1px"
         android:background="?attr/colorBackground"
         android:foreground="?attr/selectableItemBackground">
 
@@ -131,8 +131,8 @@
     <!-- Разделитель -->
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/white"
+        android:layout_height="1px"
+        android:background="?attr/colorMainText"
         android:layout_gravity="bottom"/>
 
     <!-- Слой для выделения записей с checkbox = true -->
