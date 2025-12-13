@@ -296,6 +296,9 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             if (clickDebounce()) fullPathDir(getIdCurrentDir())
         }
 
+        topToolbarBinding.ivEye.setOnClickListener {
+            noSleepModeOff()
+        }
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ БОКОВАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // swipe влево по флагу для открытия БОКОВОЙ ПАНЕЛИ
         var downX = 0f
@@ -444,8 +447,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     fun noSleepModeON() {
         isNoSleepMode = true
         switchNoSleepMode(true)    // В активити включаем keepScreenOn
-        binding.ivEye.isVisible = true
-        binding.ivEye.startAnimation(animationEye)             // Анимация иконки
+        topToolbarBinding.ivEye.isVisible = true
+        topToolbarBinding.ivEye.startAnimation(animationEye)             // Анимация иконки
         // Маргание иконки каждые 10 секунд
         eyeJob = lifecycleScope.launch {
             eyeAnimation()
@@ -455,13 +458,13 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private fun noSleepModeOff() {
         isNoSleepMode = false
         switchNoSleepMode(false)       // В активити выключаем keepScreenOn
-        binding.ivEye.isVisible = false
+        topToolbarBinding.ivEye.isVisible = false
         eyeJob.cancel()                                                         // Отменить маргание глаза
     }
     // Анимация глаза
     private suspend fun eyeAnimation() {
         delay(EYE_ANIMATION_DELEY)
-        binding.ivEye.startAnimation(animationEye)             // Анимация иконки
+        topToolbarBinding.ivEye.startAnimation(animationEye)             // Анимация иконки
         eyeAnimation()                                                      // Рекурсия
     }
 

@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ВЕРХНЯЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
-<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ll_top_toolbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingTop="4dp"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:animateLayoutChanges="true">
 
     <!-- Кнопка МЕНЮ -->
     <ImageView
@@ -37,5 +39,14 @@
         android:paddingVertical="4dp"
         android:drawablePadding="4dp"
         app:drawableStartCompat="@drawable/ic_full_dir"/>
+
+    <ImageView
+        android:id="@+id/iv_eye"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="6dp"
+        android:src="@drawable/ic_eye"
+        android:visibility="gone"
+        tools:ignore="contentDescription" />
 
 </LinearLayout>
