@@ -42,7 +42,7 @@ class CustomizerRecyclerView(
                 return false
             }
         })
-        recycler.itemAnimator = null        // Отключаем анимацию
+        recycler.itemAnimator = null        // Отключаем анимацию для правильного поведения фокуса
         recycler.scheduleLayoutAnimation()
         recycler.layoutAnimation = animOpenNewDir
         recycler.invalidate()
