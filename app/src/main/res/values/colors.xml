@@ -12,6 +12,7 @@
     <color name="color_hint">#7eb5c5</color>
     <color name="edit_text_accent">#50ffffff</color>
     <color name="zoom_color">#7d7d7d</color>
+    <color name="eye_color">#9b9b9b</color>
 
     <!-- Светлая тема -->
     <color name="light_background">#fffaf5</color>   <!-- a4cded -->
