@@ -109,7 +109,7 @@
     <string name="desc_side_tb_text2">"Expand" button. The side toolbar can be expanded – the buttons will have labels explaining their purpose</string>
     <string name="desc_side_tb_text0">enables NO SLEEP mode</string>
     <string name="desc_side_tb_text01">\u0009If this mode is off, after the set time, the device will go into sleep mode. Sometimes it is useful (for example, when packing a suitcase according to a list) to disable sleep mode. This button is for that purpose.\n
-        \u0009This mode is not optimal in terms of battery consumption. Therefore, it operates only in the current folder. If you exit the folder, it will turn off automatically. An animation in the top right corner of the screen will remind you that this energy-consuming mode is enabled.
+        \u0009This mode is not optimal in terms of battery consumption. Therefore, it operates only in the current folder. If you exit the folder, it will turn off automatically. An animation in the top right corner of the screen will remind you that this energy-consuming mode is enabled. Clicking on the animation disables the NO SLEEP mode.
     </string>
     <string name="desc_side_tb_text3">send list. <font color='#4eb6ff'><u>See \u00A7 15</u></font></string>
     <string name="desc_side_tb_text4">convert text to list. <font color='#4eb6ff'><u>See \u00A7 14</u></font></string>
