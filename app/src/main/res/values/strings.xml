@@ -101,6 +101,11 @@
     <string name="set_string">Settings</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="feedback">Write to support</string>
+    <string name="like_string">If you liked <font color='#4eb6ff'><b>\u2022list</b></font></string>
+
+    <string name="your_feedback">Please give your feedback about the app</string>
+    <string name="for_friends">Send weblink to the <font color='#4eb6ff'><b>\u2022list</b></font> page to your friends</string>
+    <string name="for_friends2">or ask them to scan the QR-code</string>
 
     <string name="notification">Reminder</string>
     <string name="notifi_hint">Enter a brief reminder text,\nset date and time</string>

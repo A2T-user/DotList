@@ -101,6 +101,12 @@
     <string name="set_string">Настройки</string>
     <string name="privacy_policy">Политика конфеденциальности</string>
     <string name="feedback">Написать в поддержку</string>
+    <string name="like_string">Если Вам понравился <font color='#4eb6ff'><b>\u2022list</b></font></string>
+    
+    <string name="your_feedback">Оставьте отзыв о приложении</string>
+    <string name="for_friends">Отправьте друзьям ссылку на страницу <font color='#4eb6ff'><b>\u2022list</b></font></string>
+    <string name="for_friends2">или предложите сканировать QR-код</string>
+
 
     <string name="notification">Напоминание</string>
     <string name="notifi_hint">Введите краткий текст напоминания,\nустановите дату и время</string>
