@@ -1,4 +1,4 @@
-package com.a2t.myapplication.main.ui.fragments.models
+package com.a2t.myapplication.common.model
 
 data class AppSettings(
     var launchCounter: Int,

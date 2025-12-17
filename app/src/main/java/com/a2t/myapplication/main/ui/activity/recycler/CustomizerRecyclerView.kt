@@ -3,11 +3,10 @@ package com.a2t.myapplication.main.ui.activity.recycler
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.view.View
-import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.a2t.myapplication.R
+import com.a2t.myapplication.common.model.DLAnimator
 import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.ui.ActionEditText
 import com.a2t.myapplication.main.ui.activity.MainActivity
@@ -26,7 +25,6 @@ class CustomizerRecyclerView(
     }
 
     fun setupRecyclerView() {
-        val animOpenNewDir = AnimationUtils.loadLayoutAnimation(ma, R.anim.anim_open_new_dir)
         recycler.adapter = adapter
         recycler.setLayoutManager(object : LinearLayoutManager(ma) {
             // Разрешаем скольжение тоько при старте редактирования записи
@@ -44,7 +42,7 @@ class CustomizerRecyclerView(
         })
         recycler.itemAnimator = null        // Отключаем анимацию для правильного поведения фокуса
         recycler.scheduleLayoutAnimation()
-        recycler.layoutAnimation = animOpenNewDir
+        recycler.layoutAnimation = DLAnimator().animOpenNewDir
         recycler.invalidate()
     }
 

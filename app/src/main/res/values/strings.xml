@@ -103,6 +103,7 @@
     <string name="feedback">Write to support</string>
     <string name="like_string">If you liked <font color='#4eb6ff'><b>\u2022list</b></font></string>
 
+    <string name="qr_description">Show QR code</string>
     <string name="your_feedback">Please give your feedback about the app</string>
     <string name="for_friends">Send weblink to the <font color='#4eb6ff'><b>\u2022list</b></font> page to your friends</string>
     <string name="for_friends2">or ask them to scan the QR-code</string>

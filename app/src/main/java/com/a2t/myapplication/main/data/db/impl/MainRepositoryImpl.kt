@@ -1,6 +1,6 @@
 package com.a2t.myapplication.main.data.db.impl
 
-import com.a2t.myapplication.App
+import com.a2t.myapplication.common.App
 import com.a2t.myapplication.main.data.db.AppDatabase
 import com.a2t.myapplication.main.data.db.RecordDBConverter
 import com.a2t.myapplication.main.data.db.entity.ListRecordEntity

@@ -5,9 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import androidx.core.view.isVisible
 import com.a2t.myapplication.R
+import com.a2t.myapplication.common.model.DLAnimator
 import com.a2t.myapplication.databinding.FragmentDesc12RestModeBinding
 import com.a2t.myapplication.databinding.ToolbarModesBinding
 import com.a2t.myapplication.description.ui.DescriptionActivity
@@ -32,7 +32,6 @@ class RestoreModeFragment12 : Fragment() {
 
         (requireActivity() as DescriptionActivity).currentScrollView = binding.scrollView
         // Панель режимов
-        val animationRestoreMode = AnimationUtils.loadAnimation(requireContext(), R.anim.arrow_up)
         modesBinding.clModesToolbar.isVisible = true
         modesBinding.btnSelectAll.isVisible = true
         modesBinding.btnAction.isVisible = true
@@ -41,7 +40,7 @@ class RestoreModeFragment12 : Fragment() {
         modesBinding.ivBarModes3.isVisible = false
         modesBinding.ivBarModes2.setImageResource(R.drawable.ic_basket)
         modesBinding.ivBarModes1.setImageResource(R.drawable.ic_arrow_blue)
-        modesBinding.ivBarModes1.startAnimation(animationRestoreMode)            // Анимация
+        modesBinding.ivBarModes1.startAnimation(DLAnimator().animationRestoreMode)            // Анимация
     }
 
     override fun onDestroyView() {

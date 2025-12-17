@@ -17,7 +17,8 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_mylist"
         android:layout_marginVertical="80dp"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="@string/qr_description"/>
 
     <View
         android:layout_width="match_parent"

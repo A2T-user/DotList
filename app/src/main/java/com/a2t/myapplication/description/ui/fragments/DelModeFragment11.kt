@@ -5,9 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import androidx.core.view.isVisible
 import com.a2t.myapplication.R
+import com.a2t.myapplication.common.model.DLAnimator
 import com.a2t.myapplication.databinding.FragmentDesc11DelModeBinding
 import com.a2t.myapplication.databinding.ToolbarModesBinding
 import com.a2t.myapplication.description.ui.DescriptionActivity
@@ -32,7 +32,6 @@ class DelModeFragment11 : Fragment() {
 
         (requireActivity() as DescriptionActivity).currentScrollView = binding.scrollView
         // Панель режимов
-        val animationDeleteMode = AnimationUtils.loadAnimation(requireContext(), R.anim.arrow_down)
         modesBinding.clModesToolbar.isVisible = true
         modesBinding.btnSelectAll.isVisible = true
         modesBinding.btnAction.isVisible = true
@@ -41,7 +40,7 @@ class DelModeFragment11 : Fragment() {
         modesBinding.ivBarModes3.isVisible = false
         modesBinding.ivBarModes2.setImageResource(R.drawable.ic_basket)
         modesBinding.ivBarModes1.setImageResource(R.drawable.ic_arrow_red)
-        modesBinding.ivBarModes1.startAnimation(animationDeleteMode)             // Анимация
+        modesBinding.ivBarModes1.startAnimation(DLAnimator().animationDeleteMode)             // Анимация
 
     }
 

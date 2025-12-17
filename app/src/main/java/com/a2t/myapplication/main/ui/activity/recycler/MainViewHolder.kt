@@ -5,7 +5,6 @@ import android.graphics.Typeface
 import android.text.format.DateFormat
 import android.view.View
 import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -15,8 +14,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
-import com.a2t.myapplication.App
+import com.a2t.myapplication.common.App
 import com.a2t.myapplication.R
+import com.a2t.myapplication.common.model.DLAnimator
 import com.a2t.myapplication.main.ui.ActionEditText
 import com.a2t.myapplication.utilities.AlarmHelper
 import com.a2t.myapplication.main.domain.model.ListRecord
@@ -31,7 +31,7 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     var observerTextSize: Observer<Float>? = null
     private var endDayJob: Job? = null
     private var alarmJob: Job? = null
-    private var animationBell: Animation = AnimationUtils.loadAnimation(App.appContext, R.anim.anim_bell)
+    private var animationBell: Animation = DLAnimator().animBell
     var id: Long = 0
     private var bellType = 0        // Тип иконки напоминания (0-скрыта, 1-белый, 2-красный, 3-анимация)
     // foreground
