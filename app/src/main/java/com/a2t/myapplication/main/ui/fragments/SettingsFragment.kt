@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.fragment.app.Fragment
-import com.a2t.myapplication.App
+import com.a2t.myapplication.common.App
 import com.a2t.myapplication.databinding.FragmentSettingsBinding
 import com.a2t.myapplication.main.ui.activity.MainActivity
-import com.a2t.myapplication.main.ui.fragments.models.AppSettings
+import com.a2t.myapplication.common.model.AppSettings
 
 class SettingsFragment : Fragment() {
 

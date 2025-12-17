@@ -11,8 +11,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -27,8 +25,9 @@ import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.a2t.myapplication.App
+import com.a2t.myapplication.common.App
 import com.a2t.myapplication.R
+import com.a2t.myapplication.common.model.DLAnimator
 import com.a2t.myapplication.databinding.ActivityMainBinding
 import com.a2t.myapplication.databinding.ContextMenuFormatBinding
 import com.a2t.myapplication.databinding.ContextMenuMoveBinding
@@ -81,6 +80,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     val adapter = MainAdapter(this)
     private lateinit var recycler: RecyclerView
     private var mIth: ItemTouchHelper? = null
+    private lateinit var dlAnimator: DLAnimator
     private var nameDir = "R:"
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
@@ -95,14 +95,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     var widthScreen = 0                                             // Ширина экрана
     private var heightScreen = 0                                   // Ширина экрана
     private var heighContextMenu = 0                               // Высота контекстного меню
-    private lateinit var animationMoveMode: Animation
-    private lateinit var animationDeleteMode: Animation
-    private lateinit var animationRestoreMode: Animation
-    private lateinit var animationArchiveMode: Animation
-    private lateinit var animationEye: Animation
-    private lateinit var animOpenNewDir: LayoutAnimationController
-    private lateinit var animOpenChildDir: LayoutAnimationController
-    private lateinit var animOpenParentDir: LayoutAnimationController
     private var archiveJob = lifecycleScope.launch {}
     private var eyeJob = lifecycleScope.launch {}
     private var nameJob = lifecycleScope.launch {}
@@ -155,14 +147,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
 
         // Анимации
-        animationMoveMode = AnimationUtils.loadAnimation(this, R.anim.arrow_right)
-        animationDeleteMode = AnimationUtils.loadAnimation(this, R.anim.arrow_down)
-        animationRestoreMode = AnimationUtils.loadAnimation(this, R.anim.arrow_up)
-        animationArchiveMode = AnimationUtils.loadAnimation(this, R.anim.archive)
-        animationEye = AnimationUtils.loadAnimation(this, R.anim.eye_eff)
-        animOpenNewDir = AnimationUtils.loadLayoutAnimation(this, R.anim.anim_open_new_dir)
-        animOpenChildDir = AnimationUtils.loadLayoutAnimation(this, R.anim.anim_open_child_dir)
-        animOpenParentDir = AnimationUtils.loadLayoutAnimation(this, R.anim.anim_open_parent_dir)
+        dlAnimator = DLAnimator()
 
         // $$$$$$$$$$$$$$$$$$$$$$   Реакция на нажатие системной кнопки BACK   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         mainBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -209,7 +194,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             binding.progressBar.isVisible = true
             enableSpecialMode()
             initializingRecyclerView()
-            goToDir(animOpenNewDir)
+            goToDir(dlAnimator.animOpenNewDir)
         }
         deleteOldAlarm(startDay)
 
@@ -335,7 +320,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             if (getSpecialMode() != SpecialMode.DELETE && getSpecialMode() != SpecialMode.RESTORE) {
                 if (getIdCurrentDir() != 0L) {
                     mainViewModel.idDir = 0L
-                    goToDir(animOpenParentDir)
+                    goToDir(dlAnimator.animOpenParentDir)
                 }
             }
         }
@@ -385,7 +370,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         // Потеря фокуса контекст.меню приводит к скрытию меню
         contextMenuFormatBinding.llContextMenuFormat.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
             if (!hasFocus) {
-                AppHelper.animationHideAlpha(v!!, 500)
+                dlAnimator.animationHideAlpha(v!!, 500)
                 cancelCurrentHolder()
                 mainBackPressedCallback.isEnabled = true
                 floatingBarBackPressedCallback.isEnabled = false
@@ -420,7 +405,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         // Потеря фокуса контекст.меню приводит к скрытию меню
         contextMenuMoveBinding.llContextMenuMove.setOnFocusChangeListener{ v: View?, hasFocus: Boolean ->
             if (!hasFocus) {
-                AppHelper.animationHideAlpha(v!!, 500)
+                dlAnimator.animationHideAlpha(v!!, 500)
                 cancelCurrentHolder()
                 mainBackPressedCallback.isEnabled = true
                 floatingBarBackPressedCallback.isEnabled = false
@@ -448,7 +433,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         isNoSleepMode = true
         switchNoSleepMode(true)    // В активити включаем keepScreenOn
         topToolbarBinding.ivEye.isVisible = true
-        topToolbarBinding.ivEye.startAnimation(animationEye)             // Анимация иконки
+        topToolbarBinding.ivEye.startAnimation(dlAnimator.animationEye)             // Анимация иконки
         // Маргание иконки каждые 10 секунд
         eyeJob = lifecycleScope.launch {
             eyeAnimation()
@@ -464,7 +449,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     // Анимация глаза
     private suspend fun eyeAnimation() {
         delay(EYE_ANIMATION_DELEY)
-        topToolbarBinding.ivEye.startAnimation(animationEye)             // Анимация иконки
+        topToolbarBinding.ivEye.startAnimation(dlAnimator.animationEye)             // Анимация иконки
         eyeAnimation()                                                      // Рекурсия
     }
 
@@ -494,7 +479,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     override fun enableSpecialMode(mode: SpecialMode) {
         mainViewModel.specialMode = mode
         enableSpecialMode()
-        goToDir(animOpenNewDir)
+        goToDir(dlAnimator.animOpenNewDir)
     }
 
     private fun enableSelectAllButtons (mode: SpecialMode, records: List<ListRecord>) {
@@ -547,19 +532,19 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 modesToolbarBinding.ivBarModes3.isVisible = false
                 modesToolbarBinding.ivBarModes2.setImageResource(R.drawable.ic_move_mode_2)
                 modesToolbarBinding.ivBarModes1.setImageResource(R.drawable.ic_move_mode_1)
-                modesToolbarBinding.ivBarModes1.startAnimation(animationMoveMode)               // Анимация
+                modesToolbarBinding.ivBarModes1.startAnimation(dlAnimator.animationMoveMode)               // Анимация
             }
             SpecialMode.DELETE -> {
                 modesToolbarBinding.ivBarModes3.isVisible = false
                 modesToolbarBinding.ivBarModes2.setImageResource(R.drawable.ic_basket)
                 modesToolbarBinding.ivBarModes1.setImageResource(R.drawable.ic_arrow_red)
-                modesToolbarBinding.ivBarModes1.startAnimation(animationDeleteMode)             // Анимация
+                modesToolbarBinding.ivBarModes1.startAnimation(dlAnimator.animationDeleteMode)             // Анимация
             }
             SpecialMode.RESTORE -> {
                 modesToolbarBinding.ivBarModes3.isVisible = false
                 modesToolbarBinding.ivBarModes2.setImageResource(R.drawable.ic_basket)
                 modesToolbarBinding.ivBarModes1.setImageResource(R.drawable.ic_arrow_blue)
-                modesToolbarBinding.ivBarModes1.startAnimation(animationRestoreMode)            // Анимация
+                modesToolbarBinding.ivBarModes1.startAnimation(dlAnimator.animationRestoreMode)            // Анимация
             }
             SpecialMode.ARCHIVE -> {
                 modesToolbarBinding.ivBarModes3.isVisible = true
@@ -577,11 +562,11 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     // Анимация Архива
     private suspend fun archiveModeAnimation() {
         delay(ANIMATION_DELEY)
-        modesToolbarBinding.ivBarModes2.startAnimation(animationArchiveMode)            // Анимация
+        modesToolbarBinding.ivBarModes2.startAnimation(dlAnimator.animationArchiveMode)            // Анимация
         delay(ANIMATION_DELEY)
-        modesToolbarBinding.ivBarModes3.startAnimation(animationArchiveMode)            // Анимация
+        modesToolbarBinding.ivBarModes3.startAnimation(dlAnimator.animationArchiveMode)            // Анимация
         delay(ANIMATION_DELEY)
-        modesToolbarBinding.ivBarModes1.startAnimation(animationArchiveMode)            // Анимация
+        modesToolbarBinding.ivBarModes1.startAnimation(dlAnimator.animationArchiveMode)            // Анимация
         archiveModeAnimation()                                                              // Рекурсия
     }
 
@@ -652,19 +637,19 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     fun goToNormalMode() {
         mainViewModel.specialMode = SpecialMode.NORMAL
         enableSpecialMode()
-        goToDir(animOpenNewDir)
+        goToDir(dlAnimator.animOpenNewDir)
     }
 
     private fun goToParentDir() {
         mainViewModel.getParentDirId(getIdCurrentDir()) { ids ->
             mainViewModel.idDir = ids[0]
-            goToDir(animOpenParentDir)
+            goToDir(dlAnimator.animOpenParentDir)
         }
     }
 
     override fun goToChildDir(id: Long) {
         mainViewModel.idDir = id
-        goToDir(animOpenChildDir)
+        goToDir(dlAnimator.animOpenChildDir)
     }
 
     private fun goToDir(animationController: LayoutAnimationController?) {
@@ -934,7 +919,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             ScrollState.END -> {            // Конец списка
                 this.scrollState = scrollState
                 binding.ivBtnScroll.isVisible = false
-                AppHelper.animationShowAlpha(binding.tvZoom, 1000)// Анимация появления tvZOOM
+                dlAnimator.animationShowAlpha(binding.tvZoom, 1000)// Анимация появления tvZOOM
             }
         }
         scrollJob.cancel()

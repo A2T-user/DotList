@@ -22,7 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import com.a2t.myapplication.App
+import com.a2t.myapplication.common.App
 import com.a2t.myapplication.R
 import com.a2t.myapplication.main.ui.NotificationWorker
 import com.a2t.myapplication.databinding.ButtonAlarmBinding

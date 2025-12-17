@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -16,8 +15,9 @@ import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
-import com.a2t.myapplication.App
+import com.a2t.myapplication.common.App
 import com.a2t.myapplication.R
+import com.a2t.myapplication.common.model.DLAnimator
 import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.ui.activity.MainActivity
 import com.a2t.myapplication.main.ui.activity.model.SpecialMode
@@ -117,9 +117,7 @@ class MainAdapter(
                 }
 
                 holder.ivBtnDel.setOnClickListener {            // Удалить запись
-                    holder.llForeground.startAnimation(
-                        AnimationUtils.loadAnimation(App.appContext, R.anim.del_holder)
-                    ) // Анимация удаления
+                    holder.llForeground.startAnimation(DLAnimator().animDelHolder) // Анимация удаления
                     mac.deleteRecords(arrayListOf(item))
                 }
 

@@ -69,6 +69,13 @@ class MainMenuFragment: Fragment() {
             email.putExtra(Intent.EXTRA_SUBJECT, context.resources.getString(R.string.app_name))
             context.startActivity(Intent.createChooser(email, context.resources.getString(R.string.mail)))
         }
+
+        binding.tvLike.setOnClickListener {
+            val ma = requireActivity() as MainActivity
+            ma.fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
+                .add(R.id.main_layout, LikeFragment())
+                .addToBackStack("likeFragment").commit()
+        }
     }
 
 

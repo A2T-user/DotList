@@ -2,7 +2,7 @@ package com.a2t.myapplication.main.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.a2t.myapplication.App
+import com.a2t.myapplication.common.App
 import com.a2t.myapplication.main.ui.activity.model.SpecialMode
 import com.a2t.myapplication.main.domain.api.MainInteractor
 import com.a2t.myapplication.main.domain.model.ListRecord

@@ -1,4 +1,4 @@
-package com.a2t.myapplication
+package com.a2t.myapplication.common
 
 import android.app.Application
 import android.content.Context
@@ -8,12 +8,12 @@ import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.room.Room
+import com.a2t.myapplication.common.model.AppSettings
 import com.a2t.myapplication.di.dataModule
 import com.a2t.myapplication.di.interactorModule
 import com.a2t.myapplication.di.repositoryModule
 import com.a2t.myapplication.di.viewModelModule
 import com.a2t.myapplication.main.data.db.AppDatabase
-import com.a2t.myapplication.main.ui.fragments.models.AppSettings
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
