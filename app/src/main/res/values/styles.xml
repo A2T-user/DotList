@@ -297,10 +297,23 @@
     </style>
 
     <style name="TVMainMenu">
-        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginHorizontal">10dp</item>
         <item name="android:paddingVertical">8dp</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="TVLikeFragment">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginHorizontal">10dp</item>
+        <item name="android:paddingVertical">16dp</item>
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">20sp</item>

@@ -15,7 +15,9 @@ class SettingsFragment : Fragment() {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var app: App                 //= App.appContext as App
+    private lateinit var app: App
+    private lateinit var ma: MainActivity
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -27,7 +29,8 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        app = requireContext().applicationContext as App
+        app = App.appContext as App
+        ma = requireActivity() as MainActivity
 
         installNewSettings(App.appSettings)
 
@@ -103,7 +106,7 @@ class SettingsFragment : Fragment() {
             binding.leftHand.alpha = 0.3f
             App.appSettings.isLeftHandControl = false
             app.saveSettings()
-            (requireActivity() as MainActivity).installHandControl()
+            ma.installHandControl()
         }
         // левая
         binding.leftHand.setOnClickListener {
@@ -111,7 +114,7 @@ class SettingsFragment : Fragment() {
             binding.rightHand.alpha = 0.3f
             App.appSettings.isLeftHandControl = true
             app.saveSettings()
-            (requireActivity() as MainActivity).installHandControl()
+            ma.installHandControl()
         }
     }
 
@@ -155,7 +158,7 @@ class SettingsFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = false
+        ma.mainBackPressedCallback.isEnabled = false
     }
 
     override fun onResume() {
@@ -174,7 +177,7 @@ class SettingsFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = true
+        ma.mainBackPressedCallback.isEnabled = true
     }
 
     override fun onDestroyView() {

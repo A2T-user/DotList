@@ -1,7 +1,10 @@
 package com.a2t.myapplication.common.model
 
+import android.animation.Animator
+import android.animation.AnimatorInflater
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
 import com.a2t.myapplication.R
 import com.a2t.myapplication.common.App
 
@@ -40,6 +43,35 @@ class DLAnimator {
                 view.alpha = 1f
             }
             .start()
+    }
+
+    // Анимация переворота иконки вокруг Y
+    fun flipPicture(icon: ImageView, titl: Int) {
+        try {
+            icon.setCameraDistance(10000f)
+            val flipAnimator1 =
+                AnimatorInflater.loadAnimator(App.appContext, R.animator.flip_1)
+            flipAnimator1.setTarget(icon)
+            flipAnimator1.addListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator) {}
+                override fun onAnimationEnd(animation: Animator) {
+                    // Сменить картинку
+                    icon.setImageResource(titl)
+                    val flipAnimator2 = AnimatorInflater.loadAnimator(
+                        App.appContext,
+                        R.animator.flip_2
+                    )
+                    flipAnimator2.setTarget(icon)
+                    flipAnimator2.start()
+                }
+
+                override fun onAnimationCancel(animation: Animator) {}
+                override fun onAnimationRepeat(animation: Animator) {}
+            })
+            flipAnimator1.start()
+        } catch (_: Exception) {
+            icon.setImageResource(titl)
+        }
     }
 
 }

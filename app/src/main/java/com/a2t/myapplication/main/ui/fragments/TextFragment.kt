@@ -34,6 +34,9 @@ class TextFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        ma = requireActivity() as MainActivity
+
         savedInstanceState?.let {
             mainViewModel.textFragmentMode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 it.getParcelable("mode", TextFragmentMode::class.java)
@@ -42,7 +45,7 @@ class TextFragment : Fragment() {
             }
             mainViewModel.idCurrentDir = it.getLong("idCurrentDir")
             mainViewModel.mainRecords.clear()
-            mainViewModel.mainRecords.addAll((requireActivity() as MainActivity).getRecords())
+            mainViewModel.mainRecords.addAll(ma.getRecords())
         }
 
         mode = mainViewModel.textFragmentMode
@@ -55,8 +58,6 @@ class TextFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        ma = requireActivity() as MainActivity
 
         savedInstanceState?.let {
             binding.etText.setText(it.getString("text"))
@@ -74,7 +75,7 @@ class TextFragment : Fragment() {
             }
         } else {
             Toast.makeText(requireContext(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
-            requireActivity().supportFragmentManager.popBackStack()
+            ma.supportFragmentManager.popBackStack()
         }
 
         // Кнопка Help
@@ -116,7 +117,7 @@ class TextFragment : Fragment() {
         mainViewModel.mainRecords.clear()
         mainViewModel.textFragmentMode = null
         mainViewModel.idCurrentDir = 0
-        requireActivity().supportFragmentManager.popBackStack()
+        ma.supportFragmentManager.popBackStack()
     }
 
     private fun showConvertMode() {
@@ -158,7 +159,7 @@ class TextFragment : Fragment() {
             intent.putExtra(Intent.EXTRA_TEXT, string)
             val chooserIntent = Intent.createChooser(intent, getString(R.string.mail_service))
             startActivity(chooserIntent)
-            requireActivity().supportFragmentManager.popBackStack()
+            ma.supportFragmentManager.popBackStack()
         }
     }
 
@@ -240,17 +241,17 @@ class TextFragment : Fragment() {
     private fun openDescriptionActivity(currentTab: Int) {
         val intent = Intent(requireContext(), DescriptionActivity::class.java)
         intent.putExtra(CURRENT_TAB, currentTab)
-        requireActivity().startActivity(intent)
+        ma.startActivity(intent)
     }
 
     override fun onStart() {
         super.onStart()
-        (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = false
+        ma.mainBackPressedCallback.isEnabled = false
     }
 
     override fun onStop() {
         super.onStop()
-        (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = true
+        ma.mainBackPressedCallback.isEnabled = true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
