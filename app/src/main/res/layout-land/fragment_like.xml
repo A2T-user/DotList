@@ -20,8 +20,8 @@
 
         <ImageView
             android:id="@+id/iv_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="256dp"
+            android:layout_height="256dp"
             android:src="@drawable/ic_mylist"
             android:contentDescription="@string/qr_description"/>
 
@@ -45,19 +45,19 @@
             android:id="@+id/tv_like"
             android:text="@string/your_feedback"
             app:drawableStartCompat="@drawable/ic_star"
-            style="@style/TVMainMenu"/>
+            style="@style/TVLikeFragment"/>
 
         <TextView
             android:id="@+id/tv_send"
             android:text="@string/for_friends"
             app:drawableStartCompat="@drawable/ic_send"
-            style="@style/TVMainMenu"/>
+            style="@style/TVLikeFragment"/>
 
         <TextView
             android:id="@+id/tv_qr"
             android:text="@string/for_friends2"
             app:drawableStartCompat="@drawable/ic_uri_app_qr"
-            style="@style/TVMainMenu"/>
+            style="@style/TVLikeFragment"/>
 
     </LinearLayout>
 

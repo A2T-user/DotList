@@ -1,5 +1,6 @@
 package com.a2t.myapplication.main.ui.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
@@ -20,6 +21,8 @@ import androidx.core.net.toUri
 class MainMenuFragment: Fragment() {
     private var _binding: FragmentMainMenuBinding? = null
     private val binding get() = _binding!!
+    private lateinit var  context: Context
+    private lateinit var ma: MainActivity
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,19 +35,21 @@ class MainMenuFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        context = requireContext()
+        ma = requireActivity() as MainActivity
         var version: String
         try {
             val pInfo: PackageInfo =
-                requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
+                context.packageManager.getPackageInfo(context.packageName, 0)
             version = pInfo.versionName.toString()
-        } catch (e: PackageManager.NameNotFoundException) {
+        } catch (_: PackageManager.NameNotFoundException) {
             version = ""
         }
         binding.tvVersion.text = getString(R.string.version, version)
 
         binding.tvDescription.setOnClickListener { v ->
             AppHelper.requestFocusInTouch(v)
-            val intent = Intent(requireContext(), DescriptionActivity::class.java)
+            val intent = Intent(context, DescriptionActivity::class.java)
             startActivity(intent)
         }
 
@@ -55,23 +60,28 @@ class MainMenuFragment: Fragment() {
                 .addToBackStack("settingsFragment").commit()
         }
 
-        binding.tvPrivacyPolicy.setOnClickListener {
+        binding.tvPrivacyPolicy.setOnClickListener { v ->
+            AppHelper.requestFocusInTouch(v)
             val locale = Locale.getDefault()
-            val uriPP = if (locale.language == "ru") "https://dot-list.tb.ru/dot_list" else "https://dot-list-en.tb.ru"
+            val uriPP = if (locale.language == "ru") {
+                context.resources.getString(R.string.privacy_policy_ru)
+            } else {
+                context.resources.getString(R.string.privacy_policy_en )
+            }
             val browserIntent = Intent(Intent.ACTION_VIEW, uriPP.toUri())
             startActivity(browserIntent)
         }
 
-        binding.tvFeedback.setOnClickListener {
-            val context = requireContext()
+        binding.tvFeedback.setOnClickListener { v ->
+            AppHelper.requestFocusInTouch(v)
             val email = Intent(Intent.ACTION_SENDTO, "mailto:".toUri())
-            email.putExtra(Intent.EXTRA_EMAIL, arrayOf(context.resources.getString(R.string.e_mail)))
+            email.putExtra(Intent.EXTRA_EMAIL, arrayOf(context.resources.getString(R.string.support_email)))
             email.putExtra(Intent.EXTRA_SUBJECT, context.resources.getString(R.string.app_name))
             context.startActivity(Intent.createChooser(email, context.resources.getString(R.string.mail)))
         }
 
-        binding.tvLike.setOnClickListener {
-            val ma = requireActivity() as MainActivity
+        binding.tvLike.setOnClickListener { v ->
+            AppHelper.requestFocusInTouch(v)
             ma.fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
                 .add(R.id.main_layout, LikeFragment())
                 .addToBackStack("likeFragment").commit()
@@ -81,7 +91,7 @@ class MainMenuFragment: Fragment() {
 
     override fun onStart() {
         super.onStart()
-        (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = false
+        ma.mainBackPressedCallback.isEnabled = false
     }
 
     override fun onResume() {
@@ -100,7 +110,7 @@ class MainMenuFragment: Fragment() {
 
     override fun onStop() {
         super.onStop()
-        (requireActivity() as MainActivity).mainBackPressedCallback.isEnabled = true
+        ma.mainBackPressedCallback.isEnabled = true
     }
 
     override fun onDestroyView() {

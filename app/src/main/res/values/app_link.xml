@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_link" translatable="false">https://dot-list.tb.ru/dot_list</string> <!-- Ссылка на страницй приложения -->
+    <string name="app_reviews_link" translatable="false">https://dot-list-en.tb.ru</string> <!-- Ссылка на страницу с отзывами о приложении -->
+    <string name="support_email" translatable="false">dot_list_a2t@mail.ru</string> <!-- Ссылка на страницй приложения -->
+    <string name="privacy_policy_ru" translatable="false">https://dot-list.tb.ru/dot_list</string> <!-- Ссылка на политику конфиденциальности русский-->
+    <string name="privacy_policy_en" translatable="false">https://dot-list.tb.ru/dot_list</string> <!-- Ссылка на политику конфиденциальности английский-->
+</resources>
