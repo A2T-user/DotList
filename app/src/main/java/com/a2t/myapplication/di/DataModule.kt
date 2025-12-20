@@ -3,6 +3,7 @@ package com.a2t.myapplication.di
 import android.content.Context
 import androidx.room.Room
 import com.a2t.myapplication.main.data.db.AppDatabase
+import com.a2t.myapplication.main.data.db.MIGRATION_2_3
 import com.a2t.myapplication.main.data.db.RecordDBConverter
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -16,7 +17,7 @@ val dataModule = module {
 
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
-            .fallbackToDestructiveMigration()
+            .addMigrations(MIGRATION_2_3)
             .build()
     }
 
