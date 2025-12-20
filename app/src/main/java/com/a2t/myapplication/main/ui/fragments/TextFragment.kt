@@ -219,6 +219,7 @@ class TextFragment : Fragment() {
             null,
             isArchive = false,
             isDelete = false,
+            null,
             isFull = false,
             isAllCheck = false,
             isNew = false,

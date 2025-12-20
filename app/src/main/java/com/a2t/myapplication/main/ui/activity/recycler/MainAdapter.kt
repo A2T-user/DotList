@@ -332,7 +332,7 @@ class MainAdapter(
                     val record = ListRecord(
                         0, mac.getIdCurrentDir(), false, maxNpp + 1, false,
                         "", "", 0, 0, 0, 0,
-                        null, null, null, isArchive = false, isDelete = false, isFull = false,
+                        null, null, null, isArchive = false, isDelete = false, null, isFull = false,
                         isAllCheck = false, true, em, false
                     )
                     if (em) isKeyboardON = true
