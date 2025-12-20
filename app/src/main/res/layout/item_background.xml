@@ -65,6 +65,12 @@
             android:src="@drawable/ic_dir_on"
             tools:ignore="contentDescription"/>
 
+        <ImageView
+            android:id="@+id/iv_btn_image_plus"
+            style="@style/BackgroundBtnStyle"
+            android:src="@drawable/ic_image_plus"
+            tools:ignore="contentDescription"/>
+
     </LinearLayout>
 
 </LinearLayout>
