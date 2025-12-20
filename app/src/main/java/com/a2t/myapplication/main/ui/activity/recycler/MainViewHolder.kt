@@ -54,14 +54,18 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     val ivBtnEdit: ImageView = itemView.findViewById(R.id.iv_btn_edit)
     val ivBtnBell: ImageView = itemView.findViewById(R.id.iv_btn_bell)
     val ivBtnDir: ImageView = itemView.findViewById(R.id.iv_btn_dir)
+    val ivBtnImagePlus: ImageView = itemView.findViewById(R.id.iv_btn_image_plus)
     // Слой для выделения записей с checkbox = true
     private val vLayerCheck: View = itemView.findViewById(R.id.v_layer_check)
 
     fun bind(item: ListRecord) {
         id = item.id
         //background
+        // Кнопка Редактирование
         ivBtnEdit.isVisible = item.isDir
+        // Кнопка Напоминания
         var res = if (item.alarmTime == null) R.drawable.ic_bell_plus else R.drawable.ic_bell_edit
+        // Кнопка Папка
         ivBtnBell.setImageResource(res)
         if (item.isFull) {
             ivBtnDir.isVisible = false
@@ -70,31 +74,39 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             res = if (item.isDir) R.drawable.ic_dir_off else R.drawable.ic_dir_on
             ivBtnDir.setImageResource(res)
         }
+        if (!item.mediaFile.isNullOrEmpty()) ivBtnDir.isVisible = false
+
+        // Кнопка Присоединить медиафайл
+        ivBtnImagePlus.isVisible = !item.isDir && item.mediaFile.isNullOrEmpty()
+
         //foreground
-        if (item.isDir) {
+        // Иконка папки/картинки
+        val resource = when {
+            !item.isFull -> R.drawable.ic_dir_empty
+            item.isAllCheck -> R.drawable.ic_dir_check
+            else -> R.drawable.ic_dir_full
+        }
+        if (item.isDir || !item.mediaFile.isNullOrEmpty()) {
             ivDirIcon.visibility = View.VISIBLE
-            res = if (!item.isFull) {
-                R.drawable.ic_dir_empty
-            } else if (item.isAllCheck) {
-                R.drawable.ic_dir_check
-            } else {
-                R.drawable.ic_dir_full
-            }
-            ivDirIcon.setImageResource(res)
+            ivDirIcon.setImageResource(if (item.isDir) resource else R.drawable.ic_image)
         } else {
             ivDirIcon.visibility = View.INVISIBLE
         }
+        // Чекбокс
         checkbox.isChecked = item.isChecked
+        // Подсвечивает строки с установленным чекбокс
         if (item.isChecked) {
             vLayerCheck.visibility = View.VISIBLE
         } else {
             vLayerCheck.visibility = View.INVISIBLE
         }
+        // Зачеркивает текст осн.поля строк с установленным чекбокс
         if (item.isChecked && App.appSettings.crossedOutOn) {
             aetRecord.paintFlags = aetRecord.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG           // Зачеркнуть
         } else {
             aetRecord.paintFlags = aetRecord.paintFlags and (Paint.STRIKE_THRU_TEXT_FLAG.inv())  // Снять зачеркивание
         }
+        // Поле Дата последнего редактирования
         tvDateTime.text = if (item.lastEditTime != 0L) AlarmHelper.convertDateTime(item.lastEditTime) else ""
 
         //Установка размера шрифта
@@ -102,15 +114,18 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             aetRecord.textSize = size
             aetNote.textSize = 0.75f * size
         }
-
+        // Заполнение полей основного и прмечания
         aetRecord.setText(item.record)
         aetNote.setText(item.note)
         aetNote.isVisible = item.note.isNotEmpty()
+        // Установка цвета/стиля шрифта
         changeTextColor(item.textColor)
         changeTextStyle(item.textStyle)
         changeTextUnder(item.textUnder)
+        // Установка колокольчика
         changeBellType(item)
         changeBellIcon()
+        // Заполнение поля Время напоминания
         item.alarmTime?.let {
             tvTimeBellFull.text = DateFormat.format("EEE, dd.M.yy HH:mm", it)
             .toString()
@@ -161,6 +176,7 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         }
     }
 
+    // Определение типа иконки колокольчика
     private fun changeBellType(item: ListRecord) {
         alarmJob?.cancel()
         endDayJob?.cancel()
@@ -195,6 +211,7 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         }
     }
 
+    // Установка иконки колокольчика
     private fun changeBellIcon() {
         when(bellType) {
             1 -> {
