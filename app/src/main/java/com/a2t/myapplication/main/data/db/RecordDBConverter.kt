@@ -20,7 +20,8 @@ class RecordDBConverter {
             r.alarmText,
             r.alarmId?.toString(),
             r.isArchive,
-            r.isDelete
+            r.isDelete,
+            r.mediaFile
         )
     }
     fun map(r: ListRecordEntity): ListRecord {
@@ -41,6 +42,7 @@ class RecordDBConverter {
             r.alarmId?.let { UUID.fromString(it) },
             r.isArchive,
             r.isDelete,
+            r.mediaFile,
             isFull = false,
             isAllCheck = false,
             isNew = false,
