@@ -54,6 +54,12 @@
             tools:ignore="contentDescription"/>
 
         <ImageView
+            android:id="@+id/iv_btn_image_plus"
+            style="@style/BackgroundBtnStyle"
+            android:src="@drawable/ic_image_plus"
+            tools:ignore="contentDescription"/>
+
+        <ImageView
             android:id="@+id/iv_btn_bell"
             style="@style/BackgroundBtnStyle"
             android:src="@drawable/ic_bell_plus"
@@ -63,12 +69,6 @@
             android:id="@+id/iv_btn_dir"
             style="@style/BackgroundBtnStyle"
             android:src="@drawable/ic_dir_on"
-            tools:ignore="contentDescription"/>
-
-        <ImageView
-            android:id="@+id/iv_btn_image_plus"
-            style="@style/BackgroundBtnStyle"
-            android:src="@drawable/ic_image_plus"
             tools:ignore="contentDescription"/>
 
     </LinearLayout>
