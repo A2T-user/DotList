@@ -328,4 +328,27 @@
         <item name="android:layout_weight">1</item>
         <item name="android:src">@drawable/ic_point</item>
     </style>
+
+    <style name="BTNSelectMediaFile">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/btn_rect_blue</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:textColor">?attr/colorMainText</item>
+        <item name="android:paddingHorizontal">4dp</item>
+        <item name="android:layout_marginHorizontal">4dp</item>
+    </style>
+
+    <style name="TVMenuMediaFile">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingStart">30dp</item>
+        <item name="android:paddingVertical">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+    </style>
 </resources>

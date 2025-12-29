@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.GestureDetector
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -139,7 +138,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         // Определяем ширину экрана, пределы смещения холдера вдоль оси Х вправо и влево
         widthScreen = resources.displayMetrics.widthPixels
         heightScreen = resources.displayMetrics.heightPixels
-        val dpSize = this.resources.displayMetrics.density              // Размер dp
+        val dpSize = resources.displayMetrics.density              // Размер dp
         heighContextMenu = (58 * dpSize).toInt()                        // Высота контекстного меню в px
         App.getTextSizeLiveData().observe(this) { size ->
             sizeGrandText = size
@@ -271,6 +270,7 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ГЛАВНАЯ ПАНЕЛЬ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         // Кнопка МЕНЮ
         topToolbarBinding.btnMenu.setOnClickListener {
+            requestMenuFocus()
             fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
                 .add(R.id.container_menu, MainMenuFragment())
                 .addToBackStack("MainMenuFragment").commit()
@@ -615,7 +615,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
 
     // Вызывается из адаптера для возврата Foreground в исходное положение
     override fun returnHolderToOriginalState(viewHolder: RecyclerView.ViewHolder) {
-        Log.e ("МОЁ", "returnHolderToOriginalState")
         val foregroundView = (viewHolder as MainViewHolder).llForeground
         foregroundView.translationX = 0f
         foregroundView.translationY = 0f

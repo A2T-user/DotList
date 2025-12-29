@@ -21,7 +21,7 @@ class CustomizerRecyclerView(
 ) {
     companion object {
         const val K_MAX_SHIFT_RIGHT = 0.2f
-        const val K_MAX_SHIFT_LEFT = -0.3f
+        const val K_MAX_SHIFT_LEFT = -0.35f
     }
 
     fun setupRecyclerView() {

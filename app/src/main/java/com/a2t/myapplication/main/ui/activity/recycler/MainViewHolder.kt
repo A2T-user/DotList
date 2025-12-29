@@ -88,7 +88,7 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         }
         if (item.isDir || !item.mediaFile.isNullOrEmpty()) {
             ivDirIcon.visibility = View.VISIBLE
-            ivDirIcon.setImageResource(if (item.isDir) resource else R.drawable.ic_image)
+            ivDirIcon.setImageResource(if (item.isDir) resource else R.drawable.ic_media)
         } else {
             ivDirIcon.visibility = View.INVISIBLE
         }

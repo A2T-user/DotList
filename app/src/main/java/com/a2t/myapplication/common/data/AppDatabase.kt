@@ -1,4 +1,4 @@
-package com.a2t.myapplication.main.data.db
+package com.a2t.myapplication.common.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
@@ -7,6 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.a2t.myapplication.main.data.db.dao.AlarmDao
 import com.a2t.myapplication.main.data.db.dao.MainRecordDao
 import com.a2t.myapplication.main.data.db.entity.ListRecordEntity
+import com.a2t.myapplication.mediafile.data.dao.MediaFileDao
 
 // Миграция от версии 2 к версии 3: добавляем поле mediaFile
 val MIGRATION_2_3 = object : Migration(2, 3) {
@@ -21,4 +22,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun mainRecordDao(): MainRecordDao
 
     abstract fun alarmDao(): AlarmDao
+
+    abstract fun mediaFileDao(): MediaFileDao
 }
