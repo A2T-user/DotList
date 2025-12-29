@@ -7,13 +7,11 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.room.Room
 import com.a2t.myapplication.common.model.AppSettings
 import com.a2t.myapplication.di.dataModule
 import com.a2t.myapplication.di.interactorModule
 import com.a2t.myapplication.di.repositoryModule
 import com.a2t.myapplication.di.viewModelModule
-import com.a2t.myapplication.main.data.db.AppDatabase
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -42,15 +40,16 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        startKoin {
+            androidContext(this@App)
+            modules(dataModule, repositoryModule, interactorModule, viewModelModule)
+        }
+
         pref = getSharedPreferences("list_preferences", MODE_PRIVATE)
         getSettings()
         appSettings.launchCounter++
         pref.edit { putInt(LAUNCH_COUNTER, appSettings.launchCounter) }
         switchTheme()
-        startKoin {
-            androidContext(this@App)
-            modules(dataModule, repositoryModule, interactorModule, viewModelModule)
-        }
         appContext = this@App
     }
 

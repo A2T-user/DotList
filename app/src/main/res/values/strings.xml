@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">\u2022list</string>
     <string name="version">\u2022list version %1$s</string>
-    <string name="mail">Выберите почтовый сервис:</string>
+    <string name="mail">Select a mail service:</string>
     <!-- ГЛАВНАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
-    <string name="menu_desc">Главное меню приложения</string>
+    <string name="menu_desc">The main menu of the application</string>
 
     <!-- МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
     <string name="root_dir">R:</string>
@@ -122,10 +122,24 @@
     <string name="text_err">Reminder text cannot be empty</string>
     <string name="notifi_title">You asked to remind:</string>
     <string name="ban_notifications">You will not receive reminder notifications</string>
-    
+
     <string name="first_launch_message">Familiarize yourself with all app features.\nLater, you can open the app description in the menu on the top toolbar.\nOpen description?</string>
     <string name="first_launch_positive_button">Yes</string>
     <string name="first_launch_neutral_button">Not now</string>
 
     <string name="zoom">ZOOM</string>
+
+    <!-- ВЫБОР МЕДИАФАЙЛА -->
+    <string name="all">All</string>
+    <string name="photo">Photos</string>
+    <string name="video">Videos</string>
+    <string name="select">Select</string>
+    <string name="out_of_memory">Not enough space in internal storage</string>
+    <string name="copy_error">File copy error</string>
+    <string name="unexpected_error">Unexpected error while copying</string>
+    <string name="access_media_denied">Access to media files is denied. Please allow it in the app settings.</string>
+    <string name="access_camera_denied">Access to camera denied. Please allow it in the app settings.</string>
+    <string name="photo_hint">photo</string>
+    <string name="video_hint">video</string>
+    <string name="today">today</string>
 </resources>

@@ -58,7 +58,7 @@ interface MainRecordDao {
     @Query("SELECT * FROM list_table WHERE idDir = :idDir AND isDelete = 1")
     fun selectionSubordinateRecordsToRestore(idDir: Long): List<ListRecordEntity>
 
-    // Удаление записей с итекшим сроком хранения
+    // Удаление записей с истекшим сроком хранения
     @Query("DELETE FROM list_table WHERE isDelete = 1 AND lastEditTime < :time")
     fun deletingExpiredRecords(time: Long)
 }

@@ -22,6 +22,7 @@ import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.ui.activity.MainActivity
 import com.a2t.myapplication.main.ui.activity.model.SpecialMode
 import com.a2t.myapplication.main.ui.fragments.AlarmFragment
+import com.a2t.myapplication.mediafile.ui.SelectMediaFileFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -139,6 +140,13 @@ class MainAdapter(
                     holder.bind(item)
                     mac.updateRecord(item)
                 }
+                holder.ivBtnImagePlus.setOnClickListener {
+                    mac.requestMenuFocus()
+                    (mac as MainActivity).fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
+                        .add(R.id.main_layout, SelectMediaFileFragment.newInstance(item.id))
+                        .addToBackStack("selectMediaFileFragment").commit()
+                }
+
                 // ############################################## РЕАКЦИЯ ОБЪЕКТОВ FOREGROUND ###################################################
                 holder.llForeground.setOnClickListener {
                     holdersResponseToClick(holder, item)
