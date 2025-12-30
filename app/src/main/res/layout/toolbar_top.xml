@@ -20,7 +20,7 @@
         android:clickable="true"
         android:focusable="true"
         android:src="@drawable/ic_burger"
-        android:paddingHorizontal="2dp" />
+        android:paddingHorizontal="8dp" />
 
     <TextView
         android:id="@+id/pathDir"
