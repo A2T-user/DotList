@@ -401,7 +401,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
                 // Если успешно, удаляем временный файл
                 originalFile.delete()
                 withContext(Dispatchers.Main) {
-                    delay(1000L)  // Задержка для индексации (тестируйте)
+                    delay(500L)  // Задержка для индексации Вроде не нужна, но на старых устр-ах может понадобиться
                     updateRecyclerView()  // Обновляем UI
                 }
             }
