@@ -50,8 +50,8 @@ import com.a2t.myapplication.main.ui.activity.recycler.model.ScrollState
 import com.a2t.myapplication.main.ui.fragments.MainMenuFragment
 import com.a2t.myapplication.main.ui.fragments.ToolbarSideFragment
 import com.a2t.myapplication.main.ui.fragments.ToolbarSideFragment.Companion.SWIPE_THRESHOLD
-import com.a2t.myapplication.utilities.AlarmHelper
-import com.a2t.myapplication.utilities.AppHelper
+import com.a2t.myapplication.common.utilities.AlarmHelper
+import com.a2t.myapplication.common.utilities.AppHelper
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.internal.ViewUtils.dpToPx
 import kotlinx.coroutines.Job

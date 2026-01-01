@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -113,7 +114,30 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
         }
         // Добавление файла с камеры в галерею
         mediaFileViewModel.getResultAddingFileLiveData().observe(viewLifecycleOwner) { uri ->
-            if (uri != null) updateRecyclerView()
+            if (uri != null) {
+                val resolver = requireContext().contentResolver
+                val projection = arrayOf(MediaStore.MediaColumns.DATA)
+                resolver.notifyChange(uri, null)
+                val cursor = resolver.query(uri, projection, null, null, null)
+                cursor?.use { c ->
+                    if (c.moveToFirst()) {
+                        val filePath = c.getString(c.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA))
+                        MediaScannerConnection.scanFile(
+                            requireContext(),
+                            arrayOf(filePath),
+                            null,
+                            object : MediaScannerConnection.OnScanCompletedListener {
+                                override fun onScanCompleted(path: String?, uri: Uri?) {
+                                    requireActivity().runOnUiThread {
+                                        updateRecyclerView()
+                                    }
+                                }
+                            }
+                        )
+                    }
+                }
+                cursor?.close()
+            }
             binding.progressBar.isVisible = false
         }
 

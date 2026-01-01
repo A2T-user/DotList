@@ -1,4 +1,4 @@
-package com.a2t.myapplication.utilities
+package com.a2t.myapplication.common.utilities
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
