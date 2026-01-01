@@ -1,11 +1,16 @@
 package com.a2t.myapplication.mediafile.data.impl
 
+import android.content.ContentResolver
+import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.os.Environment
 import android.os.StatFs
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.util.Log
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.core.net.toUri
 import com.a2t.myapplication.R
@@ -17,11 +22,9 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-class StoragesRepositoryImpl: StoragesRepository {
-    companion object {
-        private val imageFormats = listOf("png", "jpg", "jpeg")
-        private val videoFormats = listOf("mp4", "avi")
-    }
+class StoragesRepositoryImpl(
+    private val contentResolver: ContentResolver
+): StoragesRepository {
 
     // Получение списка имеющихся в общем хранилище медиафайлов
     override fun getAllMediaFiles(type: MediaType): List<MediaItemDto> {
@@ -34,8 +37,7 @@ class StoragesRepositoryImpl: StoragesRepository {
                     context,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     items,
-                    imageFormats
-                    , "I"
+                    "I"
                 )
             }
             MediaType.VIDEO -> { // Получение видео файлов
@@ -43,7 +45,6 @@ class StoragesRepositoryImpl: StoragesRepository {
                     context,
                     MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                     items,
-                    videoFormats,
                     "V"
                 )
             }
@@ -51,14 +52,12 @@ class StoragesRepositoryImpl: StoragesRepository {
                 getMediaFiles(context,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     items,
-                    imageFormats,
                     "I"
                 )
                 getMediaFiles(
                     context,
                     MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                     items,
-                    videoFormats,
                     "V"
                 )
             }
@@ -66,17 +65,18 @@ class StoragesRepositoryImpl: StoragesRepository {
         // Сортировка по дате создания (новые сверху)
         return items.sortedByDescending { it.creationTime }
     }
-
+    // Получение медиа файлов из галереи
     private fun getMediaFiles(
         context: Context,
         contentUri: Uri,
         items: MutableList<MediaItemDto>,
-        allowedFormats: List<String>,
         mediaFileType: String
     ) {
         val projection = arrayOf(
             MediaStore.MediaColumns._ID,
             MediaStore.MediaColumns.DATE_TAKEN,
+            MediaStore.MediaColumns.DATE_MODIFIED,
+            MediaStore.MediaColumns.DATE_ADDED,
             MediaStore.MediaColumns.DATA
         )
 
@@ -90,20 +90,21 @@ class StoragesRepositoryImpl: StoragesRepository {
 
         cursor?.use { c ->
             val idIndex = c.getColumnIndexOrThrow(MediaStore.MediaColumns._ID)
-            val dateIndex = c.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_TAKEN)
+            val dateTakenIndex = c.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_TAKEN)
+            val dateModifiedIndex = c.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_MODIFIED)
+            val dateAddedIndex = c.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
             val dataIndex = c.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
 
             while (c.moveToNext()) {
                 val id = c.getLong(idIndex)
                 val uri = Uri.withAppendedPath(contentUri, id.toString())
-                val creationTime = c.getLong(dateIndex)
+                val creationTime = c.getLong(dateTakenIndex)
+                val modifiedTime = c.getLong(dateModifiedIndex)
+                val addedTime = c.getLong(dateAddedIndex)*1000
+                val maxTime = maxOf(creationTime, modifiedTime, addedTime)
                 val filePath = c.getString(dataIndex)
                 val mediaFileFormat = filePath.substringAfterLast('.', "").lowercase()
-
-                // Скип пустых или поврежденных (если creationTime <= 0) и неподходящих форматов
-                if (mediaFileFormat in allowedFormats && creationTime > 0) {
-                    items.add(MediaItemDto(uri, creationTime, mediaFileFormat, mediaFileType))
-                }
+                items.add(MediaItemDto(uri, maxTime, mediaFileFormat, mediaFileType))
             }
         }
     }
@@ -188,4 +189,63 @@ class StoragesRepositoryImpl: StoragesRepository {
         }
     }
 
+    override suspend fun addPhotoToGallery(file: File): Uri? {
+        return insertMediaFile(
+            file = file,
+            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            mimeTypeStr = "image/jpeg",
+            relativePath = Environment.DIRECTORY_PICTURES,
+            logPrefix = "photo"
+        )
+    }
+
+    override suspend fun addVideoToGallery(file: File): Uri? {
+        return insertMediaFile(
+            file = file,
+            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+            mimeTypeStr = "video/mp4",
+            relativePath = Environment.DIRECTORY_MOVIES,
+            logPrefix = "video"
+        )
+    }
+
+    private fun insertMediaFile(
+        file: File,
+        contentUri: Uri,
+        mimeTypeStr: String,
+        relativePath: String,
+        logPrefix: String
+    ): Uri? {
+        try {
+            val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension.lowercase()) ?: mimeTypeStr
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, file.name)
+                put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
+                put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
+            }
+
+            // Вставка записи в MediaStore и получение URI
+            val uri = contentResolver.insert(contentUri, contentValues) ?: return null  // Если вставка не удалась
+
+            // Копирование файла в MediaStore
+            try {
+                contentResolver.openOutputStream(uri)?.use { outputStream ->
+                    file.inputStream().use { inputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                } ?: return null  // Если не удалось открыть поток
+            } catch (copyException: Exception) {
+                Log.e("MediaRepository", "Error copying file in $logPrefix: ${copyException.message}")
+                // Удалить частично созданную запись, если копирование провалилось
+                contentResolver.delete(uri, null, null)
+                return null
+            }
+
+            file.delete()   // Удаляем исходный файл
+            return uri
+        } catch (e: Exception) {
+            Log.e("MediaRepository", "Error adding $logPrefix to gallery: ${e.message}")
+            return null
+        }
+    }
 }
