@@ -88,7 +88,7 @@
                 android:src="@drawable/ic_video_camera"
                 android:padding="8dp"
                 android:visibility="gone"
-                tools:ignore="contentDescription" />
+                android:contentDescription="@string/video_hint" />
 
             <ImageView
                 android:id="@+id/iv_photo"
@@ -97,7 +97,8 @@
                 android:src="@drawable/ic_photo_camera"
                 android:padding="8dp"
                 android:visibility="visible"
-                tools:ignore="contentDescription" />
+                tools:ignore="contentDescription"
+                android:contentDescription="@string/photo_hint"/>
         </LinearLayout>
 
         <!-- Прогрессбар -->

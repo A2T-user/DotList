@@ -19,6 +19,6 @@ val repositoryModule = module {
     }
 
     single<StoragesRepository> {
-        StoragesRepositoryImpl()
+        StoragesRepositoryImpl(get())
     }
 }

@@ -133,7 +133,7 @@
     <!-- ВЫБОР МЕДИАФАЙЛА -->
     <string name="all">Все</string>
     <string name="photo">Фото</string>
-    <string name="video">Видио</string>
+    <string name="video">Видео</string>
     <string name="select">Выбрать</string>
     <string name="out_of_memory">Недостаточно места во внутреннем хранилище</string>
     <string name="copy_error">Ошибка копирования файла</string>

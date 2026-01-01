@@ -1,5 +1,6 @@
 package com.a2t.myapplication.mediafile.ui.recycler
 
+import android.net.Uri
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
@@ -18,7 +19,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class MediaFileViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-    var observerPosition: Observer<Int>? = null
+    var observerUri: Observer<Uri?>? = null
     // Получаем текущую дату
     val currentDate: LocalDate = LocalDate.now()
     val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yy", Locale.getDefault())
@@ -46,13 +47,12 @@ class MediaFileViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         if (item.creationDate == today) {
             date.text = itemView.context.getString(R.string.today)
         } else {
-            date.setText(item.creationDate)
+            date.text = item.creationDate
         }
     }
 
-    // Меняем отступы фото и выводим галочку в выбранном holder
+    // Меняем отступы фото, цвет фона и выводим галочку в выбранном holder
     fun selectHolder(isSelected: Boolean) {
-        check.isVisible = isSelected
         val backgroundColor: Int
         var marginInDp: Int
         if (isSelected) {
@@ -62,6 +62,7 @@ class MediaFileViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             backgroundColor = ResourcesCompat.getColor(itemView.resources, R.color.transparent, null)
             marginInDp = NORMAL_HOLDER_MARGIN
         }
+        check.isVisible = isSelected
         container.setBackgroundColor(backgroundColor)
         val marginInPx = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
