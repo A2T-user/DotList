@@ -14,7 +14,7 @@ import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.FragmentMainMenuBinding
 import com.a2t.myapplication.description.ui.DescriptionActivity
 import com.a2t.myapplication.main.ui.activity.MainActivity
-import com.a2t.myapplication.utilities.AppHelper
+import com.a2t.myapplication.common.utilities.AppHelper
 import java.util.Locale
 import androidx.core.net.toUri
 

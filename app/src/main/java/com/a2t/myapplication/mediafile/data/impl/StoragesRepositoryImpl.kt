@@ -107,6 +107,7 @@ class StoragesRepositoryImpl(
                 items.add(MediaItemDto(uri, maxTime, mediaFileFormat, mediaFileType))
             }
         }
+        cursor?.close()
     }
 
     // Сохранение медиафайла из общего хранилища во внутреннем

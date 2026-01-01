@@ -44,4 +44,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
+    <ImageView
+        android:id="@+id/iv_download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_download"
+        tools:ignore="contentDescription"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintEnd_toEndOf="@id/iv_image"
+        app:layout_constraintBottom_toBottomOf="@id/iv_image"
+        android:visibility="gone"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

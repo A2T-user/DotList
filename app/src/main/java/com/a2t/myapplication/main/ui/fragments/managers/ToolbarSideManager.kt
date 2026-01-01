@@ -11,7 +11,7 @@ import com.a2t.myapplication.main.ui.activity.model.SpecialMode
 import com.a2t.myapplication.main.ui.fragments.TextFragment
 import com.a2t.myapplication.main.ui.fragments.ToolbarSideFragment
 import com.a2t.myapplication.main.ui.fragments.models.TextFragmentMode
-import com.a2t.myapplication.utilities.AppHelper
+import com.a2t.myapplication.common.utilities.AppHelper
 
 class ToolbarSideManager (
     private val toolbarSideFragment: ToolbarSideFragment,

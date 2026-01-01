@@ -16,7 +16,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.ActivityDescriptionBinding
 import com.a2t.myapplication.databinding.DescriptionContentBinding
-import com.a2t.myapplication.utilities.AppHelper
+import com.a2t.myapplication.common.utilities.AppHelper
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
