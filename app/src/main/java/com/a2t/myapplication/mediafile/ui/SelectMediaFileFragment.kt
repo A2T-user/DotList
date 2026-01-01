@@ -117,7 +117,6 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
             if (uri != null) {
                 val resolver = requireContext().contentResolver
                 val projection = arrayOf(MediaStore.MediaColumns.DATA)
-                resolver.notifyChange(uri, null)
                 val cursor = resolver.query(uri, projection, null, null, null)
                 cursor?.use { c ->
                     if (c.moveToFirst()) {
