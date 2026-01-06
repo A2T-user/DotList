@@ -143,5 +143,8 @@
     <string name="photo_hint">photo</string>
     <string name="video_hint">video</string>
     <string name="today">сегодня</string>
+    <string name="transfer">перенос</string>
+    <string name="copy_file">копия</string>
+    <string name="no_file_selected">Файл не выбран</string>
 
 </resources>

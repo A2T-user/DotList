@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -29,6 +30,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.FragmentSelectMediaFileBinding
 import com.a2t.myapplication.main.ui.activity.MainActivity
+import com.a2t.myapplication.mediafile.data.dto.ErrCode
+import com.a2t.myapplication.mediafile.data.dto.Response
 import com.a2t.myapplication.mediafile.data.model.MediaType
 import com.a2t.myapplication.mediafile.presentation.MediaFileViewModel
 import com.a2t.myapplication.mediafile.ui.recycler.MediaFileAdapter
@@ -112,6 +115,35 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
             binding.tvSelectedType.setText(res)
             requestMediaPermissions()
         }
+        // Сохранение файла во внутреннем хранилище
+        mediaFileViewModel.getResponseLiveData().observe(viewLifecycleOwner) { response ->
+            binding.progressBar.isVisible = true
+            parentFragmentManager.beginTransaction().remove(this@SelectMediaFileFragment).commitAllowingStateLoss() // Закрытие фрагмента
+            when(response) {
+                is Response.Success -> {
+                    val fileName = response.fileName
+                    // Обновляем строку БД
+                    mediaFileViewModel.addMediaFile(idString!!, fileName)
+                    // Обновляем данные в MainActivity
+                    updatingMainActivity(fileName)
+                }
+                is Response.FileExists -> {
+                    val fileName = response.fileName
+                    // Обновляем строку БД
+                    mediaFileViewModel.addMediaFile(idString!!, fileName)
+                    // Обновляем данные в MainActivity
+                    updatingMainActivity(fileName)
+                }
+                is Response.Error -> {
+                    val res = when(response.errCode) {
+                        ErrCode.OUT_OF_MEMORY -> R.string.out_of_memory
+                        ErrCode.COPY_ERROR -> R.string.copy_error
+                        ErrCode.UNEXPECTED_ERROR -> R.string.unexpected_error
+                    }
+                    Toast.makeText(requireContext(), res, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
         // Добавление файла с камеры в галерею
         mediaFileViewModel.getResultAddingFileLiveData().observe(viewLifecycleOwner) { uri ->
             if (uri != null) {
@@ -124,15 +156,12 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
                         MediaScannerConnection.scanFile(
                             requireContext(),
                             arrayOf(filePath),
-                            null,
-                            object : MediaScannerConnection.OnScanCompletedListener {
-                                override fun onScanCompleted(path: String?, uri: Uri?) {
-                                    requireActivity().runOnUiThread {
-                                        updateRecyclerView()
-                                    }
-                                }
+                            null
+                        ) { _, _ ->
+                            requireActivity().runOnUiThread {
+                                updateRecyclerView()
                             }
-                        )
+                        }
                     }
                 }
                 cursor?.close()
@@ -189,6 +218,29 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
         binding.ivVideo.setOnClickListener {
             isVideo = true
             requestCameraPermissions()
+        }
+        binding.tvSelect.setOnClickListener {
+            binding.progressBar.isVisible = true
+            val currentItem = mediaFileViewModel.currentHolderItemLiveData.value
+            if (currentItem != null) {
+
+                mediaFileViewModel.saveImageToPrivateStorage(
+                    currentItem.uri,
+                    currentItem.mediaFileType,
+                    binding.cbTransfer.isChecked
+                )
+            } else {
+                Toast.makeText(requireContext(), R.string.no_file_selected, Toast.LENGTH_SHORT).show()
+            }
+        }
+        // Копирование/перенос
+        binding.cbCopy.setOnClickListener {
+            binding.cbCopy.isChecked = true
+            binding.cbTransfer.isChecked = false
+        }
+        binding.cbTransfer.setOnClickListener {
+            binding.cbCopy.isChecked = false
+            binding.cbTransfer.isChecked = true
         }
     }
 
@@ -343,6 +395,16 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
         mediaFileViewModel.addVideoToGallery(file)
     }
 
+    private fun updatingMainActivity(fileName: String) {
+        // Обновляем данные в MainActivity
+        val records = ma.adapter.records
+        val position = records.indexOfFirst { it.id == idString }
+        // Обновление данных в массиве
+        val item = records[position]
+        item.mediaFile = fileName
+        // Обновление холдера
+        ma.adapter.notifyItemChanged(position)
+    }
 
 
     fun processAndSaveImage(originalFile: File) {

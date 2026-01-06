@@ -11,11 +11,11 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
 import android.webkit.MimeTypeMap
-import android.widget.Toast
 import androidx.core.net.toUri
-import com.a2t.myapplication.R
 import com.a2t.myapplication.common.App
+import com.a2t.myapplication.mediafile.data.dto.ErrCode
 import com.a2t.myapplication.mediafile.data.dto.MediaItemDto
+import com.a2t.myapplication.mediafile.data.dto.Response
 import com.a2t.myapplication.mediafile.data.model.MediaType
 import com.a2t.myapplication.mediafile.domaim.api.StoragesRepository
 import java.io.File
@@ -26,7 +26,7 @@ class StoragesRepositoryImpl(
     private val contentResolver: ContentResolver
 ): StoragesRepository {
 
-    // Получение списка имеющихся в общем хранилище медиафайлов
+    // Получение списка имеющихся в общем хранилище и в загрузках медиафайлов
     override fun getAllMediaFiles(type: MediaType): List<MediaItemDto> {
         val context = App.appContext
         val items = mutableListOf<MediaItemDto>()
@@ -111,48 +111,53 @@ class StoragesRepositoryImpl(
     }
 
     // Сохранение медиафайла из общего хранилища во внутреннем
-    override fun saveImageToPrivateStorage(sourceUri: Uri): String? {
+    override fun saveImageToPrivateStorage(
+        sourceUri: Uri,
+        mediaFileType: String,
+        deleteSourceAfterSave: Boolean): Response {
         val context = App.appContext
-        // Получение оригинального имени файла и извлечение расширения
-        val originalName = getFileName(context, sourceUri)
-        val extension = originalName?.substringAfterLast('.', "")?.takeIf { it.isNotEmpty() } ?: ""
+        val originalName = getFileName(context, sourceUri) ?: return Response.Error(ErrCode.UNEXPECTED_ERROR)  // Если оригинальное имя не получено, вернуть null
 
-        // Генерация имени файла на основе текущей даты и времени, с добавлением расширения
-        val dateTime = System.currentTimeMillis().toString()
-        val fileName = if (extension.isNotEmpty()) {
-            "mediafile_$dateTime.$extension"
-        } else {
-            "mediafile_$dateTime"
+        val prefix = when (mediaFileType) {
+            "I" -> "image_"
+            "V" -> "video_"
+            else -> "mediafile_"
         }
 
+        val fileName = "$prefix$originalName"
         val outputFile = File(context.filesDir, fileName)
-
+        // Проверка, существует ли файл с таким именем
+        if (outputFile.exists()) {
+            return  Response.FileExists(fileName) // Вернуть имя файла, если файл уже существует
+        }
         // Получение размера исходного файла
         val fileSize = getFileSize(context, sourceUri)
         // Проверка доступного места во внутреннем хранилище
         val stat = StatFs(context.filesDir.absolutePath)
         val availableBytes = stat.availableBlocksLong * stat.blockSizeLong
         if (fileSize > availableBytes) {
-            Toast.makeText(context, context.resources.getString(R.string.out_of_memory), Toast.LENGTH_SHORT).show()
-            return null
+            return Response.Error(ErrCode.OUT_OF_MEMORY) // Вернуть код ошибки, если файл неумещается
         }
-
         // Копирование файла с обработкой исключений
         return try {
             context.contentResolver.openInputStream(sourceUri)?.use { inputStream ->
                 FileOutputStream(outputFile).use { outputStream ->
                     inputStream.copyTo(outputStream)
                 }
-                fileName  // Возврат имени файла при успехе
             }
+
+            if (deleteSourceAfterSave) {
+                try {
+                    context.contentResolver.delete(sourceUri, null, null)
+                } catch (_: Exception) {
+                    Log.e("saveImageToPrivateStorage", "Ошибка удаления исходного файла")
+                }
+            }
+            Response.Success(fileName)
         } catch (_: IOException) {
-            // Обработка ошибок ввода-вывода
-            Toast.makeText(context, context.resources.getString(R.string.copy_error), Toast.LENGTH_SHORT).show()
-            null  // Возврат null при ошибке
+            Response.Error(ErrCode.COPY_ERROR)
         } catch (_: Exception) {
-            // Обработка других исключений (например, SecurityException)
-            Toast.makeText(context, context.resources.getString(R.string.unexpected_error), Toast.LENGTH_SHORT).show()
-            null  // Возврат null
+            Response.Error(ErrCode.UNEXPECTED_ERROR)
         }
     }
 
@@ -196,7 +201,6 @@ class StoragesRepositoryImpl(
             contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             mimeTypeStr = "image/jpeg",
             relativePath = Environment.DIRECTORY_PICTURES,
-            logPrefix = "photo"
         )
     }
 
@@ -206,7 +210,6 @@ class StoragesRepositoryImpl(
             contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
             mimeTypeStr = "video/mp4",
             relativePath = Environment.DIRECTORY_MOVIES,
-            logPrefix = "video"
         )
     }
 
@@ -214,8 +217,7 @@ class StoragesRepositoryImpl(
         file: File,
         contentUri: Uri,
         mimeTypeStr: String,
-        relativePath: String,
-        logPrefix: String
+        relativePath: String
     ): Uri? {
         try {
             val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension.lowercase()) ?: mimeTypeStr
@@ -224,7 +226,6 @@ class StoragesRepositoryImpl(
                 put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
                 put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
             }
-
             // Вставка записи в MediaStore и получение URI
             val uri = contentResolver.insert(contentUri, contentValues) ?: return null  // Если вставка не удалась
 
@@ -235,17 +236,14 @@ class StoragesRepositoryImpl(
                         inputStream.copyTo(outputStream)
                     }
                 } ?: return null  // Если не удалось открыть поток
-            } catch (copyException: Exception) {
-                Log.e("MediaRepository", "Error copying file in $logPrefix: ${copyException.message}")
+            } catch (_: Exception) {
                 // Удалить частично созданную запись, если копирование провалилось
                 contentResolver.delete(uri, null, null)
                 return null
             }
-
             file.delete()   // Удаляем исходный файл
             return uri
-        } catch (e: Exception) {
-            Log.e("MediaRepository", "Error adding $logPrefix to gallery: ${e.message}")
+        } catch (_: Exception) {
             return null
         }
     }

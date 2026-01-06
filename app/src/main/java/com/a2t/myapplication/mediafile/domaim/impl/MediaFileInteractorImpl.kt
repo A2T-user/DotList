@@ -2,6 +2,7 @@ package com.a2t.myapplication.mediafile.domaim.impl
 
 import android.net.Uri
 import com.a2t.myapplication.mediafile.data.MediaFileConverter
+import com.a2t.myapplication.mediafile.data.dto.Response
 import com.a2t.myapplication.mediafile.data.model.MediaType
 import com.a2t.myapplication.mediafile.domaim.api.MediaFileDBRepositori
 import com.a2t.myapplication.mediafile.domaim.api.MediaFileInteractor
@@ -21,13 +22,16 @@ class MediaFileInteractorImpl(
         return itemList.map { mediaFileConverter.map(it) }
     }
     // Сохранение медиафайла из общего хранилища во внутреннем и добавление его имени в строку
-    override fun saveImageToPrivateStorage(sourceUri: Uri, idRec: Long) {
-        val name = storagesRepository.saveImageToPrivateStorage(sourceUri)
-        if (name != null) mediaFileDBRepositori.addMediaFile(idRec, name)
+    override fun saveImageToPrivateStorage(sourceUri: Uri, mediaFileType: String, deleteSourceAfterSave: Boolean): Response {
+        return storagesRepository.saveImageToPrivateStorage(sourceUri, mediaFileType, deleteSourceAfterSave)
     }
     // Получение URI файла во внутреннем хранилище
     override fun getFileUri(fileName: String): Uri? {
         return storagesRepository.getFileUri(fileName)
+    }
+    // Прикрепить медиафайл к строке
+    override fun addMediaFile(id: Long, fileName: String) {
+        mediaFileDBRepositori.addMediaFile(id, fileName)
     }
     // Открепить медиафайл от строки
     override fun deleteMediaFile(id: Long) {

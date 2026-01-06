@@ -20,24 +20,24 @@ class MediaFileAdapter(
     override fun onBindViewHolder(holder: MediaFileViewHolder, position: Int) {
         val item = itemList[position]
         holder.bind(item)
-        holder.observerUri = Observer { currentHolderUri ->
-            holder.selectHolder(currentHolderUri == item.uri)
+        holder.observerItem = Observer { currentHolderItem ->
+            holder.selectHolder(currentHolderItem == item)
         }
-        holder.observerUri?.let { observer ->
-            mfac.getVM().currentHolderUriLiveData.observeForever(observer)
+        holder.observerItem?.let { observer ->
+            mfac.getVM().currentHolderItemLiveData.observeForever(observer)
         }
 
         holder.container.setOnClickListener {
-            mfac.getVM().currentHolderUriLiveData.postValue(item.uri)
+            mfac.getVM().currentHolderItemLiveData.postValue(item)
         }
     }
 
     override fun onViewRecycled(holder: MediaFileViewHolder) {
         super.onViewRecycled(holder)
-        holder.observerUri?.let { observer ->
+        holder.observerItem?.let { observer ->
             holder.selectHolder(false)
-            mfac.getVM().currentHolderUriLiveData.removeObserver(observer)
-            holder.observerUri = null
+            mfac.getVM().currentHolderItemLiveData.removeObserver(observer)
+            holder.observerItem = null
         }
     }
 

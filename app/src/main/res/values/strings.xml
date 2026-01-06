@@ -142,4 +142,7 @@
     <string name="photo_hint">photo</string>
     <string name="video_hint">video</string>
     <string name="today">today</string>
+    <string name="transfer">transfer</string>
+    <string name="copy_file">copy</string>
+    <string name="no_file_selected">No file selected</string>
 </resources>
