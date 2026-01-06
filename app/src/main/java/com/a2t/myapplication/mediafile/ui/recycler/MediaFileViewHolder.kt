@@ -1,6 +1,5 @@
 package com.a2t.myapplication.mediafile.ui.recycler
 
-import android.net.Uri
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
@@ -20,7 +19,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class MediaFileViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-    var observerUri: Observer<Uri?>? = null
+    var observerItem: Observer<MediaItem?>? = null
     // Получаем текущую дату
     val currentDate: LocalDate = LocalDate.now()
     val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yy", Locale.getDefault())

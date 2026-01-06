@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.a2t.myapplication.mediafile.data.dto.Response
 import com.a2t.myapplication.mediafile.data.model.MediaType
 import com.a2t.myapplication.mediafile.domaim.api.MediaFileInteractor
 import com.a2t.myapplication.mediafile.domaim.model.MediaItem
@@ -15,14 +16,22 @@ import java.io.File
 class MediaFileViewModel(
     private val mediaFileInteractor: MediaFileInteractor
 ): ViewModel() {
-    var currentHolderUriLiveData = MutableLiveData<Uri?>(null)
+    var currentHolderItemLiveData = MutableLiveData<MediaItem?>(null)
     var selectedTypeLiveData = MutableLiveData(MediaType.ALL)
     var itemListLiveData = MutableLiveData<List<MediaItem>>(ArrayList())
     var resultAddingFileLiveData = MutableLiveData<Uri?>(null)
+    var responseLiveData = MutableLiveData<Response>()
 
     fun getSelectedTypeLiveData(): LiveData<MediaType> = selectedTypeLiveData
     fun getItemListLiveData(): LiveData<List<MediaItem>> = itemListLiveData
     fun getResultAddingFileLiveData(): LiveData<Uri?> = resultAddingFileLiveData
+    fun getResponseLiveData(): LiveData<Response> = responseLiveData
+    fun saveImageToPrivateStorage(sourceUri: Uri, mediaFileType: String, deleteSourceAfterSave: Boolean) {
+        viewModelScope.launch (Dispatchers.IO) {
+            val response = mediaFileInteractor.saveImageToPrivateStorage(sourceUri,mediaFileType, deleteSourceAfterSave)
+            responseLiveData.postValue(response)
+        }
+    }
     fun getAllMediaFiles() {
         val type: MediaType = selectedTypeLiveData.value!!
         viewModelScope.launch (Dispatchers.IO) {
@@ -40,6 +49,12 @@ class MediaFileViewModel(
         viewModelScope.launch (Dispatchers.IO) {
             val uri = mediaFileInteractor.addVideoToGallery(file)
             resultAddingFileLiveData.postValue(uri)
+        }
+    }
+
+    fun addMediaFile(id: Long, fileName: String) {
+        viewModelScope.launch (Dispatchers.IO) {
+            mediaFileInteractor.addMediaFile(id, fileName)
         }
     }
 }
