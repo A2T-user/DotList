@@ -53,16 +53,16 @@ class MediaFileViewModel(
         }
     }
     fun filterListItems() {
-        val filterList = baseListItem.filter { it.dir == filterLiveData.value.dir }
-        if (filterLiveData.value.type != null) {
-            val result = filterList.filter { it.mediaFileType == filterLiveData.value.type }
+        val filterList = baseListItem.filter { it.dir == filterLiveData.value!!.dir }
+        if (filterLiveData.value!!.type != null) {
+            val result = filterList.filter { it.mediaFileType == filterLiveData.value!!.type }
             itemListLiveData.postValue(result)
         } else {
             itemListLiveData.postValue(filterList)
         }
     }
     fun filterExistingFiles(originalName: String) {
-        val filterList = baseListItem.filter { it.dir == DirType.INTERNAL_STORAGE }
+        val filterList = baseListItem.filter { it.dir == DirType.APP }
         val result = mutableListOf<MediaItem>()
         for (item in filterList) {
             val uri = item.uri.toString()
