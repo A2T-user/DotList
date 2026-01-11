@@ -1,10 +1,12 @@
 package com.a2t.myapplication.mediafile.ui
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Typeface
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
@@ -12,10 +14,12 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -30,12 +34,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.FragmentSelectMediaFileBinding
 import com.a2t.myapplication.main.ui.activity.MainActivity
+import com.a2t.myapplication.main.ui.activity.recycler.MyScrollListener
+import com.a2t.myapplication.main.ui.activity.recycler.OnScrollStateChangedListener
+import com.a2t.myapplication.main.ui.activity.recycler.model.ScrollState
+import com.a2t.myapplication.mediafile.data.dto.DirType
 import com.a2t.myapplication.mediafile.data.dto.ErrCode
+import com.a2t.myapplication.mediafile.data.dto.MediaFileType
 import com.a2t.myapplication.mediafile.data.dto.Response
-import com.a2t.myapplication.mediafile.data.model.MediaType
 import com.a2t.myapplication.mediafile.presentation.MediaFileViewModel
+import com.a2t.myapplication.mediafile.presentation.model.MediaFileFilter
 import com.a2t.myapplication.mediafile.ui.recycler.MediaFileAdapter
 import com.a2t.myapplication.mediafile.ui.recycler.MediaFileAdapterCallback
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -45,7 +55,7 @@ import java.io.File
 import kotlin.getValue
 
 
-class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
+class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollStateChangedListener {
     private val mediaFileViewModel: MediaFileViewModel by viewModel()
     private var _binding: FragmentSelectMediaFileBinding? = null
     private val binding get() = _binding!!
@@ -62,6 +72,8 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
     private var photoFile: File? = null
     private var videoFile: File? = null
     private var selectionMenuJob: Job? = null
+    private var scrollJob = lifecycleScope.launch {}
+    private var scrollState = ScrollState.STOPPED
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,36 +117,79 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
         recycler.scheduleLayoutAnimation()
         recycler.invalidate()
         requestMediaPermissions()
-        // Следим за изменение selectedType
-        mediaFileViewModel.getSelectedTypeLiveData().observe(viewLifecycleOwner) { selectedType ->
-            val res = when(selectedType) {
-                MediaType.PHOTO -> R.string.photo
-                MediaType.VIDEO -> R.string.video
-                MediaType.ALL -> R.string.all
+
+        // ПРОКРУТКА
+        recycler.addOnScrollListener(MyScrollListener(this))
+
+        binding.ivBtnScroll.setOnClickListener {
+            when(scrollState) {
+                ScrollState.DOWN -> recycler.scrollToPosition(adapter.itemCount - 1)
+                ScrollState.UP -> recycler.scrollToPosition(0)
+                else -> {}
+            }
+        }
+
+        // Следим за состоянием Загрузка - выводим/убираем прогрессбар
+        mediaFileViewModel.getIsLoadingLiveData().observe(viewLifecycleOwner) { isLoading ->
+            binding.progressBar.isVisible = isLoading
+        }
+        // Следим за обновлением массива данных рециклера
+        mediaFileViewModel.getItemListLiveData().observe(viewLifecycleOwner) { newList ->
+            adapter.itemList.clear()
+            adapter.itemList.addAll(newList)
+            adapter.notifyDataSetChanged()
+        }
+        // Следим за изменением параметров фильтрации - папки и типа файлов
+        mediaFileViewModel.getFilterLiveData().observe(viewLifecycleOwner) { filter ->
+            val view = when (filter.dir) {
+                DirType.GALLERY -> binding.tvGallery
+                DirType.DOWNLOADS -> binding.tvDownloads
+                DirType.INTERNAL_STORAGE -> binding.tvApp
+            }
+            selectedDir(view)
+            val res = when(filter.type) {
+                MediaFileType.IMAGE -> R.string.photo
+                MediaFileType.VIDEO -> R.string.video
+                else ->  R.string.all
             }
             binding.tvSelectedType.setText(res)
-            requestMediaPermissions()
+            mediaFileViewModel.filterListItems()
         }
-        // Сохранение файла во внутреннем хранилище
+
+        // Следим за сохранением файла во внутреннем хранилище
         mediaFileViewModel.getResponseLiveData().observe(viewLifecycleOwner) { response ->
-            binding.progressBar.isVisible = true
-            parentFragmentManager.beginTransaction().remove(this@SelectMediaFileFragment).commitAllowingStateLoss() // Закрытие фрагмента
             when(response) {
                 is Response.Success -> {
                     val fileName = response.fileName
                     // Обновляем строку БД
-                    mediaFileViewModel.addMediaFile(idString!!, fileName)
+                    mediaFileViewModel.updateMediaFile(idString!!, fileName)
                     // Обновляем данные в MainActivity
                     updatingMainActivity(fileName)
+                    parentFragmentManager.beginTransaction().remove(this@SelectMediaFileFragment).commitAllowingStateLoss() // Закрытие фрагмента
                 }
                 is Response.FileExists -> {
-                    val fileName = response.fileName
-                    // Обновляем строку БД
-                    mediaFileViewModel.addMediaFile(idString!!, fileName)
-                    // Обновляем данные в MainActivity
-                    updatingMainActivity(fileName)
+                    @SuppressLint("InflateParams")
+                    val dialogView =
+                        LayoutInflater.from(context).inflate(R.layout.dialog_title_attention, null)
+                    MaterialAlertDialogBuilder(context)
+                        .setCustomTitle(dialogView)
+                        .setMessage(getString(R.string.dialog_hint))
+                        .setNeutralButton(getString(R.string.existing_copy)) { _, _ ->
+                            val originalName = response.originalName
+                            mediaFileViewModel.filterExistingFiles(originalName)
+                        }
+                        .setPositiveButton(getString(R.string.new_copy)) { _, _ ->
+                            mediaFileViewModel.saveImageToPrivateStorage(
+                                response.uri,
+                                response.mediaFileType,
+                                binding.cbTransfer.isChecked,
+                                true
+                                )
+                        }
+                        .show()
                 }
                 is Response.Error -> {
+                    parentFragmentManager.beginTransaction().remove(this@SelectMediaFileFragment).commitAllowingStateLoss() // Закрытие фрагмента
                     val res = when(response.errCode) {
                         ErrCode.OUT_OF_MEMORY -> R.string.out_of_memory
                         ErrCode.COPY_ERROR -> R.string.copy_error
@@ -145,11 +200,11 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
             }
         }
         // Добавление файла с камеры в галерею
-        mediaFileViewModel.getResultAddingFileLiveData().observe(viewLifecycleOwner) { uri ->
-            if (uri != null) {
+        mediaFileViewModel.getResultAddingFileLiveData().observe(viewLifecycleOwner) { item ->
+            if (item != null) {
                 val resolver = requireContext().contentResolver
                 val projection = arrayOf(MediaStore.MediaColumns.DATA)
-                val cursor = resolver.query(uri, projection, null, null, null)
+                val cursor = resolver.query(item.uri, projection, null, null, null)
                 cursor?.use { c ->
                     if (c.moveToFirst()) {
                         val filePath = c.getString(c.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA))
@@ -159,22 +214,17 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
                             null
                         ) { _, _ ->
                             requireActivity().runOnUiThread {
-                                updateRecyclerView()
+                                mediaFileViewModel.filterLiveData.postValue(MediaFileFilter(DirType.GALLERY, null))
+                                mediaFileViewModel.baseListItem.add(0, item)
+                                mediaFileViewModel.filterListItems()
+                                mediaFileViewModel.currentHolderItemLiveData.postValue(item)
+                                recycler.scrollToPosition(0)
                             }
                         }
                     }
                 }
                 cursor?.close()
             }
-            binding.progressBar.isVisible = false
-        }
-
-        // Следим за обновлением массива данных рециклера
-        mediaFileViewModel.getItemListLiveData().observe(viewLifecycleOwner) { newList ->
-            adapter.itemList.clear()
-            adapter.itemList.addAll(newList)
-            adapter.notifyDataSetChanged()
-            binding.progressBar.isVisible = false
         }
 
         // Меню выбора типа контента
@@ -186,15 +236,27 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
             }
         }
         binding.tvAll.setOnClickListener {
-            mediaFileViewModel.selectedTypeLiveData.postValue( MediaType.ALL)
+            val filter = mediaFileViewModel.filterLiveData.value
+            filter?.also {
+                it.type = null
+                mediaFileViewModel.filterLiveData.postValue(it)
+            }
             showSelectionMenu(false)
         }
         binding.tvPhoto.setOnClickListener {
-            mediaFileViewModel.selectedTypeLiveData.postValue( MediaType.PHOTO)
+            val filter = mediaFileViewModel.filterLiveData.value
+            filter?.also {
+                it.type = MediaFileType.IMAGE
+                mediaFileViewModel.filterLiveData.postValue(it)
+            }
             showSelectionMenu(false)
         }
         binding.tvVideo.setOnClickListener {
-            mediaFileViewModel.selectedTypeLiveData.postValue( MediaType.VIDEO)
+            val filter = mediaFileViewModel.filterLiveData.value
+            filter?.also {
+                it.type = MediaFileType.VIDEO
+                mediaFileViewModel.filterLiveData.postValue(it)
+            }
             showSelectionMenu(false)
         }
 
@@ -219,15 +281,38 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
             isVideo = true
             requestCameraPermissions()
         }
+
+        // Выбор папки
+        binding.tvGallery.setOnClickListener {
+            val filter = mediaFileViewModel.filterLiveData.value
+            filter?.also {
+                it.dir = DirType.GALLERY
+                mediaFileViewModel.filterLiveData.postValue(it)
+            }
+        }
+        binding.tvDownloads.setOnClickListener {
+            val filter = mediaFileViewModel.filterLiveData.value
+            filter?.also {
+                it.dir = DirType.DOWNLOADS
+                mediaFileViewModel.filterLiveData.postValue(it)
+            }
+        }
+        binding.tvApp.setOnClickListener {
+            val filter = mediaFileViewModel.filterLiveData.value
+            filter?.also {
+                it.dir = DirType.INTERNAL_STORAGE
+                mediaFileViewModel.filterLiveData.postValue(it)
+            }
+        }
+
         binding.tvSelect.setOnClickListener {
-            binding.progressBar.isVisible = true
             val currentItem = mediaFileViewModel.currentHolderItemLiveData.value
             if (currentItem != null) {
-
                 mediaFileViewModel.saveImageToPrivateStorage(
                     currentItem.uri,
                     currentItem.mediaFileType,
-                    binding.cbTransfer.isChecked
+                    binding.cbTransfer.isChecked,
+                    false
                 )
             } else {
                 Toast.makeText(requireContext(), R.string.no_file_selected, Toast.LENGTH_SHORT).show()
@@ -246,7 +331,6 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
 
     private fun requestMediaPermissions() {
         val permissionsToRequest = mutableListOf<String>()
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {  // API 33+
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.READ_MEDIA_IMAGES)
@@ -335,18 +419,17 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
     }
 
     private fun updateRecyclerView() {
-        binding.progressBar.isVisible = true
         mediaFileViewModel.getAllMediaFiles()
     }
 
     private fun showSelectionMenu(isShow: Boolean) {
         selectionMenuJob?.cancel()
         selectionMenuJob = null
-        val selectedType: MediaType = mediaFileViewModel.selectedTypeLiveData.value!!
+        val selectedType = mediaFileViewModel.filterLiveData.value!!.type
         if (isShow) {
-            binding.tvAll.isVisible = selectedType != MediaType.ALL
-            binding.tvPhoto.isVisible = selectedType != MediaType.PHOTO
-            binding.tvVideo.isVisible = selectedType != MediaType.VIDEO
+            binding.tvAll.isVisible = selectedType != null
+            binding.tvPhoto.isVisible = selectedType != MediaFileType.IMAGE
+            binding.tvVideo.isVisible = selectedType != MediaFileType.VIDEO
             isShownSelectionMenu = true
         } else {
             binding.tvAll.isVisible = false
@@ -370,7 +453,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
     }
 
     private fun openCameraForVideo() {
-        videoFile = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DCIM), "temp_video_${System.currentTimeMillis()}.mp4")  // DCIM для видео
+        videoFile = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DCIM), "temp_video_${System.currentTimeMillis()}.mp4")
         val videoUri = FileProvider.getUriForFile(
             requireContext(),
             "com.a2t.myapplication.fileprovider",
@@ -386,12 +469,10 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
     }
 
     private fun addPhotoToGallery(file: File) {
-        binding.progressBar.isVisible = true
         mediaFileViewModel.addPhotoToGallery(file)
     }
 
     private fun addVideoToGallery(file: File) {
-        binding.progressBar.isVisible = true
         mediaFileViewModel.addVideoToGallery(file)
     }
 
@@ -415,6 +496,18 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
         addVideoToGallery(originalFile)
     }
 
+    private fun selectedDir(tv: TextView) {
+        unselectedDir(binding.tvGallery)
+        unselectedDir(binding.tvDownloads)
+        unselectedDir(binding.tvApp)
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
+        tv.typeface = Typeface.defaultFromStyle(Typeface.BOLD)
+    }
+    private fun unselectedDir(tv: TextView) {
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+        tv.typeface = Typeface.defaultFromStyle(Typeface.NORMAL)
+    }
+
     override fun onStart() {
         super.onStart()
         ma.mainBackPressedCallback.isEnabled = false
@@ -432,6 +525,33 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback {
     }
 
     override fun getVM(): MediaFileViewModel = mediaFileViewModel
+    override fun onScrollStateChanged(scrollState: ScrollState) {
+        when (scrollState) {
+            ScrollState.DOWN -> {           // Прокрутка вниз
+                this.scrollState = scrollState
+                binding.ivBtnScroll.setImageResource(R.drawable.ic_scroll_down)
+                binding.ivBtnScroll.isVisible = true
+            }
+            ScrollState.UP -> {             // Прокрутка вверх
+                this.scrollState = scrollState
+                binding.ivBtnScroll.setImageResource(R.drawable.ic_scroll_up)
+                binding.ivBtnScroll.isVisible = true
+            }
+            ScrollState.STOPPED -> {        // Прокрутка остановлена
+                this.scrollState = scrollState
+            }
+            ScrollState.END -> {            // Конец списка
+                this.scrollState = scrollState
+                binding.ivBtnScroll.isVisible = false
+            }
+        }
+        scrollJob.cancel()
+        scrollJob = lifecycleScope.launch {
+            delay(1000)
+            binding.ivBtnScroll.isVisible = false
+        }
+    }
+
     companion object {
         const val REQUEST_MEDIA_PERMISSIONS = 1001
         const val REQUEST_CAMERA_PERMISSIONS = 1002

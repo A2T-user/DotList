@@ -12,7 +12,8 @@ class MediaFileConverter {
         return MediaItem (
             item.uri,
             formatDateFromLongToString(item.creationTime),
-            item.mediaFileType
+            item.mediaFileType,
+            dir = item.dir
         )
     }
 

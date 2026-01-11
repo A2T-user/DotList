@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
 import android.view.View
+import java.io.File
 
 class AppHelper {
     companion object {
@@ -16,8 +17,10 @@ class AppHelper {
         // Проверяем лежит ли файл с этим uri в папке Загрузки
         fun isFileInDownloadsFolder(context: Context, uri: Uri): Boolean {
             val path = getFilePathFromUri(context, uri)?.toString() ?: return false
+            val file = File(path)
+            val directoryPath = file.parent ?: return false
             // Проверяем наличие "Download" или "Загрузки" в пути (без учёта регистра)
-            return path.contains("Download", ignoreCase = true) || path.contains("Загрузки", ignoreCase = true)
+            return directoryPath.contains("Download", ignoreCase = true) || path.contains("Загрузки", ignoreCase = true)
         }
         // Функция для извлечения пути из URI
         fun getFilePathFromUri(context: Context, uri: Uri): Any? {
@@ -33,5 +36,6 @@ class AppHelper {
             }
             return null
         }
+
     }
 }

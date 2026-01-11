@@ -8,10 +8,63 @@
     android:background="?attr/colorBackground"
     tools:context=".mediafile.ui.SelectMediaFileFragment">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="?attr/colorBar"
+        android:paddingTop="6dp"
+        android:gravity="bottom">
+
+        <TextView
+            android:id="@+id/tv_gallery"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bookmark"
+            android:textColor="?attr/colorMainText"
+            android:paddingVertical="4dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:text="@string/gallery"
+            android:layout_marginHorizontal="0.5dp"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/tv_downloads"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bookmark"
+            android:textColor="?attr/colorMainText"
+            android:paddingVertical="4dp"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            android:text="@string/downloads"
+            android:layout_marginHorizontal="0.5dp"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/tv_app"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bookmark"
+            android:textColor="?attr/colorMainText"
+            android:paddingVertical="4dp"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            android:text="@string/app_name"
+            android:layout_marginHorizontal="0.5dp"
+            android:gravity="center"/>
+
+    </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:animateLayoutChanges="true">
 
         <!-- Рециклер -->
         <androidx.recyclerview.widget.RecyclerView
@@ -20,6 +73,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingHorizontal="1dp"
+            android:paddingTop="2dp"
             android:paddingBottom="300dp"
             android:scrollbarThumbVertical="@color/blue_icon"
             android:scrollbars="vertical"/>
@@ -55,7 +109,6 @@
                 android:text="@string/video"
                 style="@style/TVMenuMediaFile"/>
 
-
             <TextView
                 android:id="@+id/tv_selected_type"
                 android:layout_width="wrap_content"
@@ -79,7 +132,7 @@
             android:animateLayoutChanges="true"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="20dp"
-            android:padding="4dp">
+            android:padding="2dp">
 
             <ImageView
                 android:id="@+id/iv_video"
@@ -113,6 +166,21 @@
             android:indeterminateTint="@color/blue_icon"
             android:indeterminate="true"
             android:visibility="gone"/>
+
+        <!-- Кнопка прпокрутки -->
+        <ImageView
+            android:id="@+id/iv_btn_scroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="120dp"
+            android:alpha="0.7"
+            android:background="@drawable/circle_color_bar"
+            android:padding="12dp"
+            android:src="@drawable/ic_scroll_down"
+            android:visibility="gone"
+            tools:ignore="contentDescription" />
 
     </FrameLayout>
 

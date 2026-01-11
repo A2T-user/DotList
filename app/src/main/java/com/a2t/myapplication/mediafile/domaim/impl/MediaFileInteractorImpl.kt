@@ -2,8 +2,8 @@ package com.a2t.myapplication.mediafile.domaim.impl
 
 import android.net.Uri
 import com.a2t.myapplication.mediafile.data.MediaFileConverter
+import com.a2t.myapplication.mediafile.data.dto.MediaFileType
 import com.a2t.myapplication.mediafile.data.dto.Response
-import com.a2t.myapplication.mediafile.data.model.MediaType
 import com.a2t.myapplication.mediafile.domaim.api.MediaFileDBRepositori
 import com.a2t.myapplication.mediafile.domaim.api.MediaFileInteractor
 import com.a2t.myapplication.mediafile.domaim.api.StoragesRepository
@@ -17,25 +17,21 @@ class MediaFileInteractorImpl(
 ): MediaFileInteractor {
 
     // Получение списка имеющихся в общем хранилище медиафайлов
-    override fun getAllMediaFiles(type: MediaType): List<MediaItem> {
-        val itemList = storagesRepository.getAllMediaFiles(type)
+    override fun getAllMediaFiles(): List<MediaItem> {
+        val itemList = storagesRepository.getAllMediaFiles()
         return itemList.map { mediaFileConverter.map(it) }
     }
     // Сохранение медиафайла из общего хранилища во внутреннем и добавление его имени в строку
-    override fun saveImageToPrivateStorage(sourceUri: Uri, mediaFileType: String, deleteSourceAfterSave: Boolean): Response {
-        return storagesRepository.saveImageToPrivateStorage(sourceUri, mediaFileType, deleteSourceAfterSave)
+    override fun saveImageToPrivateStorage(sourceUri: Uri, mediaFileType: MediaFileType, deleteSourceAfterSave: Boolean, isNewCopy: Boolean): Response {
+        return storagesRepository.saveImageToPrivateStorage(sourceUri, mediaFileType, deleteSourceAfterSave, isNewCopy)
     }
     // Получение URI файла во внутреннем хранилище
     override fun getFileUri(fileName: String): Uri? {
         return storagesRepository.getFileUri(fileName)
     }
-    // Прикрепить медиафайл к строке
-    override fun addMediaFile(id: Long, fileName: String) {
-        mediaFileDBRepositori.addMediaFile(id, fileName)
-    }
-    // Открепить медиафайл от строки
-    override fun deleteMediaFile(id: Long) {
-        mediaFileDBRepositori.deleteMediaFile(id)
+    // Прикрепить/открепить медиафайл к строке
+    override fun updateMediaFile(id: Long, fileName: String) {
+        mediaFileDBRepositori.updateMediaFile(id, fileName)
     }
 
     override suspend fun addPhotoToGallery(file: File): Uri? {

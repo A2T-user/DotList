@@ -11,7 +11,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.R
-import com.a2t.myapplication.common.utilities.AppHelper
+import com.a2t.myapplication.mediafile.data.dto.MediaFileType
 import com.a2t.myapplication.mediafile.domaim.model.MediaItem
 import com.bumptech.glide.Glide
 import java.time.LocalDate
@@ -29,7 +29,6 @@ class MediaFileViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     val image: ImageView = itemView.findViewById(R.id.iv_image)
     val date: TextView = itemView.findViewById(R.id.tv_date)
     val check: ImageView = itemView.findViewById(R.id.iv_check)
-    val download: ImageView = itemView.findViewById(R.id.iv_download)
 
     fun bind(item: MediaItem) {
         // Вставка рисунка
@@ -38,11 +37,14 @@ class MediaFileViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             .error(R.drawable.ic_error)       // Опционально: изображение при ошибке
             .centerCrop()  // Опционально: масштабирование (centerCrop, fitCenter и т.д.)
             .into(image)
-        // Установка значка Play для видио
-        if (item.mediaFileType == "V") {
-            image.foreground = AppCompatResources.getDrawable(itemView.context, R.drawable.ic_play)
-        } else {
-            image.foreground = null
+        // Установка значка для видио и pdf
+        when (item.mediaFileType) {
+            MediaFileType.VIDEO -> {
+                image.foreground = AppCompatResources.getDrawable(itemView.context, R.drawable.ic_play)
+            }
+            MediaFileType.IMAGE -> {
+                image.foreground = null
+            }
         }
         // Выделить синим шрифтом файлы с сегодняшней датой
         if (item.creationDate == today) {
@@ -50,8 +52,6 @@ class MediaFileViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         } else {
             date.text = item.creationDate
         }
-        // Проверяем лежит ли этот файл в папке Загрузки и выводим соответствующую иконку
-        download.isVisible = AppHelper.isFileInDownloadsFolder(itemView.context, item.uri)
     }
 
     // Меняем отступы фото, цвет фона и выводим галочку в выбранном holder

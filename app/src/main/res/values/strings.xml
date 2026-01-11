@@ -145,4 +145,9 @@
     <string name="transfer">transfer</string>
     <string name="copy_file">copy</string>
     <string name="no_file_selected">No file selected</string>
+    <string name="gallery">Gallery</string>
+    <string name="downloads">Downloads</string>
+    <string name="dialog_hint">It looks like there\'s already a copy of this file in \u2022lis.\nDo you want to use the existing copy (recommended) or create a new one?</string>
+    <string name="existing_copy">Existing copy</string>
+    <string name="new_copy">New copy</string>
 </resources>

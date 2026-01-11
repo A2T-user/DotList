@@ -71,7 +71,7 @@
                     android:background="@drawable/circle_color_bar"
                     android:padding="12dp"
                     android:src="@drawable/ic_scroll_down"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     tools:ignore="contentDescription" />
 
                 <!-- МАЛАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
