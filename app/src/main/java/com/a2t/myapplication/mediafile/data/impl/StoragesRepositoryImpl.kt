@@ -13,7 +13,6 @@ import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.core.net.toUri
 import com.a2t.myapplication.common.App
-import com.a2t.myapplication.common.utilities.AppHelper
 import com.a2t.myapplication.mediafile.data.dto.DirType
 import com.a2t.myapplication.mediafile.data.dto.ErrCode
 import com.a2t.myapplication.mediafile.data.dto.MediaFileType
@@ -30,7 +29,6 @@ class StoragesRepositoryImpl(
 
     // Получение списка имеющихся в общем хранилище и в загрузках медиафайлов
     override fun getAllMediaFiles(): List<MediaItemDto> {
-        val t0 = System.currentTimeMillis()
         val context = App.appContext
         val items = mutableListOf<MediaItemDto>()
         // Получение файлов из общего хранилища
@@ -39,76 +37,59 @@ class StoragesRepositoryImpl(
             items,
             MediaFileType.IMAGE
         )
-        val t1 = System.currentTimeMillis()
         getMediaFiles(
             context,
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI,    // Видео
             items,
             MediaFileType.VIDEO
         )
-        val t2 = System.currentTimeMillis()
-        // Определение файлов из папки ЗАГРУЗКИ
-        for (item in items) {
-            if (AppHelper.isFileInDownloadsFolder(context,item.uri)) item.dir = DirType.DOWNLOADS
-        }
-        val t3 = System.currentTimeMillis()
-        getInternalMediaFiles(                                          // файлы из внутреннего хранилища
+        // Получение файлов из внутреннего хранилища
+        getInternalMediaFiles(
             context,
-            items
+            items,
+            MediaFileType.IMAGE
         )
-        val t4 = System.currentTimeMillis()
-        Log.e("МОЁ", "Получение фото - " + (t1-t0).toString())
-        Log.e("МОЁ", "Получение видео - " + (t2-t1).toString())
-        Log.e("МОЁ", "Загрузки - " + (t3-t2).toString())
-        Log.e("МОЁ", "Внутреннее хранилище - " + (t4-t3).toString())
-        Log.e("МОЁ", "ВСЕГО - " + (t4-t0).toString())
+        getInternalMediaFiles(
+            context,
+            items,
+            MediaFileType.VIDEO
+        )
         return items.sortedByDescending { it.creationTime } // Сортировка по дате (новые сверху)
     }
     // Получение файлов из внутреннего хранилища
     private fun getInternalMediaFiles(
         context: Context,
-        items: MutableList<MediaItemDto>
+        items: MutableList<MediaItemDto>,
+        mediaFileType: MediaFileType
     ) {
-        val mediaFilesDir = File(context.filesDir, "mediafiles") // Папка: /data/data/com.example.app/files/mediafiles/
-
-        // Проверяем, существует ли папка mediafiles
-        if (!mediaFilesDir.exists() || !mediaFilesDir.isDirectory) return // Если папки нет - выходим
+        val subDirName = when (mediaFileType) {
+            MediaFileType.IMAGE -> "image"
+            MediaFileType.VIDEO -> "video"
+        }
+        val typeDir = File(context.filesDir, "mediafiles/$subDirName")
+        // Проверяем, существует ли папка
+        if (!typeDir.exists() || !typeDir.isDirectory) return
 
         // Вспомогательная функция для обхода папок
         fun scanDirectory(currentDir: File) {
-            val files = currentDir.listFiles()          // Cписок всех файлов и папок внутри
+            val files = currentDir.listFiles()
             files?.forEach { file ->
                 if (file.isDirectory) {
-                    scanDirectory(file)     // Если это папка — заходим в нее глубже
+                    scanDirectory(file)
                 } else if (file.isFile) {
-                    parseFile(file)?.let { mediaItem -> // Если файл — пробуем превратить его в MediaItemDto
-                        items.add(mediaItem)
-                    }
+                    parseFile(file, mediaFileType).let { items.add(it) }
                 }
             }
         }
-        scanDirectory(mediaFilesDir)        // Запускаем сканирование от папки mediafiles
+
+        scanDirectory(typeDir)        // Запускаем сканирование от папки mediafiles
     }
-    private fun parseFile(file: File): MediaItemDto? {
-        val name = file.name
-        val extension = file.extension.lowercase()  // Расширение файла
-        if (extension.isEmpty()) return null
-        val type = when {
-            name.startsWith("image_", ignoreCase = true) -> MediaFileType.IMAGE     // Картинка
-            name.startsWith("video_", ignoreCase = true) -> MediaFileType.VIDEO     // Видео
-            else -> null
-        }
-        return if (type != null) {                  // Если это медиа, создаем объект DTO
-            MediaItemDto(
-                uri = Uri.fromFile(file),           // Превращаем путь к файлу в Uri
-                creationTime = file.lastModified(), // Берем время последнего изменения
-                mediaFileType = type,
-                DirType.INTERNAL_STORAGE
-            )
-        } else {
-            null
-        }
-    }
+    private fun parseFile(file: File, mediaFileType: MediaFileType): MediaItemDto = MediaItemDto(
+        uri = Uri.fromFile(file),           // Превращаем путь к файлу в Uri
+        creationTime = file.lastModified(), // Берем время последнего изменения
+        mediaFileType = mediaFileType,
+        DirType.APP
+    )
 
     // Получение медиа файлов из галереи
     private fun getMediaFiles(
@@ -127,7 +108,7 @@ class StoragesRepositoryImpl(
         val cursor: Cursor? = context.contentResolver.query(
             contentUri,
             projection,
-            null, // Без дополнительных условий фильтрации
+            null,
             null,
             null
         )
@@ -160,21 +141,23 @@ class StoragesRepositoryImpl(
         val context = App.appContext
         val originalName = getFileName(context, sourceUri) ?: return Response.Error(ErrCode.UNEXPECTED_ERROR)
 
-        var prefix = when (mediaFileType) {
-            MediaFileType.IMAGE -> "image_"
-            MediaFileType.VIDEO -> "video_"
+        val fileName = if (isNewCopy) {
+            val timestamp = System.currentTimeMillis()
+            "${timestamp}_$originalName"
+        } else {
+            originalName
         }
-        if (isNewCopy) {
-            val time = System.currentTimeMillis().toString() + "_"
-            prefix = "$prefix$time"
+        val subDirName = when (mediaFileType) {
+            MediaFileType.IMAGE -> "image"
+            MediaFileType.VIDEO -> "video"
         }
-        val fileName = "$prefix$originalName"
-        // Создание подкаталога mediafiles
         val mediaFilesDir = File(context.filesDir, "mediafiles")
-        if (!mediaFilesDir.exists()) {
-            mediaFilesDir.mkdirs()
+        val typeSpecificDir = File(mediaFilesDir, subDirName)
+
+        if (!typeSpecificDir.exists()) {
+            typeSpecificDir.mkdirs() // mkdirs создает все промежуточные директории
         }
-        val outputFile = File(mediaFilesDir, fileName)
+        val outputFile = File(typeSpecificDir, fileName)
         // Проверка, существует ли файл с таким именем
         if (outputFile.exists()) {
             return  Response.FileExists(originalName, sourceUri, mediaFileType) // Вернуть имя файла, если файл уже существует
@@ -185,7 +168,7 @@ class StoragesRepositoryImpl(
         val stat = StatFs(context.filesDir.absolutePath)
         val availableBytes = stat.availableBlocksLong * stat.blockSizeLong
         if (fileSize > availableBytes) {
-            return Response.Error(ErrCode.OUT_OF_MEMORY) // Вернуть код ошибки, если файл неумещается
+            return Response.Error(ErrCode.OUT_OF_MEMORY)
         }
         // Копирование файла с обработкой исключений
         return try {
@@ -197,8 +180,8 @@ class StoragesRepositoryImpl(
             if (deleteSourceAfterSave) {
                 try {
                     context.contentResolver.delete(sourceUri, null, null)
-                } catch (_: Exception) {
-                    Log.e("saveImageToPrivateStorage", "Ошибка удаления исходного файла")
+                } catch (e: Exception) {
+                    Log.e("saveImageToPrivateStorage", "Ошибка удаления исходного файла: ${e.message}")
                 }
             }
             Response.Success(fileName)

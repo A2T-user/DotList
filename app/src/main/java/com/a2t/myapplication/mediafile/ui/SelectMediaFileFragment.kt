@@ -143,8 +143,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
         mediaFileViewModel.getFilterLiveData().observe(viewLifecycleOwner) { filter ->
             val view = when (filter.dir) {
                 DirType.GALLERY -> binding.tvGallery
-                DirType.DOWNLOADS -> binding.tvDownloads
-                DirType.INTERNAL_STORAGE -> binding.tvApp
+                DirType.APP -> binding.tvApp
             }
             selectedDir(view)
             val res = when(filter.type) {
@@ -290,17 +289,10 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 mediaFileViewModel.filterLiveData.postValue(it)
             }
         }
-        binding.tvDownloads.setOnClickListener {
-            val filter = mediaFileViewModel.filterLiveData.value
-            filter?.also {
-                it.dir = DirType.DOWNLOADS
-                mediaFileViewModel.filterLiveData.postValue(it)
-            }
-        }
         binding.tvApp.setOnClickListener {
             val filter = mediaFileViewModel.filterLiveData.value
             filter?.also {
-                it.dir = DirType.INTERNAL_STORAGE
+                it.dir = DirType.APP
                 mediaFileViewModel.filterLiveData.postValue(it)
             }
         }
@@ -498,7 +490,6 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
 
     private fun selectedDir(tv: TextView) {
         unselectedDir(binding.tvGallery)
-        unselectedDir(binding.tvDownloads)
         unselectedDir(binding.tvApp)
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
         tv.typeface = Typeface.defaultFromStyle(Typeface.BOLD)
