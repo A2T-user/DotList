@@ -297,7 +297,7 @@
     </style>
 
     <style name="TVMainMenu">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginHorizontal">10dp</item>
         <item name="android:paddingVertical">8dp</item>
