@@ -5,11 +5,8 @@ import androidx.room.Query
 
 @Dao
 interface MediaFileDao {
-    // Обнуляем устаревшие Alarm-ы
-    @Query("UPDATE list_table SET mediaFile = :fileName WHERE id = :id")
-    fun addMediaFile (id: Long, fileName: String)
+    // Обновляем медиафайл
+    @Query("UPDATE list_table SET mediaFile = :fileName, lastEditTime = :time WHERE id = :id")
+    fun updateMediaFile (id: Long, fileName: String?, time: Long)
 
-    // Обнуляем устаревшие Alarm-ы
-    @Query("UPDATE list_table SET mediaFile = NULL WHERE id = :id")
-    fun deleteMediaFile (id: Long)
 }
