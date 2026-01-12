@@ -1,6 +1,5 @@
 package com.a2t.myapplication.di
 
-import android.content.ContentResolver
 import android.content.Context
 import androidx.room.Room
 import com.a2t.myapplication.common.data.AppDatabase
@@ -22,8 +21,6 @@ val dataModule = module {
             .addMigrations(MIGRATION_2_3)
             .build()
     }
-
-    single<ContentResolver> { get<Context>().contentResolver }
 
     factory { RecordDBConverter() }
     factory { MediaFileConverter() }

@@ -1,10 +1,12 @@
 package com.a2t.myapplication.mediafile.presentation
 
 import android.net.Uri
+import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.a2t.myapplication.common.App
 import com.a2t.myapplication.mediafile.data.dto.DirType
 import com.a2t.myapplication.mediafile.data.dto.MediaFileType
 import com.a2t.myapplication.mediafile.data.dto.Response
@@ -75,42 +77,44 @@ class MediaFileViewModel(
     // Ускоренная проверка окончаний для очень больших строк
     fun String.endsWithFast(suffix: String): Boolean {
         if (suffix.length > this.length) return false
-
         var i = this.length - 1
         var j = suffix.length - 1
-
         while (j >= 0) {
             if (this[i] != suffix[j]) return false
             i--
             j--
         }
-
         return true
     }
 
-    fun addPhotoToGallery(file: File) {
-        viewModelScope.launch (Dispatchers.IO) {
-            isLoadingLiveData.postValue(true)
-            val uri = mediaFileInteractor.addPhotoToGallery(file)
-            val dateFormat = SimpleDateFormat("dd.MM.yy", Locale.getDefault())
-            val currentDate = dateFormat.format(Date())
-            resultAddingFileLiveData.postValue(uri?.let {
-                MediaItem(it, currentDate, MediaFileType.IMAGE, DirType.GALLERY)
-            })
-            isLoadingLiveData.postValue(false)
-        }
+    fun addPhotoToInternalStorage(file: File) {
+        isLoadingLiveData.postValue(true)
+        val uri = FileProvider.getUriForFile(
+            App.appContext,
+            "com.a2t.myapplication.fileprovider",
+            file
+        )
+        val dateFormat = SimpleDateFormat("dd.MM.yy", Locale.getDefault())
+        val currentDate = dateFormat.format(Date())
+        resultAddingFileLiveData.postValue(uri?.let {
+            MediaItem(it, currentDate, MediaFileType.IMAGE, DirType.APP)
+        })
+        isLoadingLiveData.postValue(false)
     }
-    fun addVideoToGallery(file: File) {
-        viewModelScope.launch (Dispatchers.IO) {
-            isLoadingLiveData.postValue(true)
-            val uri = mediaFileInteractor.addVideoToGallery(file)
-            val dateFormat = SimpleDateFormat("dd.MM.yy", Locale.getDefault())
-            val currentDate = dateFormat.format(Date())
-            resultAddingFileLiveData.postValue(uri?.let {
-                MediaItem(it, currentDate, MediaFileType.VIDEO, DirType.GALLERY)
-            })
-            isLoadingLiveData.postValue(false)
-        }
+
+    fun addVideoToInternalStorage(file: File) {
+        isLoadingLiveData.postValue(true)
+        val uri = FileProvider.getUriForFile(
+            App.appContext,
+            "com.a2t.myapplication.fileprovider",
+            file
+        )
+        val dateFormat = SimpleDateFormat("dd.MM.yy", Locale.getDefault())
+        val currentDate = dateFormat.format(Date())
+        resultAddingFileLiveData.postValue(uri?.let {
+            MediaItem(it, currentDate, MediaFileType.VIDEO, DirType.APP)
+        })
+        isLoadingLiveData.postValue(false)
     }
 
     fun updateMediaFile(id: Long, fileName: String) {

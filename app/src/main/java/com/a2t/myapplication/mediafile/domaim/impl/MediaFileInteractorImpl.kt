@@ -8,7 +8,6 @@ import com.a2t.myapplication.mediafile.domaim.api.MediaFileDBRepositori
 import com.a2t.myapplication.mediafile.domaim.api.MediaFileInteractor
 import com.a2t.myapplication.mediafile.domaim.api.StoragesRepository
 import com.a2t.myapplication.mediafile.domaim.model.MediaItem
-import java.io.File
 
 class MediaFileInteractorImpl(
     private val mediaFileConverter: MediaFileConverter,
@@ -32,13 +31,5 @@ class MediaFileInteractorImpl(
     // Прикрепить/открепить медиафайл к строке
     override fun updateMediaFile(id: Long, fileName: String) {
         mediaFileDBRepositori.updateMediaFile(id, fileName)
-    }
-
-    override suspend fun addPhotoToGallery(file: File): Uri? {
-        return storagesRepository.addPhotoToGallery(file)
-    }
-
-    override suspend fun addVideoToGallery(file: File): Uri? {
-        return storagesRepository.addVideoToGallery(file)
     }
 }
