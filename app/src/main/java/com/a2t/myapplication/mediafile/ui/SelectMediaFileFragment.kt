@@ -176,6 +176,8 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                         .setNeutralButton(getString(R.string.existing_copy)) { _, _ ->
                             val originalName = response.originalName
                             mediaFileViewModel.filterExistingFiles(originalName)
+                            selectedDir(binding.tvApp)
+                            binding.tvSelectedType.setText(R.string.all)
                         }
                         .setPositiveButton(getString(R.string.new_copy)) { _, _ ->
                             mediaFileViewModel.saveImageToPrivateStorage(

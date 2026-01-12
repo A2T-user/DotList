@@ -147,7 +147,7 @@
     <string name="copy_file">копия</string>
     <string name="no_file_selected">Файл не выбран</string>
     <string name="gallery">Галерея</string>
-    <string name="dialog_hint">Похоже, в \u2022lis tуже есть копия этого файла.\nХотите воспользоваться имеющейся копией (рекомендуется) или создать новую?</string>
-    <string name="existing_copy">Имеющаяся копия</string>
+    <string name="dialog_hint">Похоже, в \u2022lis уже есть копии этого файла.\nХотите воспользоваться имеющейся копией (рекомендуется) или создать новую?</string>
+    <string name="existing_copy">Имеющиеся копии</string>
     <string name="new_copy">Новая копия</string>
 </resources>
