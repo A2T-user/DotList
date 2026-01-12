@@ -7,11 +7,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Typeface
-import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.TypedValue
@@ -87,15 +85,13 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
 
         photoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK && photoFile != null && photoFile!!.exists()) {
-                // Запускаем асинхронную обработку вместо блока UI
-                processAndSaveImage(photoFile!!)
+                mediaFileViewModel.addPhotoToInternalStorage(photoFile!!)
             }
             photoFile = null
         }
         videoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK && videoFile != null && videoFile!!.exists()) {
-                // Запускаем асинхронную обработку
-                processAndSaveVideo(videoFile!!)
+                mediaFileViewModel.addVideoToInternalStorage(videoFile!!)
             }
             videoFile = null
         }
@@ -203,28 +199,13 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
         // Добавление файла с камеры в галерею
         mediaFileViewModel.getResultAddingFileLiveData().observe(viewLifecycleOwner) { item ->
             if (item != null) {
-                val resolver = requireContext().contentResolver
-                val projection = arrayOf(MediaStore.MediaColumns.DATA)
-                val cursor = resolver.query(item.uri, projection, null, null, null)
-                cursor?.use { c ->
-                    if (c.moveToFirst()) {
-                        val filePath = c.getString(c.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA))
-                        MediaScannerConnection.scanFile(
-                            requireContext(),
-                            arrayOf(filePath),
-                            null
-                        ) { _, _ ->
-                            requireActivity().runOnUiThread {
-                                mediaFileViewModel.filterLiveData.postValue(MediaFileFilter(DirType.GALLERY, null))
-                                mediaFileViewModel.baseListItem.add(0, item)
-                                mediaFileViewModel.filterListItems()
-                                mediaFileViewModel.currentHolderItemLiveData.postValue(item)
-                                recycler.scrollToPosition(0)
-                            }
-                        }
-                    }
+                requireActivity().runOnUiThread {
+                    mediaFileViewModel.filterLiveData.postValue(MediaFileFilter(DirType.APP, null))
+                    mediaFileViewModel.baseListItem.add(0, item)
+                    mediaFileViewModel.filterListItems()
+                    mediaFileViewModel.currentHolderItemLiveData.postValue(item)
+                    recycler.scrollToPosition(0)
                 }
-                cursor?.close()
             }
         }
 
@@ -396,7 +377,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 } else {
                     view?.let {
                         Snackbar.make(
-                            it.findViewById(android.R.id.content),  // Или ваш View
+                            it.findViewById(android.R.id.content),
                             context.resources.getString(R.string.access_camera_denied),
                             Snackbar.LENGTH_LONG
                         )
@@ -434,10 +415,14 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
     }
 
     private fun openCameraForPhoto() {
-        photoFile = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "temp_photo_${System.currentTimeMillis()}.jpg")
+        val mediaDir = File(requireContext().filesDir, "mediafiles/image")
+        if (!mediaDir.exists()) {
+            mediaDir.mkdirs()
+        }
+        photoFile = File(mediaDir, "${System.currentTimeMillis()}.jpg")
         val photoUri = FileProvider.getUriForFile(
             requireContext(),
-            "com.a2t.myapplication.fileprovider",  // Authority из манифеста
+            "com.a2t.myapplication.fileprovider",
             photoFile!!
         )
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
@@ -447,7 +432,11 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
     }
 
     private fun openCameraForVideo() {
-        videoFile = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DCIM), "temp_video_${System.currentTimeMillis()}.mp4")
+        val mediaDir = File(requireContext().filesDir, "mediafiles/video")
+        if (!mediaDir.exists()) {
+            mediaDir.mkdirs()
+        }
+        videoFile = File(mediaDir, "${System.currentTimeMillis()}.mp4")
         val videoUri = FileProvider.getUriForFile(
             requireContext(),
             "com.a2t.myapplication.fileprovider",
@@ -462,14 +451,6 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
         videoLauncher.launch(intent)
     }
 
-    private fun addPhotoToGallery(file: File) {
-        mediaFileViewModel.addPhotoToGallery(file)
-    }
-
-    private fun addVideoToGallery(file: File) {
-        mediaFileViewModel.addVideoToGallery(file)
-    }
-
     private fun updatingMainActivity(fileName: String) {
         // Обновляем данные в MainActivity
         val records = ma.adapter.records
@@ -479,15 +460,6 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
         item.mediaFile = fileName
         // Обновление холдера
         ma.adapter.notifyItemChanged(position)
-    }
-
-
-    fun processAndSaveImage(originalFile: File) {
-        addPhotoToGallery(originalFile)
-    }
-
-    fun processAndSaveVideo(originalFile: File) {
-        addVideoToGallery(originalFile)
     }
 
     private fun selectedDir(tv: TextView) {

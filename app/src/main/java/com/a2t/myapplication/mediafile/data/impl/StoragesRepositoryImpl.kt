@@ -1,16 +1,12 @@
 package com.a2t.myapplication.mediafile.data.impl
 
-import android.content.ContentResolver
-import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
-import android.os.Environment
 import android.os.StatFs
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
-import android.webkit.MimeTypeMap
 import androidx.core.net.toUri
 import com.a2t.myapplication.common.App
 import com.a2t.myapplication.mediafile.data.dto.DirType
@@ -24,7 +20,6 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 class StoragesRepositoryImpl(
-    private val contentResolver: ContentResolver
 ): StoragesRepository {
 
     // Получение списка имеющихся в общем хранилище и в загрузках медиафайлов
@@ -69,7 +64,6 @@ class StoragesRepositoryImpl(
         val typeDir = File(context.filesDir, "mediafiles/$subDirName")
         // Проверяем, существует ли папка
         if (!typeDir.exists() || !typeDir.isDirectory) return
-
         // Вспомогательная функция для обхода папок
         fun scanDirectory(currentDir: File) {
             val files = currentDir.listFiles()
@@ -81,7 +75,6 @@ class StoragesRepositoryImpl(
                 }
             }
         }
-
         scanDirectory(typeDir)        // Запускаем сканирование от папки mediafiles
     }
     private fun parseFile(file: File, mediaFileType: MediaFileType): MediaItemDto = MediaItemDto(
@@ -215,58 +208,6 @@ class StoragesRepositoryImpl(
         }
     }
 
-    override suspend fun addPhotoToGallery(file: File): Uri? {
-        return insertMediaFile(
-            file = file,
-            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            mimeTypeStr = "image/jpeg",
-            relativePath = Environment.DIRECTORY_PICTURES,
-        )
-    }
-
-    override suspend fun addVideoToGallery(file: File): Uri? {
-        return insertMediaFile(
-            file = file,
-            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-            mimeTypeStr = "video/mp4",
-            relativePath = Environment.DIRECTORY_MOVIES,
-        )
-    }
-
-    private fun insertMediaFile(
-        file: File,
-        contentUri: Uri,
-        mimeTypeStr: String,
-        relativePath: String
-    ): Uri? {
-        try {
-            val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension.lowercase()) ?: mimeTypeStr
-            val contentValues = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, file.name)
-                put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
-                put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
-            }
-            // Вставка записи в MediaStore и получение URI
-            val uri = contentResolver.insert(contentUri, contentValues) ?: return null  // Если вставка не удалась
-
-            // Копирование файла в MediaStore
-            try {
-                contentResolver.openOutputStream(uri)?.use { outputStream ->
-                    file.inputStream().use { inputStream ->
-                        inputStream.copyTo(outputStream)
-                    }
-                } ?: return null  // Если не удалось открыть поток
-            } catch (_: Exception) {
-                // Удалить частично созданную запись, если копирование провалилось
-                contentResolver.delete(uri, null, null)
-                return null
-            }
-            file.delete()   // Удаляем исходный файл
-            return uri
-        } catch (_: Exception) {
-            return null
-        }
-    }
     // Получение имени файла из Uri
    private fun getFileName(context: Context, uri: Uri): String? {
         val cursor = context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)
