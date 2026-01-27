@@ -6,7 +6,7 @@ import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.a2t.myapplication.common.model.DLAnimator
+import com.a2t.myapplication.common.utilities.DLAnimator
 import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.ui.ActionEditText
 import com.a2t.myapplication.main.ui.activity.MainActivity

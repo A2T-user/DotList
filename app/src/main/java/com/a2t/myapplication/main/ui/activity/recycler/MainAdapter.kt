@@ -17,11 +17,12 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.common.App
 import com.a2t.myapplication.R
-import com.a2t.myapplication.common.model.DLAnimator
+import com.a2t.myapplication.common.utilities.DLAnimator
 import com.a2t.myapplication.main.domain.model.ListRecord
 import com.a2t.myapplication.main.ui.activity.MainActivity
 import com.a2t.myapplication.main.ui.activity.model.SpecialMode
 import com.a2t.myapplication.main.ui.fragments.AlarmFragment
+import com.a2t.myapplication.mediafile.ui.MediaViewerFragment
 import com.a2t.myapplication.mediafile.ui.SelectMediaFileFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -438,7 +439,16 @@ class MainAdapter(
             mac.requestMenuFocus()
             mac.goToChildDir(item.id)
         } else {
-            if (!item.isEdit) startEditMode(item, holder)
+            if (item.mediaFile.isNullOrEmpty()) {
+                if (!item.isEdit) startEditMode(item, holder)
+            } else {
+                (mac as MainActivity).fragmentManager.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN)
+                    .add(
+                        R.id.main_layout,
+                        MediaViewerFragment.newInstance(item.id, item.record, item.note, item.mediaFile!!)
+                    )
+                    .addToBackStack("mediaViewerFragment").commit()
+            }
         }
     }
 

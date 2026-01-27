@@ -11,7 +11,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.a2t.myapplication.R
-import com.a2t.myapplication.common.model.DLAnimator
+import com.a2t.myapplication.common.utilities.DLAnimator
 import com.a2t.myapplication.databinding.FragmentDesc2RecordsBinding
 import com.a2t.myapplication.databinding.ItemMainBinding
 import com.a2t.myapplication.description.ui.DescriptionActivity

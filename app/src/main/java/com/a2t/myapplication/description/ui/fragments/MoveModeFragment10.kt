@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.a2t.myapplication.R
-import com.a2t.myapplication.common.model.DLAnimator
+import com.a2t.myapplication.common.utilities.DLAnimator
 import com.a2t.myapplication.databinding.ContextMenuMoveBinding
 import com.a2t.myapplication.databinding.FragmentDesc10MoveModeBinding
 import com.a2t.myapplication.databinding.ToolbarModesBinding

@@ -1,15 +1,21 @@
 package com.a2t.myapplication.mediafile.ui
 
+
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.TypedValue
@@ -17,13 +23,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -39,17 +45,23 @@ import com.a2t.myapplication.mediafile.data.dto.DirType
 import com.a2t.myapplication.mediafile.data.dto.ErrCode
 import com.a2t.myapplication.mediafile.data.dto.MediaFileType
 import com.a2t.myapplication.mediafile.data.dto.Response
+import com.a2t.myapplication.mediafile.domaim.model.MediaItem
 import com.a2t.myapplication.mediafile.presentation.MediaFileViewModel
-import com.a2t.myapplication.mediafile.presentation.model.MediaFileFilter
 import com.a2t.myapplication.mediafile.ui.recycler.MediaFileAdapter
 import com.a2t.myapplication.mediafile.ui.recycler.MediaFileAdapterCallback
+import com.davemorrissey.labs.subscaleview.ImageSource
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.Job
+import androidx.exifinterface.media.ExifInterface
+import com.a2t.myapplication.mediafile.presentation.model.MediaFileFilter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.getValue
 
 
@@ -62,16 +74,12 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
     private var idString: Long? = null
     private lateinit var recycler: RecyclerView
     lateinit var adapter: MediaFileAdapter
-    private var isShownSelectionMenu = false
-    private var isVideo = true
-    private var isMenuCameraFull = false
     private lateinit var photoLauncher: ActivityResultLauncher<Intent>
-    private lateinit var videoLauncher: ActivityResultLauncher<Intent>
-    private var photoFile: File? = null
-    private var videoFile: File? = null
-    private var selectionMenuJob: Job? = null
     private var scrollJob = lifecycleScope.launch {}
+    private var loadMediaJob = lifecycleScope.launch {}
     private var scrollState = ScrollState.STOPPED
+    private var isPreviewContainerBig = false
+    private var photoUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,19 +91,13 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
         savedInstanceState: Bundle?
     ): View {
 
-        photoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK && photoFile != null && photoFile!!.exists()) {
-                mediaFileViewModel.addPhotoToInternalStorage(photoFile!!)
+        photoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
+            photoUri?.let { uri ->
+                if (checkUriReady(uri)) {
+                    mediaFileViewModel.addPhotoToExternalAppStorage(photoUri!!)
+                }
             }
-            photoFile = null
         }
-        videoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK && videoFile != null && videoFile!!.exists()) {
-                mediaFileViewModel.addVideoToInternalStorage(videoFile!!)
-            }
-            videoFile = null
-        }
-
         _binding = FragmentSelectMediaFileBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -124,7 +126,6 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 else -> {}
             }
         }
-
         // Следим за состоянием Загрузка - выводим/убираем прогрессбар
         mediaFileViewModel.getIsLoadingLiveData().observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.isVisible = isLoading
@@ -142,19 +143,21 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 DirType.APP -> binding.tvApp
             }
             selectedDir(view)
-            val res = when(filter.type) {
-                MediaFileType.IMAGE -> R.string.photo
-                MediaFileType.VIDEO -> R.string.video
-                else ->  R.string.all
-            }
-            binding.tvSelectedType.setText(res)
             mediaFileViewModel.filterListItems()
         }
 
-        // Следим за сохранением файла во внутреннем хранилище
-        mediaFileViewModel.getResponseLiveData().observe(viewLifecycleOwner) { response ->
+        // Следим за сохранением файла во ВНУТРЕННЕМ хранилище
+        mediaFileViewModel.getResponseCopyToPrivateStorageLiveData().observe(viewLifecycleOwner) { response ->
             when(response) {
                 is Response.Success -> {
+                    val fileName = response.fileName
+                    // Обновляем строку БД
+                    mediaFileViewModel.updateMediaFile(idString!!, fileName)
+                    // Обновляем данные в MainActivity
+                    updatingMainActivity(fileName)
+                    parentFragmentManager.beginTransaction().remove(this@SelectMediaFileFragment).commitAllowingStateLoss() // Закрытие фрагмента
+                }
+                is Response.FileFromExternalAppStorage -> {
                     val fileName = response.fileName
                     // Обновляем строку БД
                     mediaFileViewModel.updateMediaFile(idString!!, fileName)
@@ -170,16 +173,14 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                         .setCustomTitle(dialogView)
                         .setMessage(getString(R.string.dialog_hint))
                         .setNeutralButton(getString(R.string.existing_copy)) { _, _ ->
-                            val originalName = response.originalName
-                            mediaFileViewModel.filterExistingFiles(originalName)
+                            mediaFileViewModel.filterExistingFiles(response.originalName, response.mediaFileType)
                             selectedDir(binding.tvApp)
-                            binding.tvSelectedType.setText(R.string.all)
                         }
                         .setPositiveButton(getString(R.string.new_copy)) { _, _ ->
-                            mediaFileViewModel.saveImageToPrivateStorage(
+                            mediaFileViewModel.saveImageToExternalAppStorage(
                                 response.uri,
                                 response.mediaFileType,
-                                binding.cbTransfer.isChecked,
+                                DirType.GALLERY,
                                 true
                                 )
                         }
@@ -196,71 +197,70 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 }
             }
         }
-        // Добавление файла с камеры в галерею
+        // Следим за сохранением файла в ОБЩЕМ хранилище
+        mediaFileViewModel.getResponseCopyToPublicStorageLiveData().observe(viewLifecycleOwner) { response ->
+            when(response) {
+                is Response.Success -> {
+                    // добавляем item в baseListItem
+                    val dateFormat = SimpleDateFormat("dd.MM.yy", Locale.getDefault())
+                    val currentDate = dateFormat.format(Date())
+                    val item = MediaItem(response.uri, currentDate, response.mediaFileType, DirType.GALLERY)
+                    mediaFileViewModel.baseListItem.add(0, item)
+                    // Обновляем данные вкладки Галерея, если она текущая и фильтрация соответствующая
+                    if (mediaFileViewModel.filterLiveData.value!!.dir == DirType.GALLERY
+                        && mediaFileViewModel.filterLiveData.value!!.type == response.mediaFileType) {
+                        mediaFileViewModel.filterListItems()
+                    }
+                }
+                is Response.FileExists -> {
+                    Toast.makeText(requireContext(), R.string.file_exists_in_galery, Toast.LENGTH_SHORT).show()
+                }
+                is Response.Error -> {
+                    parentFragmentManager.beginTransaction().remove(this@SelectMediaFileFragment).commitAllowingStateLoss() // Закрытие фрагмента
+                    val res = when(response.errCode) {
+                        ErrCode.OUT_OF_MEMORY -> R.string.out_of_memory
+                        ErrCode.COPY_ERROR -> R.string.copy_error
+                        ErrCode.UNEXPECTED_ERROR -> R.string.unexpected_error
+                    }
+                    Toast.makeText(requireContext(), res, Toast.LENGTH_SHORT).show()
+                }
+                else -> {}
+            }
+        }
+        // Добавление файла с камеры во общее хранилище
         mediaFileViewModel.getResultAddingFileLiveData().observe(viewLifecycleOwner) { item ->
             if (item != null) {
                 requireActivity().runOnUiThread {
-                    mediaFileViewModel.filterLiveData.postValue(MediaFileFilter(DirType.APP, null))
+                    mediaFileViewModel.filterLiveData.postValue(MediaFileFilter(DirType.GALLERY, null))
                     mediaFileViewModel.baseListItem.add(0, item)
                     mediaFileViewModel.filterListItems()
-                    mediaFileViewModel.currentHolderItemLiveData.postValue(item)
                     recycler.scrollToPosition(0)
                 }
             }
         }
 
-        // Меню выбора типа контента
-        binding.llSelectType.setOnClickListener {
-            showSelectionMenu(!isShownSelectionMenu)
-            selectionMenuJob = viewLifecycleOwner.lifecycleScope.launch {
-                delay(3000)
-                showSelectionMenu(false)
+        // Слушаем изменение текущего холдера
+        mediaFileViewModel.currentHolderItemLiveData.observe(viewLifecycleOwner) { item ->
+            if (item != null) {
+                loadMedia(item.uri, item.mediaFileType)
+                binding.ivBtnCopyToGallery.isVisible = false
+                isVisibleBtnCopyToGallery(item)
             }
-        }
-        binding.tvAll.setOnClickListener {
-            val filter = mediaFileViewModel.filterLiveData.value
-            filter?.also {
-                it.type = null
-                mediaFileViewModel.filterLiveData.postValue(it)
-            }
-            showSelectionMenu(false)
-        }
-        binding.tvPhoto.setOnClickListener {
-            val filter = mediaFileViewModel.filterLiveData.value
-            filter?.also {
-                it.type = MediaFileType.IMAGE
-                mediaFileViewModel.filterLiveData.postValue(it)
-            }
-            showSelectionMenu(false)
-        }
-        binding.tvVideo.setOnClickListener {
-            val filter = mediaFileViewModel.filterLiveData.value
-            filter?.also {
-                it.type = MediaFileType.VIDEO
-                mediaFileViewModel.filterLiveData.postValue(it)
-            }
-            showSelectionMenu(false)
         }
 
-        // Меню камеры, выбор фото/видео
-        binding.ivPhoto.setOnClickListener {
-            if (isMenuCameraFull) {
-                isVideo = false
-                binding.ivVideo.isVisible = false
-                isMenuCameraFull = false
-                requestCameraPermissions()
-            } else {
-                binding.ivVideo.isVisible = true
-                isMenuCameraFull = true
-                viewLifecycleOwner.lifecycleScope.launch {
-                    delay(3000)
-                    binding.ivVideo.isVisible = false
-                    isMenuCameraFull = false
-                }
-            }
+        // Слушаем завершился ли процесс копирования файла
+        mediaFileViewModel.copyJob.observe(viewLifecycleOwner) { copyJob ->
+            val currentItem = mediaFileViewModel.currentHolderItemLiveData.value
+            if (copyJob == null) isVisibleBtnCopyToGallery(currentItem)
         }
-        binding.ivVideo.setOnClickListener {
-            isVideo = true
+
+        // Копирование файлф в галерею
+        binding.ivBtnCopyToGallery.setOnClickListener {
+            exportFileToMediaStore()
+        }
+
+        // Кнопка Камера
+        binding.ivPhoto.setOnClickListener {
             requestCameraPermissions()
         }
 
@@ -279,29 +279,65 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 mediaFileViewModel.filterLiveData.postValue(it)
             }
         }
-
+        // Кнопка размер окна предпросмотра
+        binding.ivPreviewSize.setOnClickListener {
+            setPreviewWindowSize()
+        }
+        //Кнопка Выбрать
         binding.tvSelect.setOnClickListener {
             val currentItem = mediaFileViewModel.currentHolderItemLiveData.value
             if (currentItem != null) {
-                mediaFileViewModel.saveImageToPrivateStorage(
+                mediaFileViewModel.saveImageToExternalAppStorage(
                     currentItem.uri,
                     currentItem.mediaFileType,
-                    binding.cbTransfer.isChecked,
+                    currentItem.dir,
                     false
                 )
             } else {
                 Toast.makeText(requireContext(), R.string.no_file_selected, Toast.LENGTH_SHORT).show()
             }
         }
-        // Копирование/перенос
-        binding.cbCopy.setOnClickListener {
-            binding.cbCopy.isChecked = true
-            binding.cbTransfer.isChecked = false
+    }
+
+    /*private fun requestWriteMediaPermissions() {
+        val permissionsToRequest = mutableListOf<String>()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Android 13+: нужны явные разрешения на запись медиа
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.WRITE_MEDIA_IMAGES)
+            }
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.WRITE_MEDIA_VIDEO)
+            }
         }
-        binding.cbTransfer.setOnClickListener {
-            binding.cbCopy.isChecked = false
-            binding.cbTransfer.isChecked = true
+        // Android 8–12: WRITE_MEDIA_* не существует, но READ_EXTERNAL_STORAGE уже позволяет писать в MediaStore
+        // → НЕ запрашиваем ничего дополнительного
+
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                permissionsToRequest.toTypedArray(),
+                REQUEST_WRITE_MEDIA_PERMISSIONS
+            )
+        } else {
+            // Разрешения уже есть — сразу запускаем экспорт
+            exportFileToMediaStore()
         }
+    }*/
+
+    private fun exportFileToMediaStore() {
+        val dialogView =
+            LayoutInflater.from(context).inflate(R.layout.dialog_title_attention, null)
+        MaterialAlertDialogBuilder(context)
+            .setCustomTitle(dialogView)
+            .setMessage(getString(R.string.copy_dialog_hint))
+            .setNeutralButton(getString(R.string.back)) { _, _ -> }
+            .setPositiveButton(getString(R.string.copy)) { _, _ ->
+                val item = mediaFileViewModel.currentHolderItemLiveData.value!!
+                mediaFileViewModel.copyFileFromExternalAppToPublicStorage(item.uri, item.mediaFileType)
+            }
+            .show()
     }
 
     private fun requestMediaPermissions() {
@@ -310,9 +346,9 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.READ_MEDIA_IMAGES)
             }
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED) {
+            /*if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.READ_MEDIA_VIDEO)
-            }
+            }*/
         } else {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -330,11 +366,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
     private fun requestCameraPermissions() {
         val permissions = arrayOf(Manifest.permission.CAMERA)
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            if (isVideo) {
-                openCameraForVideo()
-            } else {
-                openCameraForPhoto()
-            }
+            openCameraForPhoto()
         } else {
             ActivityCompat.requestPermissions(requireActivity(), permissions, REQUEST_CAMERA_PERMISSIONS)
         }
@@ -351,7 +383,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 } else {
                     view?.let {
                         Snackbar.make(
-                            it.findViewById(android.R.id.content),  // Или ваш View
+                            it.findViewById(android.R.id.content),
                             context.resources.getString(R.string.access_media_denied),
                             Snackbar.LENGTH_LONG
                         )
@@ -369,11 +401,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
             REQUEST_CAMERA_PERMISSIONS -> {
                 val granted = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 if (granted) {
-                    if (isVideo) {
-                        openCameraForVideo()
-                    } else {
-                        openCameraForPhoto()
-                    }
+                    openCameraForPhoto()
                 } else {
                     view?.let {
                         Snackbar.make(
@@ -397,58 +425,31 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
         mediaFileViewModel.getAllMediaFiles()
     }
 
-    private fun showSelectionMenu(isShow: Boolean) {
-        selectionMenuJob?.cancel()
-        selectionMenuJob = null
-        val selectedType = mediaFileViewModel.filterLiveData.value!!.type
-        if (isShow) {
-            binding.tvAll.isVisible = selectedType != null
-            binding.tvPhoto.isVisible = selectedType != MediaFileType.IMAGE
-            binding.tvVideo.isVisible = selectedType != MediaFileType.VIDEO
-            isShownSelectionMenu = true
-        } else {
-            binding.tvAll.isVisible = false
-            binding.tvPhoto.isVisible = false
-            binding.tvVideo.isVisible = false
-            isShownSelectionMenu = false
-        }
-    }
-
     private fun openCameraForPhoto() {
-        val mediaDir = File(requireContext().filesDir, "mediafiles/image")
-        if (!mediaDir.exists()) {
-            mediaDir.mkdirs()
+        val values = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, "${System.currentTimeMillis()}.jpg")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures")
+            } else {
+                // Для API 26-28: создаем путь к файлу
+                val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                val file = File(picturesDir, "${System.currentTimeMillis()}.jpg")
+                put(MediaStore.Images.Media.DATA, file.absolutePath)
+            }
         }
-        photoFile = File(mediaDir, "${System.currentTimeMillis()}.jpg")
-        val photoUri = FileProvider.getUriForFile(
-            requireContext(),
-            "com.a2t.myapplication.fileprovider",
-            photoFile!!
+        photoUri = requireContext().contentResolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            values
         )
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
-            putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-        }
-        photoLauncher.launch(intent)
-    }
 
-    private fun openCameraForVideo() {
-        val mediaDir = File(requireContext().filesDir, "mediafiles/video")
-        if (!mediaDir.exists()) {
-            mediaDir.mkdirs()
+        photoUri?.let { cameraUri ->
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+                putExtra(MediaStore.EXTRA_OUTPUT, cameraUri)
+                addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            }
+            photoLauncher.launch(intent)
         }
-        videoFile = File(mediaDir, "${System.currentTimeMillis()}.mp4")
-        val videoUri = FileProvider.getUriForFile(
-            requireContext(),
-            "com.a2t.myapplication.fileprovider",
-            videoFile!!
-        )
-        val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE).apply {
-            putExtra(MediaStore.EXTRA_OUTPUT, videoUri)
-            // Ограничения на качество/длительность
-            putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1)  // 0 - low, 1 - high
-            putExtra(MediaStore.EXTRA_DURATION_LIMIT, 30)  // 30 сек макс
-        }
-        videoLauncher.launch(intent)
     }
 
     private fun updatingMainActivity(fileName: String) {
@@ -473,20 +474,35 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
         tv.typeface = Typeface.defaultFromStyle(Typeface.NORMAL)
     }
 
-    override fun onStart() {
-        super.onStart()
-        ma.mainBackPressedCallback.isEnabled = false
+    // Проверка, выводить ли на экран кнопку Копирование в галерею
+    private fun isVisibleBtnCopyToGallery(currentItem: MediaItem?) {
+        var result = false
+        if (currentItem != null) {
+            if (currentItem.dir == DirType.APP && mediaFileViewModel.copyJob.value == null) {
+                result = !isFileExistsInPublicStorage(currentItem.uri)  // Проверяем есть ли такой файл в Галерее
+            }
+        }
+        binding.ivBtnCopyToGallery.isVisible = result
     }
-
-    override fun onStop() {
-        super.onStop()
-        ma.mainBackPressedCallback.isEnabled = true
+    private fun isFileExistsInPublicStorage(uri: Uri): Boolean {
+        val fileName = getFileName(uri)
+        if (fileName.isBlank()) return false
+        return mediaFileViewModel.isTheFileInPublicStorage(fileName)
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        selectionMenuJob?.cancel()
-        _binding = null
+    private fun getFileName(uri: Uri): String {
+        val fileName = when (uri.scheme) {
+            "file" -> {
+                File(uri.path ?: "").name
+            }
+            else -> {
+                uri.lastPathSegment ?: ""   // берем последний сегмент
+            }
+        }
+        return if (fileName.contains("#")) {
+            fileName.substringAfter("#")    // отделяем наш префикс
+        } else {
+            fileName
+        }
     }
 
     override fun getVM(): MediaFileViewModel = mediaFileViewModel
@@ -496,11 +512,13 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 this.scrollState = scrollState
                 binding.ivBtnScroll.setImageResource(R.drawable.ic_scroll_down)
                 binding.ivBtnScroll.isVisible = true
+                if (isPreviewContainerBig) setPreviewWindowSize()
             }
             ScrollState.UP -> {             // Прокрутка вверх
                 this.scrollState = scrollState
                 binding.ivBtnScroll.setImageResource(R.drawable.ic_scroll_up)
                 binding.ivBtnScroll.isVisible = true
+                if (isPreviewContainerBig) setPreviewWindowSize()
             }
             ScrollState.STOPPED -> {        // Прокрутка остановлена
                 this.scrollState = scrollState
@@ -514,6 +532,136 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
         scrollJob = lifecycleScope.launch {
             delay(1000)
             binding.ivBtnScroll.isVisible = false
+        }
+    }
+
+    private fun loadMedia(uri: Uri, mediaFileType: MediaFileType) {
+        loadMediaJob.cancel()
+        loadMediaJob = lifecycleScope.launch {
+            when (mediaFileType) {
+                MediaFileType.IMAGE -> {
+                    binding.photoWindow.isVisible = true
+                    try {
+                        val bitmap = getBitmapFromUri(context, uri)
+                        if (bitmap == null || bitmap.isRecycled) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Ошибка загрузки изображения",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@launch
+                        }
+
+                        val rotatedBitmap = rotateBitmapAccordingToExif(context, uri, bitmap)
+                        binding.photoWindow.setImage(ImageSource.bitmap(rotatedBitmap))
+                        binding.photoWindow.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
+                        binding.photoWindow.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF)
+                        binding.photoWindow.setDoubleTapZoomScale(2f)
+                        binding.photoWindow.setPanLimit(SubsamplingScaleImageView.PAN_LIMIT_INSIDE)
+                    } catch (_: Exception) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Ошибка загрузки изображения",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
+                else -> {
+                    Toast.makeText(
+                        requireContext(),
+                        "Неподдерживаемый формат",
+                        Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
+    }
+    fun getBitmapFromUri(context: Context, uri: Uri): Bitmap? {
+        return context.contentResolver.openInputStream(uri)?.use { inputStream ->
+            BitmapFactory.decodeStream(inputStream)
+        }
+    }
+
+    private fun rotateBitmapAccordingToExif(context: Context, uri: Uri, bitmap: Bitmap): Bitmap {
+        return try {
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                val exif = ExifInterface(inputStream)
+                val orientation = exif.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL
+                )
+
+                val rotationDegrees = when (orientation) {
+                    ExifInterface.ORIENTATION_ROTATE_90 -> 90
+                    ExifInterface.ORIENTATION_ROTATE_180 -> 180
+                    ExifInterface.ORIENTATION_ROTATE_270 -> 270
+                    else -> 0
+                }
+
+                if (rotationDegrees != 0) {
+                    val matrix = Matrix()
+                    matrix.postRotate(rotationDegrees.toFloat())
+                    Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+                } else {
+                    bitmap
+                }
+            } ?: bitmap // если inputStream == null — возвращаем оригинал
+        } catch (_: Exception) {
+            bitmap
+        }
+    }
+
+    // Установка размера окна предпросмотра
+    private fun setPreviewWindowSize() {
+        var size = 400f
+        if (isPreviewContainerBig) {
+            size = 200f
+            binding.ivPreviewSize.setImageResource(R.drawable.ic_preview_max)
+        } else {
+            binding.ivPreviewSize.setImageResource(R.drawable.ic_preview_min)
+        }
+        var widht: Int
+        var height: Int
+        if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            widht = LinearLayout.LayoutParams.MATCH_PARENT
+            height = dpToPx(context, size)
+        } else {
+            widht = dpToPx(context, size)
+            height = LinearLayout.LayoutParams.MATCH_PARENT
+        }
+        binding.flPreviewContainer.layoutParams = LinearLayout.LayoutParams(widht, height)
+        isPreviewContainerBig = !isPreviewContainerBig
+    }
+    private fun dpToPx(context: Context, dp: Float): Int {
+        val density = context.resources.displayMetrics.density
+        return (dp * density).toInt()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        ma.mainBackPressedCallback.isEnabled = false
+    }
+
+    override fun onStop() {
+        super.onStop()
+        ma.mainBackPressedCallback.isEnabled = true
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun checkUriReady(uri: Uri): Boolean {
+        return try {
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                val buffer = ByteArray(1024)
+                val bytesRead = inputStream.read(buffer)
+                bytesRead > 0
+            } ?: false
+        } catch (_: Exception) {
+            false
         }
     }
 
