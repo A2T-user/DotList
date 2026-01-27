@@ -2,6 +2,7 @@ package com.a2t.myapplication.mediafile.domaim.impl
 
 import android.net.Uri
 import com.a2t.myapplication.mediafile.data.MediaFileConverter
+import com.a2t.myapplication.mediafile.data.dto.DirType
 import com.a2t.myapplication.mediafile.data.dto.MediaFileType
 import com.a2t.myapplication.mediafile.data.dto.Response
 import com.a2t.myapplication.mediafile.domaim.api.MediaFileDBRepositori
@@ -20,16 +21,17 @@ class MediaFileInteractorImpl(
         val itemList = storagesRepository.getAllMediaFiles()
         return itemList.map { mediaFileConverter.map(it) }
     }
-    // Сохранение медиафайла из общего хранилища во внутреннем и добавление его имени в строку
-    override fun saveImageToPrivateStorage(sourceUri: Uri, mediaFileType: MediaFileType, deleteSourceAfterSave: Boolean, isNewCopy: Boolean): Response {
-        return storagesRepository.saveImageToPrivateStorage(sourceUri, mediaFileType, deleteSourceAfterSave, isNewCopy)
-    }
-    // Получение URI файла во внутреннем хранилище
-    override fun getFileUri(fileName: String): Uri? {
-        return storagesRepository.getFileUri(fileName)
+    // Сохранение медиафайла из общего хранилища во внешнее хранилище приложения
+    override fun saveFileToExternalAppStorage(sourceUri: Uri, mediaFileType: MediaFileType, dir: DirType, isNewCopy: Boolean): Response {
+        return storagesRepository.saveFileToExternalAppStorage(sourceUri, mediaFileType, dir, isNewCopy)
     }
     // Прикрепить/открепить медиафайл к строке
-    override fun updateMediaFile(id: Long, fileName: String) {
+    override fun updateMediaFile(id: Long, fileName: String?) {
         mediaFileDBRepositori.updateMediaFile(id, fileName)
     }
+    // Сохранение медиафайла из внешнего хранилища приложения в общем хранилище
+    override suspend fun copyFileFromExternalAppToPublicStorage(sourceUri: Uri, mediaFileType: MediaFileType): Response {
+        return storagesRepository.copyFileFromExternalAppToPublicStorage(sourceUri, mediaFileType)
+    }
+
 }

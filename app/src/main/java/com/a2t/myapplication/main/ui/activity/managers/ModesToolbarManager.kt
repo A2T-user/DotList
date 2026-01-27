@@ -122,12 +122,12 @@ class ModesToolbarManager(
     private fun pasteRecords() {
         // Перенос записей
         var maxNpp = getMaxNpp(ma.getRecords())
-        getMoveBuffer().forEachIndexed { index, listRecord ->
+        getMoveBuffer().forEachIndexed { _, listRecord ->
             listRecord.idDir = getIdCurrentDir()
             maxNpp++
             listRecord.npp = maxNpp
         }
-        getMainBuffer().forEachIndexed { index, listRecord ->
+        getMainBuffer().forEachIndexed { _, listRecord ->
             maxNpp++
             listRecord.npp = maxNpp
         }

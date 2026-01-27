@@ -4,11 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.GestureDetector
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
-import android.view.VelocityTracker
 import android.view.View
 import android.view.animation.LayoutAnimationController
 import android.widget.FrameLayout
@@ -26,7 +24,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.common.App
 import com.a2t.myapplication.R
-import com.a2t.myapplication.common.model.DLAnimator
+import com.a2t.myapplication.common.utilities.DLAnimator
 import com.a2t.myapplication.databinding.ActivityMainBinding
 import com.a2t.myapplication.databinding.ContextMenuFormatBinding
 import com.a2t.myapplication.databinding.ContextMenuMoveBinding
@@ -69,7 +67,7 @@ const val EYE_ANIMATION_DELEY = 5000L
 const val NUMBER_OF_OPERATIO_ZOOM = 5
 const val STEP_ZOOM = 0.3f                                     // Шаг изменения размера шрифта
 const val CURRENT_TAB = "current_tab"
-private const val HIDE_CONTEXT_MENU_DEBOUNCE_DELAY = 3000L                 // Задержка закрытия контекстного меню
+private const val HIDE_CONTEXT_MENU_DEBOUNCE_DELAY = 3000L     // Задержка закрытия контекстного меню
 
 class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChangedListener {
     lateinit var mainBackPressedCallback: OnBackPressedCallback
@@ -102,8 +100,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     private var isClickAllowed = true
     private var isSideBarOpenAllowed = true
     private var scrollState = ScrollState.STOPPED
-    private lateinit var velocityTracker: VelocityTracker
-    private lateinit var specialModeGestureDetector: GestureDetector
     private var isLeftHandControl: Boolean = false
     private var hideContextMenuJob: Job? = null
     private var isBackPressedOnce = false // Флаг для отслеживания нажатия Back
@@ -687,7 +683,6 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         mainViewModel.insertRecord(item) { id ->
             item.id = id
         }
-
     }
 
     @SuppressLint("NewApi")
@@ -1027,22 +1022,13 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        mainViewModel.startGarbageCollector()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        velocityTracker = VelocityTracker.obtain() // Создаем новый объект VelocityTracker
-        velocityTracker.addMovement(event)
-
-        if (event != null) {
-            specialModeGestureDetector.onTouchEvent(event) // Обработка жестов
-        }
-
-        if (event?.action == MotionEvent.ACTION_UP || event?.action == MotionEvent.ACTION_CANCEL) {
-            velocityTracker.recycle() // Освобождаем ресурсы
-        }
-        return super.onTouchEvent(event)
     }
 }

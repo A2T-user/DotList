@@ -8,8 +8,18 @@ class MediaFileDBRepositoriImpl(
 ): MediaFileDBRepositori {
 
     // Обновляем медиафайл
-    override fun updateMediaFile(id: Long, fileName: String) {
+    override fun updateMediaFile(id: Long, fileName: String?) {
         val time = System.currentTimeMillis()
         appDatabase.mediaFileDao().updateMediaFile(id, fileName, time)
+    }
+
+    // Обновляем поля Основное и примечание
+    override fun updateRecordAndNote(
+        id: Long,
+        record: String,
+        note: String
+    ) {
+        val time = System.currentTimeMillis()
+        appDatabase.mediaFileDao().updateRecordAndNote(id, record, note, time)
     }
 }

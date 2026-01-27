@@ -40,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation("com.davemorrissey.labs:subsampling-scale-image-view:3.10.0")
     implementation("io.insert-koin:koin-android:4.1.1")
     implementation("androidx.activity:activity-ktx:1.12.2")
     implementation("androidx.core:core-ktx:1.17.0")

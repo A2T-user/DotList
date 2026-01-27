@@ -3,6 +3,7 @@ package com.a2t.myapplication.main.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a2t.myapplication.common.App
+import com.a2t.myapplication.main.domain.api.GCInteractor
 import com.a2t.myapplication.main.ui.activity.model.SpecialMode
 import com.a2t.myapplication.main.domain.api.MainInteractor
 import com.a2t.myapplication.main.domain.model.ListRecord
@@ -12,7 +13,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainViewModel(
-    private val mainInteractor: MainInteractor
+    private val mainInteractor: MainInteractor,
+    private val gcInteractor: GCInteractor
 ): ViewModel() {
     // Параметры для MainActivity
     val moveBuffer = ArrayList<ListRecord>()    // Буфер для режима MOVE(только перенос записей)
@@ -274,6 +276,13 @@ class MainViewModel(
             withContext(Dispatchers.Main) {
                 callback()
             }
+        }
+    }
+
+    // Запуск GarbageCollector для удаления неиспользуемых файлов
+    fun startGarbageCollector() {
+        viewModelScope.launch {
+            gcInteractor.run()
         }
     }
 }

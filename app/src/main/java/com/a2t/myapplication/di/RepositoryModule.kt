@@ -1,6 +1,8 @@
 package com.a2t.myapplication.di
 
+import com.a2t.myapplication.main.data.db.impl.GCRepositoryImpl
 import com.a2t.myapplication.main.data.db.impl.MainRepositoryImpl
+import com.a2t.myapplication.main.domain.api.GCRepository
 import com.a2t.myapplication.main.domain.api.MainRepository
 import com.a2t.myapplication.mediafile.data.impl.MediaFileDBRepositoriImpl
 import com.a2t.myapplication.mediafile.data.impl.StoragesRepositoryImpl
@@ -20,5 +22,9 @@ val repositoryModule = module {
 
     single<StoragesRepository> {
         StoragesRepositoryImpl()
+    }
+
+    single<GCRepository> {
+        GCRepositoryImpl(appDatabase = get())
     }
 }

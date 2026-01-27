@@ -1,4 +1,4 @@
-package com.a2t.myapplication.common.model
+package com.a2t.myapplication.common.utilities
 
 import android.animation.Animator
 import android.animation.AnimatorInflater
@@ -9,17 +9,18 @@ import com.a2t.myapplication.R
 import com.a2t.myapplication.common.App
 
 class DLAnimator {
-    val animationMoveMode = AnimationUtils.loadAnimation(App.appContext, R.anim.arrow_right)!!
-    val animationDeleteMode = AnimationUtils.loadAnimation(App.appContext, R.anim.arrow_down)!!
-    val animationRestoreMode = AnimationUtils.loadAnimation(App.appContext, R.anim.arrow_up)!!
-    val animationArchiveMode = AnimationUtils.loadAnimation(App.appContext, R.anim.archive)!!
-    val animationEye = AnimationUtils.loadAnimation(App.appContext, R.anim.eye_eff)!!
-    val animOpenNewDir = AnimationUtils.loadLayoutAnimation(App.appContext, R.anim.anim_open_new_dir)!!
-    val animOpenChildDir = AnimationUtils.loadLayoutAnimation(App.appContext, R.anim.anim_open_child_dir)!!
-    val animOpenParentDir = AnimationUtils.loadLayoutAnimation(App.appContext, R.anim.anim_open_parent_dir)!!
-    val animBell = AnimationUtils.loadAnimation(App.appContext, R.anim.anim_bell)!!
-    val animRecord = AnimationUtils.loadAnimation(App.appContext, R.anim.holder_move)!!
-    val animDelHolder = AnimationUtils.loadAnimation(App.appContext, R.anim.del_holder)!!
+    val context = App.appContext
+    val animationMoveMode = AnimationUtils.loadAnimation(context, R.anim.arrow_right)!!
+    val animationDeleteMode = AnimationUtils.loadAnimation(context, R.anim.arrow_down)!!
+    val animationRestoreMode = AnimationUtils.loadAnimation(context, R.anim.arrow_up)!!
+    val animationArchiveMode = AnimationUtils.loadAnimation(context, R.anim.archive)!!
+    val animationEye = AnimationUtils.loadAnimation(context, R.anim.eye_eff)!!
+    val animOpenNewDir = AnimationUtils.loadLayoutAnimation(context, R.anim.anim_open_new_dir)!!
+    val animOpenChildDir = AnimationUtils.loadLayoutAnimation(context, R.anim.anim_open_child_dir)!!
+    val animOpenParentDir = AnimationUtils.loadLayoutAnimation(context, R.anim.anim_open_parent_dir)!!
+    val animBell = AnimationUtils.loadAnimation(context, R.anim.anim_bell)!!
+    val animRecord = AnimationUtils.loadAnimation(context, R.anim.holder_move)!!
+    val animDelHolder = AnimationUtils.loadAnimation(context, R.anim.del_holder)!!
 
     fun animationShowAlpha(view: View, duration: Long) {
         view.visibility = View.VISIBLE // Делаем видимым перед анимацией
@@ -50,7 +51,7 @@ class DLAnimator {
         try {
             icon.setCameraDistance(10000f)
             val flipAnimator1 =
-                AnimatorInflater.loadAnimator(App.appContext, R.animator.flip_1)
+                AnimatorInflater.loadAnimator(context, R.animator.flip_1)
             flipAnimator1.setTarget(icon)
             flipAnimator1.addListener(object : Animator.AnimatorListener {
                 override fun onAnimationStart(animation: Animator) {}
@@ -58,7 +59,7 @@ class DLAnimator {
                     // Сменить картинку
                     icon.setImageResource(titl)
                     val flipAnimator2 = AnimatorInflater.loadAnimator(
-                        App.appContext,
+                        context,
                         R.animator.flip_2
                     )
                     flipAnimator2.setTarget(icon)

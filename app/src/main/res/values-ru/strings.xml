@@ -130,12 +130,13 @@
 
     <string name="zoom">ZOOM</string>
 
-    <!-- ВЫБОР МЕДИАФАЙЛА -->
+    <!-- МЕДИАФАЙЛ -->
     <string name="all">Все</string>
     <string name="photo">Фото</string>
     <string name="video">Видео</string>
     <string name="select">Выбрать</string>
-    <string name="out_of_memory">Недостаточно места во внутреннем хранилище</string>
+    <string name="out_of_memory">Недостаточно места для копировани</string>
+    <string name="file_exists_in_galery">Файл с таким именем уже есть в Галерее</string>
     <string name="copy_error">Ошибка копирования файла</string>
     <string name="unexpected_error">Неожиданная ошибка при копировании</string>
     <string name="access_media_denied">Доступ к медиа запрещен. Разрешите в настройках приложения.</string>
@@ -147,7 +148,10 @@
     <string name="copy_file">копия</string>
     <string name="no_file_selected">Файл не выбран</string>
     <string name="gallery">Галерея</string>
-    <string name="dialog_hint">Похоже, в \u2022lis уже есть копии этого файла.\nХотите воспользоваться имеющейся копией (рекомендуется) или создать новую?</string>
+    <string name="dialog_hint">В \u2022list уже есть копии файла с таким именем.\nХотите воспользоваться имеющейся копией (рекомендуется) или создать новую?</string>
     <string name="existing_copy">Имеющиеся копии</string>
     <string name="new_copy">Новая копия</string>
+    <string name="copy_dialog_hint">Файла с таким именем нет в Галерее.\nСкопировать его в Галерею?</string>
+    <string name="file_not_saved">Файл не сохранен. Попробуйте еще раз.</string>
+
 </resources>

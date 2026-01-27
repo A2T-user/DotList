@@ -4,7 +4,6 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
@@ -39,12 +38,8 @@ class MediaFileViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             .into(image)
         // Установка значка для видио и pdf
         when (item.mediaFileType) {
-            MediaFileType.VIDEO -> {
-                image.foreground = AppCompatResources.getDrawable(itemView.context, R.drawable.ic_play)
-            }
-            MediaFileType.IMAGE -> {
-                image.foreground = null
-            }
+            MediaFileType.IMAGE -> { image.foreground = null }
+            else ->  {}
         }
         // Выделить синим шрифтом файлы с сегодняшней датой
         if (item.creationDate == today) {

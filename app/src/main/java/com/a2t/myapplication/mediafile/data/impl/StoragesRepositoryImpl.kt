@@ -1,14 +1,16 @@
 package com.a2t.myapplication.mediafile.data.impl
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.os.Environment
 import android.os.StatFs
 import android.provider.MediaStore
 import android.provider.OpenableColumns
-import android.util.Log
 import androidx.core.net.toUri
 import com.a2t.myapplication.common.App
+import com.a2t.myapplication.common.utilities.AppHelper
 import com.a2t.myapplication.mediafile.data.dto.DirType
 import com.a2t.myapplication.mediafile.data.dto.ErrCode
 import com.a2t.myapplication.mediafile.data.dto.MediaFileType
@@ -32,36 +34,26 @@ class StoragesRepositoryImpl(
             items,
             MediaFileType.IMAGE
         )
-        getMediaFiles(
-            context,
-            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,    // Видео
-            items,
-            MediaFileType.VIDEO
-        )
         // Получение файлов из внутреннего хранилища
-        getInternalMediaFiles(
+        getExternalAppMediaFiles(
             context,
             items,
             MediaFileType.IMAGE
         )
-        getInternalMediaFiles(
-            context,
-            items,
-            MediaFileType.VIDEO
-        )
         return items.sortedByDescending { it.creationTime } // Сортировка по дате (новые сверху)
     }
-    // Получение файлов из внутреннего хранилища
-    private fun getInternalMediaFiles(
+    // Получение файлов из внешнего хранилища приложения
+    private fun getExternalAppMediaFiles(
         context: Context,
         items: MutableList<MediaItemDto>,
         mediaFileType: MediaFileType
     ) {
+        val externalFilesDir = context.getExternalFilesDir(null) ?: return
         val subDirName = when (mediaFileType) {
             MediaFileType.IMAGE -> "image"
             MediaFileType.VIDEO -> "video"
         }
-        val typeDir = File(context.filesDir, "mediafiles/$subDirName")
+        val typeDir = File(externalFilesDir, "mediafiles/$subDirName")
         // Проверяем, существует ли папка
         if (!typeDir.exists() || !typeDir.isDirectory) return
         // Вспомогательная функция для обхода папок
@@ -124,19 +116,21 @@ class StoragesRepositoryImpl(
         cursor?.close()
     }
 
-    // Сохранение медиафайла из общего хранилища во внутреннем
-    override fun saveImageToPrivateStorage(
+    // Сохранение медиафайла из общего хранилища во внешнем хранилище приложения
+    override fun saveFileToExternalAppStorage(
         sourceUri: Uri,
         mediaFileType: MediaFileType,
-        deleteSourceAfterSave: Boolean,
+        dir: DirType,
         isNewCopy: Boolean
     ): Response {
         val context = App.appContext
-        val originalName = getFileName(context, sourceUri) ?: return Response.Error(ErrCode.UNEXPECTED_ERROR)
-
+        val originalName = AppHelper.getFileNameFromUri(sourceUri) ?: return Response.Error(ErrCode.UNEXPECTED_ERROR)
+        if (dir == DirType.APP) {
+            return Response.FileFromExternalAppStorage(originalName)
+        }
         val fileName = if (isNewCopy) {
             val timestamp = System.currentTimeMillis()
-            "${timestamp}_$originalName"
+            "${timestamp}#$originalName"
         } else {
             originalName
         }
@@ -144,7 +138,7 @@ class StoragesRepositoryImpl(
             MediaFileType.IMAGE -> "image"
             MediaFileType.VIDEO -> "video"
         }
-        val mediaFilesDir = File(context.filesDir, "mediafiles")
+        val mediaFilesDir = File(context.getExternalFilesDir(null), "mediafiles")
         val typeSpecificDir = File(mediaFilesDir, subDirName)
 
         if (!typeSpecificDir.exists()) {
@@ -157,10 +151,11 @@ class StoragesRepositoryImpl(
         }
         // Получение размера исходного файла
         val fileSize = getFileSize(context, sourceUri)
-        // Проверка доступного места во внутреннем хранилище
-        val stat = StatFs(context.filesDir.absolutePath)
-        val availableBytes = stat.availableBlocksLong * stat.blockSizeLong
-        if (fileSize > availableBytes) {
+        // Проверка доступного места во внешнем хранилище приложения
+        val externalDir = context.getExternalFilesDir(null)
+        val statFs = StatFs(externalDir!!.absolutePath)
+        val availableSpace = statFs.availableBytes
+        if (fileSize > availableSpace) {
             return Response.Error(ErrCode.OUT_OF_MEMORY)
         }
         // Копирование файла с обработкой исключений
@@ -170,14 +165,7 @@ class StoragesRepositoryImpl(
                     inputStream.copyTo(outputStream)
                 }
             }
-            if (deleteSourceAfterSave) {
-                try {
-                    context.contentResolver.delete(sourceUri, null, null)
-                } catch (e: Exception) {
-                    Log.e("saveImageToPrivateStorage", "Ошибка удаления исходного файла: ${e.message}")
-                }
-            }
-            Response.Success(fileName)
+            Response.Success(fileName, outputFile.toUri(), mediaFileType)
         } catch (_: IOException) {
             Response.Error(ErrCode.COPY_ERROR)
         } catch (_: Exception) {
@@ -197,26 +185,62 @@ class StoragesRepositoryImpl(
         } ?: 0L
     }
 
-    // Получение URI файла во внутреннем хранилище
-    override fun getFileUri(fileName: String): Uri? {
+    // Сохранение медиафайла из внешнего хранилища приложения в общем хранилище
+    override suspend fun copyFileFromExternalAppToPublicStorage(
+        sourceUri: Uri,
+        mediaFileType: MediaFileType
+    ): Response {
         val context = App.appContext
-        val file = File(context.filesDir, fileName)
-        return if (file.exists()) {
-            file.toUri()
-        } else {
-            null  // Файл не найден
+        // Получаем имя файла из URI
+        var fileName = AppHelper.getFileNameFromUri(sourceUri) ?: return Response.Error(ErrCode.UNEXPECTED_ERROR)
+        fileName = fileName.substringAfterLast("#")     // Отбрасываем префикс
+        val fileSize = getFileSize(context, sourceUri)  // Получение размера исходного файла
+        // Проверка доступного места во общем хранилище
+        val stat = StatFs(context.getExternalFilesDir(null)?.getParentFile()?.path)
+        val availableBytes = stat.availableBytes
+        if (fileSize > availableBytes) {
+            return Response.Error(ErrCode.OUT_OF_MEMORY)
         }
-    }
-
-    // Получение имени файла из Uri
-   private fun getFileName(context: Context, uri: Uri): String? {
-        val cursor = context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)
-        return cursor?.use {
-            if (it.moveToFirst()) {
-                it.getString(it.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME))
-            } else {
-                null
+        // Определяем URI назначения (общее хранилище)
+        val destinationUri = when (mediaFileType) {
+            MediaFileType.IMAGE -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            MediaFileType.VIDEO -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+        }
+        val mimeType = AppHelper.getMimeType(fileName)
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+            put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
+            put(MediaStore.MediaColumns.RELATIVE_PATH, when (mediaFileType) {
+                MediaFileType.IMAGE -> Environment.DIRECTORY_PICTURES
+                MediaFileType.VIDEO -> Environment.DIRECTORY_MOVIES
+            })
+        }
+        val resolver = context.contentResolver
+        val newUri = resolver.insert(destinationUri, contentValues)
+        if (newUri != null) {
+            var success = false
+            return try {
+                resolver.openInputStream(sourceUri)?.use { inputStream ->
+                    resolver.openOutputStream(newUri)?.use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                }
+                success = true
+                Response.Success(fileName, newUri, mediaFileType)
+            } catch (_: IOException) {
+                Response.Error(ErrCode.COPY_ERROR)
+            } catch (_: Exception) {
+                Response.Error(ErrCode.UNEXPECTED_ERROR)
+            } finally {
+                // Если произошла ошибка, удаляем частично созданный файл
+                if (!success) {
+                    try {
+                        resolver.delete(newUri, null, null)
+                    } catch (_: Exception) {} // Игнорируем ошибки удаления
+                }
             }
+        } else {
+            return Response.Error(ErrCode.UNEXPECTED_ERROR)
         }
     }
 }

@@ -16,7 +16,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.a2t.myapplication.common.App
 import com.a2t.myapplication.R
-import com.a2t.myapplication.common.model.DLAnimator
+import com.a2t.myapplication.common.utilities.DLAnimator
 import com.a2t.myapplication.main.ui.ActionEditText
 import com.a2t.myapplication.common.utilities.AlarmHelper
 import com.a2t.myapplication.main.domain.model.ListRecord
@@ -75,7 +75,6 @@ class MainViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             ivBtnDir.setImageResource(res)
         }
         if (!item.mediaFile.isNullOrEmpty()) ivBtnDir.isVisible = false
-
         // Кнопка Присоединить медиафайл
         ivBtnImagePlus.isVisible = !item.isDir && item.mediaFile.isNullOrEmpty()
 

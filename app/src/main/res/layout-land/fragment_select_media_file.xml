@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:background="?attr/colorBackground"
+    tools:context=".mediafile.ui.SelectMediaFileFragment">
+
+    <!-- Предпросмотр -->
+    <FrameLayout
+        android:id="@+id/fl_preview_container"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:background="?attr/colorBar">
+
+        <!-- Изображение -->
+        <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+            android:id="@+id/photo_window"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:visibility="gone"/>
+
+        <!-- Кнопка копирования в Галерею -->
+        <ImageView
+            android:id="@+id/iv_btn_copy_to_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|bottom"
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/ic_copy_blue"
+            android:visibility="gone"
+            tools:ignore="contentDescription" />
+
+        <ImageView
+            android:id="@+id/iv_preview_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_preview_max"
+            android:layout_gravity="end|bottom"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            tools:ignore="contentDescription" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="?attr/colorBar"
+            android:paddingTop="6dp"
+            android:gravity="bottom">
+
+            <TextView
+                android:id="@+id/tv_gallery"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bookmark"
+                android:textColor="?attr/colorMainText"
+                android:paddingVertical="4dp"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:text="@string/gallery"
+                android:layout_marginHorizontal="1dp"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/tv_app"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bookmark"
+                android:textColor="?attr/colorMainText"
+                android:paddingVertical="4dp"
+                android:textSize="16sp"
+                android:textStyle="normal"
+                android:text="@string/app_name"
+                android:layout_marginEnd="0.5dp"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:animateLayoutChanges="true">
+
+            <!-- Рециклер -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingHorizontal="1dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="300dp"
+                android:scrollbarThumbVertical="@color/blue_icon"
+                android:scrollbars="vertical"/>
+
+            <!-- Кнопка камера -->
+            <ImageView
+                android:id="@+id/iv_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_photo_camera"
+                android:padding="8dp"
+                android:background="@drawable/rect_color_bar"
+                android:layout_gravity="end|bottom"
+                android:animateLayoutChanges="true"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="20dp"
+                android:visibility="visible"
+                tools:ignore="contentDescription"
+                android:contentDescription="@string/photo_hint"/>
+
+            <!-- Прогрессбар -->
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@style/Widget.AppCompat.ProgressBar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/circle_white_alpha"
+                android:padding="6dp"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/blue_icon"
+                android:indeterminate="true"
+                android:visibility="gone"/>
+
+            <!-- Кнопка прпокрутки -->
+            <ImageView
+                android:id="@+id/iv_btn_scroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_marginEnd="70dp"
+                android:layout_marginBottom="20dp"
+                android:alpha="0.7"
+                android:background="@drawable/circle_color_bar"
+                android:padding="12dp"
+                android:src="@drawable/ic_scroll_down"
+                android:visibility="gone"
+                tools:ignore="contentDescription" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="4dp"
+            android:gravity="center"
+            android:background="?attr/colorBar">
+
+            <TextView
+                android:id="@+id/tv_select"
+                android:layout_width="wrap_content"
+                android:text="@string/select"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="4dp"
+                android:textColor="?attr/colorMainText"
+                style="@style/BTNSelectMediaFile" />
+
+        </LinearLayout>
+    </LinearLayout>
+    
+
+</LinearLayout>
