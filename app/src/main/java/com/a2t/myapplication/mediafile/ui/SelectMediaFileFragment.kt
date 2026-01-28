@@ -298,33 +298,6 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
         }
     }
 
-    /*private fun requestWriteMediaPermissions() {
-        val permissionsToRequest = mutableListOf<String>()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // Android 13+: нужны явные разрешения на запись медиа
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
-                permissionsToRequest.add(Manifest.permission.WRITE_MEDIA_IMAGES)
-            }
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED) {
-                permissionsToRequest.add(Manifest.permission.WRITE_MEDIA_VIDEO)
-            }
-        }
-        // Android 8–12: WRITE_MEDIA_* не существует, но READ_EXTERNAL_STORAGE уже позволяет писать в MediaStore
-        // → НЕ запрашиваем ничего дополнительного
-
-        if (permissionsToRequest.isNotEmpty()) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                permissionsToRequest.toTypedArray(),
-                REQUEST_WRITE_MEDIA_PERMISSIONS
-            )
-        } else {
-            // Разрешения уже есть — сразу запускаем экспорт
-            exportFileToMediaStore()
-        }
-    }*/
-
     private fun exportFileToMediaStore() {
         val dialogView =
             LayoutInflater.from(context).inflate(R.layout.dialog_title_attention, null)

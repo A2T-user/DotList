@@ -44,6 +44,7 @@ class MediaViewerFragment : Fragment() {
     private val viewModel: MediaViewerViewModel by viewModel()
     private var _binding: FragmentMediaViewerBinding? = null
     private val binding get() = _binding!!
+    private lateinit var context: Context
     private var isMenuOpen = false
     private var isEdit = false
     private lateinit var ma: MainActivity
@@ -90,6 +91,8 @@ class MediaViewerFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        context = requireContext()
         ma = requireActivity() as MainActivity
         dlAnimator = DLAnimator()
 
@@ -127,7 +130,7 @@ class MediaViewerFragment : Fragment() {
                 openMenu(true)
             }
         }
-
+        // РЕАКЦИЯ ТЕКСТОВЫХ ПОЛЕЙ*****************************************************************************************************************
         // Отклик поля RECORD на нажатие клавиши ОК клавиатуры
         binding.aetRecord.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE || (event.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
@@ -184,15 +187,15 @@ class MediaViewerFragment : Fragment() {
     }
 
     private fun sendFile() {
-        val message = "$viewModel.record - $viewModel.note"
-        sendTextWithAttachedFile(requireContext(), message, viewModel.mediaFileName)
+        val message = "${viewModel.record} - ${viewModel.note}"
+        sendTextWithAttachedFile(message, viewModel.mediaFileName)
     }
 
-    fun sendTextWithAttachedFile(context: Context, message: String, fileName: String) {
+    fun sendTextWithAttachedFile(message: String, fileName: String) {
         val mediaType = getMediaDir(fileName)
-        val targetFile = File(requireContext().filesDir, "mediafiles/$mediaType/$fileName")
+        val targetFile = File(context.getExternalFilesDir(null), "mediafiles/$mediaType/$fileName")
         if (!targetFile.exists() || !targetFile.isFile) {
-            Toast.makeText(context, "Файл не найден", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.file_not_found), Toast.LENGTH_SHORT).show()
             return
         }
         val contentUri: Uri = FileProvider.getUriForFile(
@@ -207,12 +210,12 @@ class MediaViewerFragment : Fragment() {
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION)
         }
-        val chooserIntent = Intent.createChooser(intent, "Отправить сообщение")
+        val chooserIntent = Intent.createChooser(intent, context.getString(R.string.send_message))
         chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         try {
             context.startActivity(chooserIntent)
         } catch (_: Exception) {
-            Toast.makeText(context, "Не удалось отправить сообщение", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.send_message_error), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -233,11 +236,11 @@ class MediaViewerFragment : Fragment() {
     private fun loadMedia(fileName: String) {
         val mediaType = getMediaDir(fileName)
 
-        val directory = File(requireContext().getExternalFilesDir(null), "mediafiles/$mediaType")
+        val directory = File(context.getExternalFilesDir(null), "mediafiles/$mediaType")
         val file = File(directory, fileName)
 
         if (!file.exists()) {
-            Toast.makeText(requireContext(), "Файл не найден", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.file_not_found), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -247,7 +250,7 @@ class MediaViewerFragment : Fragment() {
                 try {
                     val bitmap = BitmapFactory.decodeFile(file.absolutePath)
                     if (bitmap == null || bitmap.isRecycled) {
-                        Toast.makeText(requireContext(), "Ошибка загрузки изображения", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.error_loading_file), Toast.LENGTH_SHORT).show()
                         return
                     }
                     val rotatedBitmap = rotateBitmapAccordingToExif(file, bitmap)
@@ -257,11 +260,11 @@ class MediaViewerFragment : Fragment() {
                     binding.photoWindow.setDoubleTapZoomScale(2f)
                     binding.photoWindow.setPanLimit(SubsamplingScaleImageView.PAN_LIMIT_INSIDE)
                 } catch (_: Exception) {
-                    Toast.makeText(requireContext(), "Ошибка загрузки изображения", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.error_loading_file), Toast.LENGTH_SHORT).show()
                 }
             }
             else -> {
-                Toast.makeText(requireContext(), "Неподдерживаемый формат", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.error_loading_file), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -354,7 +357,7 @@ class MediaViewerFragment : Fragment() {
     }
     // Вывести/убрать клавиатуру
     private fun showKeyboard(et: EditText, show: Boolean) {
-        val imm = checkNotNull(App.appContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+        val imm = checkNotNull(context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
         CoroutineScope(Dispatchers.Main).launch {
             delay(10)
             if (show) {      // Вывести клавиатуру
