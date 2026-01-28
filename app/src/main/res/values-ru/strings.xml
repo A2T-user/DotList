@@ -131,9 +131,6 @@
     <string name="zoom">ZOOM</string>
 
     <!-- МЕДИАФАЙЛ -->
-    <string name="all">Все</string>
-    <string name="photo">Фото</string>
-    <string name="video">Видео</string>
     <string name="select">Выбрать</string>
     <string name="out_of_memory">Недостаточно места для копировани</string>
     <string name="file_exists_in_galery">Файл с таким именем уже есть в Галерее</string>
@@ -142,10 +139,7 @@
     <string name="access_media_denied">Доступ к медиа запрещен. Разрешите в настройках приложения.</string>
     <string name="access_camera_denied">Доступ к камере запрещен. Разрешите в настройках приложения.</string>
     <string name="photo_hint">photo</string>
-    <string name="video_hint">video</string>
     <string name="today">сегодня</string>
-    <string name="transfer">перенос</string>
-    <string name="copy_file">копия</string>
     <string name="no_file_selected">Файл не выбран</string>
     <string name="gallery">Галерея</string>
     <string name="dialog_hint">В \u2022list уже есть копии файла с таким именем.\nХотите воспользоваться имеющейся копией (рекомендуется) или создать новую?</string>

@@ -64,7 +64,6 @@ import java.util.Date
 import java.util.Locale
 import kotlin.getValue
 
-
 class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollStateChangedListener {
     private val mediaFileViewModel: MediaFileViewModel by viewModel()
     private var _binding: FragmentSelectMediaFileBinding? = null
@@ -190,8 +189,8 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                     parentFragmentManager.beginTransaction().remove(this@SelectMediaFileFragment).commitAllowingStateLoss() // Закрытие фрагмента
                     val res = when(response.errCode) {
                         ErrCode.OUT_OF_MEMORY -> R.string.out_of_memory
-                        ErrCode.COPY_ERROR -> R.string.copy_error
-                        ErrCode.UNEXPECTED_ERROR -> R.string.unexpected_error
+                        ErrCode.COPY_ERROR -> R.string.file_not_saved
+                        ErrCode.UNEXPECTED_ERROR -> R.string.file_not_saved
                     }
                     Toast.makeText(requireContext(), res, Toast.LENGTH_SHORT).show()
                 }
@@ -219,8 +218,8 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                     parentFragmentManager.beginTransaction().remove(this@SelectMediaFileFragment).commitAllowingStateLoss() // Закрытие фрагмента
                     val res = when(response.errCode) {
                         ErrCode.OUT_OF_MEMORY -> R.string.out_of_memory
-                        ErrCode.COPY_ERROR -> R.string.copy_error
-                        ErrCode.UNEXPECTED_ERROR -> R.string.unexpected_error
+                        ErrCode.COPY_ERROR -> R.string.file_not_saved
+                        ErrCode.UNEXPECTED_ERROR -> R.string.file_not_saved
                     }
                     Toast.makeText(requireContext(), res, Toast.LENGTH_SHORT).show()
                 }
@@ -364,11 +363,19 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
     }
 
     private fun requestCameraPermissions() {
-        val permissions = arrayOf(Manifest.permission.CAMERA)
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+        val permissions = mutableListOf<String>()
+        permissions.add(Manifest.permission.CAMERA)
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {   // Android 9 и ниже - нужно WRITE_EXTERNAL_STORAGE
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+        // Проверяем, все ли разрешения уже получены
+        val permissionsToRequest = permissions.filter { permission ->
+            ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED
+        }.toTypedArray()
+        if (permissionsToRequest.isEmpty()) {
             openCameraForPhoto()
         } else {
-            ActivityCompat.requestPermissions(requireActivity(), permissions, REQUEST_CAMERA_PERMISSIONS)
+            ActivityCompat.requestPermissions(requireActivity(), permissionsToRequest, REQUEST_CAMERA_PERMISSIONS)
         }
     }
 
@@ -399,7 +406,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 }
             }
             REQUEST_CAMERA_PERMISSIONS -> {
-                val granted = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                val granted = grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }
                 if (granted) {
                     openCameraForPhoto()
                 } else {

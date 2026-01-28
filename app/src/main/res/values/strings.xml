@@ -130,9 +130,7 @@
     <string name="zoom">ZOOM</string>
 
     <!-- ВЫБОР МЕДИАФАЙЛА -->
-    <string name="all">All</string>
-    <string name="photo">Photos</string>
-    <string name="video">Videos</string>
+
     <string name="select">Select</string>
     <string name="out_of_memory">Not enough space to copy</string>
     <string name="file_exists_in_galery">A file with this name already exists in the Gallery.</string>
@@ -141,10 +139,7 @@
     <string name="access_media_denied">Access to media files is denied. Please allow it in the app settings.</string>
     <string name="access_camera_denied">Access to camera denied. Please allow it in the app settings.</string>
     <string name="photo_hint">photo</string>
-    <string name="video_hint">video</string>
     <string name="today">today</string>
-    <string name="transfer">transfer</string>
-    <string name="copy_file">copy</string>
     <string name="no_file_selected">No file selected</string>
     <string name="gallery">Gallery</string>
     <string name="dialog_hint">There are already copies of a file with this name in \u2022list.\nDo you want to use the existing copy (recommended) or create a new one?</string>
