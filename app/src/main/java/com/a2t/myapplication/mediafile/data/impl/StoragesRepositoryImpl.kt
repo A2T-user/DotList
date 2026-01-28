@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.os.StatFs
 import android.provider.MediaStore
@@ -175,14 +176,30 @@ class StoragesRepositoryImpl(
 
     // Получение размера файла из Uri
     private fun getFileSize(context: Context, uri: Uri): Long {
-        val cursor = context.contentResolver.query(uri, arrayOf(OpenableColumns.SIZE), null, null, null)
-        return cursor?.use {
-            if (it.moveToFirst()) {
-                it.getLong(it.getColumnIndexOrThrow(OpenableColumns.SIZE))
-            } else {
+        return when {
+            uri.scheme == "content" -> {
+                val cursor = context.contentResolver.query(
+                    uri,
+                    arrayOf(OpenableColumns.SIZE),
+                    null,
+                    null,
+                    null
+                )
+                cursor?.use {
+                    if (it.moveToFirst()) {
+                        it.getLong(it.getColumnIndexOrThrow(OpenableColumns.SIZE))
+                    } else {
+                        0L
+                    }
+                } ?: 0L
+            }
+            uri.scheme == "file" -> {
+                File(uri.path!!).length()
+            }
+            else -> {
                 0L
             }
-        } ?: 0L
+        }
     }
 
     // Сохранение медиафайла из внешнего хранилища приложения в общем хранилище
@@ -210,10 +227,12 @@ class StoragesRepositoryImpl(
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
             put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
-            put(MediaStore.MediaColumns.RELATIVE_PATH, when (mediaFileType) {
-                MediaFileType.IMAGE -> Environment.DIRECTORY_PICTURES
-                MediaFileType.VIDEO -> Environment.DIRECTORY_MOVIES
-            })
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                put(MediaStore.MediaColumns.RELATIVE_PATH, when (mediaFileType) {
+                    MediaFileType.IMAGE -> Environment.DIRECTORY_PICTURES
+                    MediaFileType.VIDEO -> Environment.DIRECTORY_MOVIES
+                })
+            }
         }
         val resolver = context.contentResolver
         val newUri = resolver.insert(destinationUri, contentValues)
