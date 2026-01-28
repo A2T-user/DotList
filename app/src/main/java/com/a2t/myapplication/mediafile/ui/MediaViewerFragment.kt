@@ -187,7 +187,7 @@ class MediaViewerFragment : Fragment() {
     }
 
     private fun sendFile() {
-        val message = "${viewModel.record} - ${viewModel.note}"
+        val message = if (viewModel.note.isEmpty()) viewModel.record else "${viewModel.record} - ${viewModel.note}"
         sendTextWithAttachedFile(message, viewModel.mediaFileName)
     }
 
