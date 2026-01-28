@@ -446,10 +446,12 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
     private fun selectedDir(tv: TextView) {
         unselectedDir(binding.tvGallery)
         unselectedDir(binding.tvApp)
+        tv.alpha = 1f
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
         tv.typeface = Typeface.defaultFromStyle(Typeface.BOLD)
     }
     private fun unselectedDir(tv: TextView) {
+        tv.alpha = 0.6f
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
         tv.typeface = Typeface.defaultFromStyle(Typeface.NORMAL)
     }
