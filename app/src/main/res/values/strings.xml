@@ -147,4 +147,10 @@
     <string name="new_copy">New copy</string>
     <string name="copy_dialog_hint">There is no file with this name in the Gallery.\nCopy it to the Gallery?</string>
     <string name="file_not_saved">File not saved. Try again.</string>
+
+    <!-- ПРОСМОТР МЕДИАФАЙЛА -->
+    <string name="send_message">Send message</string>
+    <string name="send_message_error">Failed to send message</string>
+    <string name="file_not_found">File not found</string>
+    <string name="error_loading_file">Error loading file</string>
 </resources>

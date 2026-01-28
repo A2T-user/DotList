@@ -148,4 +148,9 @@
     <string name="copy_dialog_hint">Файла с таким именем нет в Галерее.\nСкопировать его в Галерею?</string>
     <string name="file_not_saved">Файл не сохранен. Попробуйте еще раз.</string>
 
+    <!-- ПРОСМОТР МЕДИАФАЙЛА -->
+    <string name="send_message">Отправить сообщение</string>
+    <string name="send_message_error">Не удалось отправить сообщение</string>
+    <string name="file_not_found">Файл не найден</string>
+    <string name="error_loading_file">Ошибка загрузки файла</string>
 </resources>
