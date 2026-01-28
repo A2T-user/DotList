@@ -4,7 +4,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="white_alpha">#80ffffff</color>
-    <color name="black_alpha">#80000000</color>
     <color name="red_icon">#c80000</color>
     <color name="shadowColor">#14000000</color>                 <!-- Цвет тени -->
     <color name="alphaBlue">#50039BE5</color>

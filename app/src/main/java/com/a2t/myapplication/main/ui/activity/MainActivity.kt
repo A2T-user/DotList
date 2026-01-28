@@ -691,7 +691,8 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
             val fromPosition = adapter.records.indexOfFirst { it.id == viewHolder.id }
             val sortedRecords = ArrayList<ListRecord>()
             sortedRecords.addAll(adapter.records)
-            val newRecord = sortedRecords.removeLast()
+            val lastIndex = sortedRecords.size -1
+            val newRecord = sortedRecords.removeAt(lastIndex)
             sortedRecords.sortWith(compareBy(ListRecord::isChecked, ListRecord::npp))
             sortedRecords.add(newRecord)
             val toPosition = sortedRecords.indexOfFirst { it.id == viewHolder.id }
