@@ -134,10 +134,9 @@
     <string name="select">Выбрать</string>
     <string name="out_of_memory">Недостаточно места для копировани</string>
     <string name="file_exists_in_galery">Файл с таким именем уже есть в Галерее</string>
-    <string name="copy_error">Ошибка копирования файла</string>
-    <string name="unexpected_error">Неожиданная ошибка при копировании</string>
-    <string name="access_media_denied">Доступ к медиа запрещен. Разрешите в настройках приложения.</string>
-    <string name="access_camera_denied">Доступ к камере запрещен. Разрешите в настройках приложения.</string>
+    <string name="access_media_denied">Доступ к медиа запрещен.\n Разрешите в настройках приложения.</string>
+    <string name="access_camera_denied">Доступ к камере запрещен.\n Разрешите в настройках приложения.</string>
+    <string name="access_copy_denied">Сохранение файла в Галерее запрещено.\n Разрешите в настройках приложения.</string>
     <string name="photo_hint">photo</string>
     <string name="today">сегодня</string>
     <string name="no_file_selected">Файл не выбран</string>

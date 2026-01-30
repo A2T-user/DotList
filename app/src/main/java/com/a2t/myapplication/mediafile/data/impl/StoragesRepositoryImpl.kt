@@ -108,7 +108,7 @@ class StoragesRepositoryImpl(
                 val id = c.getLong(idIndex)
                 val uri = Uri.withAppendedPath(contentUri, id.toString())
                 val creationTime = c.getLong(dateTakenIndex)
-                val modifiedTime = c.getLong(dateModifiedIndex)
+                val modifiedTime = c.getLong(dateModifiedIndex)*1000
                 val addedTime = c.getLong(dateAddedIndex)*1000
                 val maxTime = maxOf(creationTime, modifiedTime, addedTime)
                 items.add(MediaItemDto(uri, maxTime,  mediaFileType, DirType.GALLERY))
@@ -176,8 +176,8 @@ class StoragesRepositoryImpl(
 
     // Получение размера файла из Uri
     private fun getFileSize(context: Context, uri: Uri): Long {
-        return when {
-            uri.scheme == "content" -> {
+        return when (uri.scheme){
+             "content" -> {
                 val cursor = context.contentResolver.query(
                     uri,
                     arrayOf(OpenableColumns.SIZE),
@@ -193,7 +193,7 @@ class StoragesRepositoryImpl(
                     }
                 } ?: 0L
             }
-            uri.scheme == "file" -> {
+            "file" -> {
                 File(uri.path!!).length()
             }
             else -> {
@@ -211,6 +211,7 @@ class StoragesRepositoryImpl(
         // Получаем имя файла из URI
         var fileName = AppHelper.getFileNameFromUri(sourceUri) ?: return Response.Error(ErrCode.UNEXPECTED_ERROR)
         fileName = fileName.substringAfterLast("#")     // Отбрасываем префикс
+        val extension = fileName.substringAfterLast(".", "").lowercase()
         val fileSize = getFileSize(context, sourceUri)  // Получение размера исходного файла
         // Проверка доступного места во общем хранилище
         val stat = StatFs(context.getExternalFilesDir(null)?.getParentFile()?.path)
@@ -228,10 +229,29 @@ class StoragesRepositoryImpl(
             put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
             put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                when (mediaFileType) {
+                    MediaFileType.IMAGE -> put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures")
+                    MediaFileType.VIDEO -> put(MediaStore.Video.Media.RELATIVE_PATH, "Movies")
+                }
+            } else {
+                // Для API 26-28: создаем путь к файлу
+                val picturesDir = when (mediaFileType) {
+                    MediaFileType.IMAGE -> Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                    MediaFileType.VIDEO -> Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)
+                }
+                val file = File(picturesDir, "${System.currentTimeMillis()}.$extension")
+                put(MediaStore.Images.Media.DATA, file.absolutePath)
+            }
+
+
+
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.MediaColumns.RELATIVE_PATH, when (mediaFileType) {
                     MediaFileType.IMAGE -> Environment.DIRECTORY_PICTURES
                     MediaFileType.VIDEO -> Environment.DIRECTORY_MOVIES
-                })
+                }
+                )
             }
         }
         val resolver = context.contentResolver
