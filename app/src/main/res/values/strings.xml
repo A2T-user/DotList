@@ -134,10 +134,9 @@
     <string name="select">Select</string>
     <string name="out_of_memory">Not enough space to copy</string>
     <string name="file_exists_in_galery">A file with this name already exists in the Gallery.</string>
-    <string name="copy_error">File copy error</string>
-    <string name="unexpected_error">Unexpected error while copying</string>
-    <string name="access_media_denied">Access to media files is denied. Please allow it in the app settings.</string>
-    <string name="access_camera_denied">Access to camera denied. Please allow it in the app settings.</string>
+    <string name="access_media_denied">Access to media files is denied.\n Please allow it in the app settings.</string>
+    <string name="access_camera_denied">Access to camera denied.\n Please allow it in the app settings.</string>
+    <string name="access_copy_denied">Saving file to Gallery is denied.\n Please allow it in the app settings.</string>
     <string name="photo_hint">photo</string>
     <string name="today">today</string>
     <string name="no_file_selected">No file selected</string>

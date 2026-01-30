@@ -79,6 +79,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
     private var scrollState = ScrollState.STOPPED
     private var isPreviewContainerBig = false
     private var photoUri: Uri? = null
+    private var sizePreviewMin: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,6 +107,11 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
 
         context = requireContext()
         ma = requireActivity() as MainActivity
+        sizePreviewMin = if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            resources.displayMetrics.widthPixels * 9 / 16
+        } else {
+            resources.displayMetrics.heightPixels * 9 / 16
+        }
         adapter = MediaFileAdapter(this)
         recycler = binding.recycler
         recycler.adapter = adapter
@@ -252,12 +258,23 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
             val currentItem = mediaFileViewModel.currentHolderItemLiveData.value
             if (copyJob == null) isVisibleBtnCopyToGallery(currentItem)
         }
-
         // Копирование файлф в галерею
         binding.ivBtnCopyToGallery.setOnClickListener {
-            exportFileToMediaStore()
+            val dialogView =
+                LayoutInflater.from(context).inflate(R.layout.dialog_title_attention, null)
+            MaterialAlertDialogBuilder(context)
+                .setCustomTitle(dialogView)
+                .setMessage(getString(R.string.copy_dialog_hint))
+                .setNeutralButton(getString(R.string.back)) { _, _ -> }
+                .setPositiveButton(getString(R.string.copy)) { _, _ ->
+                    requestCopyPermissions()
+                }
+                .show()
         }
-
+        // Кнопка размер окна предпросмотра
+        binding.ivPreviewSize.setOnClickListener {
+            setPreviewWindowSize()
+        }
         // Кнопка Камера
         binding.ivPhoto.setOnClickListener {
             requestCameraPermissions()
@@ -278,10 +295,6 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 mediaFileViewModel.filterLiveData.postValue(it)
             }
         }
-        // Кнопка размер окна предпросмотра
-        binding.ivPreviewSize.setOnClickListener {
-            setPreviewWindowSize()
-        }
         //Кнопка Выбрать
         binding.tvSelect.setOnClickListener {
             val currentItem = mediaFileViewModel.currentHolderItemLiveData.value
@@ -299,17 +312,8 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
     }
 
     private fun exportFileToMediaStore() {
-        val dialogView =
-            LayoutInflater.from(context).inflate(R.layout.dialog_title_attention, null)
-        MaterialAlertDialogBuilder(context)
-            .setCustomTitle(dialogView)
-            .setMessage(getString(R.string.copy_dialog_hint))
-            .setNeutralButton(getString(R.string.back)) { _, _ -> }
-            .setPositiveButton(getString(R.string.copy)) { _, _ ->
-                val item = mediaFileViewModel.currentHolderItemLiveData.value!!
-                mediaFileViewModel.copyFileFromExternalAppToPublicStorage(item.uri, item.mediaFileType)
-            }
-            .show()
+        val item = mediaFileViewModel.currentHolderItemLiveData.value!!
+        mediaFileViewModel.copyFileFromExternalAppToPublicStorage(item.uri, item.mediaFileType)
     }
 
     private fun requestMediaPermissions() {
@@ -332,6 +336,22 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
             parentFragmentManager.beginTransaction().remove(this@SelectMediaFileFragment).commitAllowingStateLoss()
         } else {
             updateRecyclerView()
+        }
+    }
+
+    private fun requestCopyPermissions() {
+        val permissions = mutableListOf<String>()
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {   // Android 9 и ниже - нужно WRITE_EXTERNAL_STORAGE
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+        // Проверяем, все ли разрешения уже получены
+        val permissionsToRequest = permissions.filter { permission ->
+            ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED
+        }.toTypedArray()
+        if (permissionsToRequest.isEmpty()) {
+            exportFileToMediaStore()
+        } else {
+            ActivityCompat.requestPermissions(requireActivity(), permissionsToRequest, REQUEST_COPY_PERMISSIONS)
         }
     }
 
@@ -387,6 +407,26 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                         Snackbar.make(
                             it.findViewById(android.R.id.content),
                             context.resources.getString(R.string.access_camera_denied),
+                            Snackbar.LENGTH_LONG
+                        )
+                    }?.setAction(context.resources.getString(R.string.settings)) {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            data = Uri.fromParts("package", context.packageName, null)
+                        }
+                        startActivity(intent)
+                    }?.show()
+                }
+            }
+            REQUEST_COPY_PERMISSIONS -> {
+                val granted = grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }
+                if (granted) {
+                    exportFileToMediaStore()
+                } else {
+                    view?.let {
+                        Snackbar.make(
+                            it.findViewById(android.R.id.content),
+                            context.resources.getString(R.string.access_copy_denied),
                             Snackbar.LENGTH_LONG
                         )
                     }?.setAction(context.resources.getString(R.string.settings)) {
@@ -596,28 +636,24 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
 
     // Установка размера окна предпросмотра
     private fun setPreviewWindowSize() {
-        var size = 400f
+        var size = sizePreviewMin
         if (isPreviewContainerBig) {
-            size = 200f
             binding.ivPreviewSize.setImageResource(R.drawable.ic_preview_max)
         } else {
+            size *= 2
             binding.ivPreviewSize.setImageResource(R.drawable.ic_preview_min)
         }
         var widht: Int
         var height: Int
         if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             widht = LinearLayout.LayoutParams.MATCH_PARENT
-            height = dpToPx(context, size)
+            height = size
         } else {
-            widht = dpToPx(context, size)
+            widht = size
             height = LinearLayout.LayoutParams.MATCH_PARENT
         }
         binding.flPreviewContainer.layoutParams = LinearLayout.LayoutParams(widht, height)
         isPreviewContainerBig = !isPreviewContainerBig
-    }
-    private fun dpToPx(context: Context, dp: Float): Int {
-        val density = context.resources.displayMetrics.density
-        return (dp * density).toInt()
     }
 
     override fun onStart() {
@@ -650,6 +686,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
     companion object {
         const val REQUEST_MEDIA_PERMISSIONS = 1001
         const val REQUEST_CAMERA_PERMISSIONS = 1002
+        const val REQUEST_COPY_PERMISSIONS = 1003
         const val ARG_ID = "id"
         @JvmStatic
         fun newInstance(id: Long) =

@@ -12,6 +12,7 @@
         android:id="@+id/fl_preview_container"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:animateLayoutChanges="true"
         android:background="?attr/colorBackground">
 
         <!-- Изображение -->
@@ -29,7 +30,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center|bottom"
             android:layout_marginBottom="10dp"
-            android:src="@drawable/ic_copy_blue"
+            android:padding="8dp"
+            android:src="@drawable/ic_copy_white"
+            android:background="@drawable/circle_color_bar"
             android:visibility="gone"
             tools:ignore="contentDescription" />
 
@@ -143,7 +146,6 @@
             android:layout_gravity="end|bottom"
             android:layout_marginEnd="70dp"
             android:layout_marginBottom="20dp"
-            android:alpha="0.7"
             android:background="@drawable/circle_color_bar"
             android:padding="12dp"
             android:src="@drawable/ic_scroll_down"
