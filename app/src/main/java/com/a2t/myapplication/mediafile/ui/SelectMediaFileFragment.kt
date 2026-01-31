@@ -148,7 +148,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 DirType.APP -> binding.tvApp
             }
             selectedDir(view)
-            mediaFileViewModel.filterListItems()
+            mediaFileViewModel.filterListItems(false)
         }
 
         // Следим за сохранением файла во ВНУТРЕННЕМ хранилище
@@ -214,7 +214,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                     // Обновляем данные вкладки Галерея, если она текущая и фильтрация соответствующая
                     if (mediaFileViewModel.filterLiveData.value!!.dir == DirType.GALLERY
                         && mediaFileViewModel.filterLiveData.value!!.type == response.mediaFileType) {
-                        mediaFileViewModel.filterListItems()
+                        mediaFileViewModel.filterListItems(true)
                     }
                 }
                 is Response.FileExists -> {
@@ -238,7 +238,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 requireActivity().runOnUiThread {
                     mediaFileViewModel.filterLiveData.postValue(MediaFileFilter(DirType.GALLERY, null))
                     mediaFileViewModel.baseListItem.add(0, item)
-                    mediaFileViewModel.filterListItems()
+                    mediaFileViewModel.filterListItems(true)
                     recycler.scrollToPosition(0)
                 }
             }
