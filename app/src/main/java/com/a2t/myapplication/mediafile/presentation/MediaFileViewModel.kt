@@ -54,20 +54,21 @@ class MediaFileViewModel(
             val itemList = mediaFileInteractor.getAllMediaFiles()
             baseListItem.clear()
             baseListItem.addAll(itemList)
-            filterListItems()
+            filterListItems(false)
             isLoadingLiveData.postValue(false)
         }
     }
-    fun filterListItems() {
-        val filterList = baseListItem.filter { it.dir == filterLiveData.value!!.dir }
-        if (filterLiveData.value!!.type != null) {
-            val result = filterList.filter { it.mediaFileType == filterLiveData.value!!.type }
-            itemListLiveData.postValue(result)
-            if (result.isNotEmpty()) currentHolderItemLiveData.postValue(result[0])
-
+    fun filterListItems(isNewFile: Boolean) {
+        val filterValue = filterLiveData.value!!
+        val filterType = filterValue.type
+        val filterList = if (filterType == null) {
+            baseListItem.filter { item -> item.dir == filterValue.dir }
         } else {
-            itemListLiveData.postValue(filterList)
-            if (filterList.isNotEmpty()) currentHolderItemLiveData.postValue(filterList[0])
+            baseListItem.filter { item -> item.dir == filterValue.dir && item.mediaFileType == filterType }
+        }
+        itemListLiveData.postValue(filterList)
+        if (filterList.isNotEmpty() && (isNewFile || !filterList.contains(currentHolderItemLiveData.value))) {
+            currentHolderItemLiveData.postValue(filterList[0])
         }
     }
     fun filterExistingFiles(originalName: String, mediaFileType: MediaFileType) {
