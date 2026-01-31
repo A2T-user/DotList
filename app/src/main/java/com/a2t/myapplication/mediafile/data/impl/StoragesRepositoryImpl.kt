@@ -242,16 +242,11 @@ class StoragesRepositoryImpl(
                 val file = File(picturesDir, "${System.currentTimeMillis()}.$extension")
                 put(MediaStore.Images.Media.DATA, file.absolutePath)
             }
-
-
-
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.MediaColumns.RELATIVE_PATH, when (mediaFileType) {
                     MediaFileType.IMAGE -> Environment.DIRECTORY_PICTURES
                     MediaFileType.VIDEO -> Environment.DIRECTORY_MOVIES
-                }
-                )
+                })
             }
         }
         val resolver = context.contentResolver
