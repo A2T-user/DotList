@@ -8,8 +8,6 @@
     tools:context=".mediafile.ui.SelectMediaFileFragment">
 
     <!-- Предпросмотр -->
-
-    <!-- Кнопка копирования в Галерею -->
     <FrameLayout
         android:id="@+id/fl_preview_container"
         android:layout_width="180dp"
@@ -30,6 +28,7 @@
 
     </FrameLayout>
 
+    <!-- Кнопка копирования в Галерею -->
     <ImageView
         android:id="@+id/iv_btn_copy_to_gallery"
         android:layout_width="wrap_content"
