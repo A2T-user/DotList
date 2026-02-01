@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a2t.myapplication.common.App
 import com.a2t.myapplication.common.utilities.AppHelper
-import com.a2t.myapplication.common.utilities.FileValidator
 import com.a2t.myapplication.mediafile.data.dto.DirType
 import com.a2t.myapplication.mediafile.data.dto.MediaFileType
 import com.a2t.myapplication.mediafile.data.dto.Response
@@ -105,18 +104,11 @@ class MediaFileViewModel(
     // Добавление файла во общее хранилище
     fun addPhotoToExternalAppStorage(uri: Uri) {
         isLoadingLiveData.postValue(true)
-        if (FileValidator().validatePublicStorageFile(uri)) {
             val dateFormat = SimpleDateFormat("dd.MM.yy", Locale.getDefault())
             val currentDate = dateFormat.format(Date())
             resultAddingFileLiveData.postValue(
                 MediaItem(uri, currentDate, MediaFileType.IMAGE, DirType.GALLERY)
             )
-        } else {
-            val resolver = App.appContext.contentResolver
-            resolver.delete(uri, null, null)
-            resultAddingFileLiveData.postValue(null)
-
-        }
         isLoadingLiveData.postValue(false)
     }
 
