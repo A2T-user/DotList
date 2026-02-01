@@ -18,6 +18,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
 
+        <ImageView
+            android:id="@+id/iv_placeholder"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_error"
+            android:layout_gravity="center"
+            tools:ignore="contentDescription"
+            android:visibility="gone"/>
+
         <!-- Изображение -->
         <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
             android:id="@+id/photo_window"

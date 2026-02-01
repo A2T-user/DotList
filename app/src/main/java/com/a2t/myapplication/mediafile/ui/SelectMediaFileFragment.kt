@@ -56,8 +56,10 @@ import androidx.exifinterface.media.ExifInterface
 import com.a2t.myapplication.common.utilities.AppHelper
 import com.a2t.myapplication.common.utilities.FileValidator
 import com.a2t.myapplication.mediafile.presentation.model.MediaFileFilter
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.text.SimpleDateFormat
@@ -240,19 +242,24 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 else -> {}
             }
         }
-        // Добавление файла с камеры во общее хранилище
+        // Добавление файла с камеры во ОБЩЕЕ хранилище
         mediaFileViewModel.getResultAddingFileLiveData().observe(viewLifecycleOwner) { item ->
-            val uri = item?.uri
             if (item != null) {
-                ma.runOnUiThread {
-                    if (FileValidator().validatePublicStorageFile(uri!!)) {
-                        mediaFileViewModel.filterLiveData.postValue(MediaFileFilter(DirType.GALLERY, null))
-                        mediaFileViewModel.baseListItem.add(0, item)
-                        mediaFileViewModel.filterListItems(true)
-                        recycler.scrollToPosition(0)
-                    } else {
-                        context.contentResolver.delete(uri, null, null)
-                        AppHelper.errorDialog(ma,getString(R.string.file_not_saved))
+                val uri = item.uri
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                    mediaFileViewModel.isLoadingLiveData.postValue(true)
+                    val isValid = FileValidator().validatePublicStorageFile(uri)
+                    mediaFileViewModel.isLoadingLiveData.postValue(false)
+                    withContext(Dispatchers.Main) {
+                        if (isValid) {
+                            mediaFileViewModel.filterLiveData.postValue(MediaFileFilter(DirType.GALLERY, null))
+                            mediaFileViewModel.baseListItem.add(0, item)
+                            mediaFileViewModel.filterListItems(true)
+                            recycler.scrollToPosition(0)
+                        } else {
+                            context.contentResolver.delete(uri, null, null)
+                            AppHelper.errorDialog(ma, getString(R.string.file_not_saved))
+                        }
                     }
                 }
             }
@@ -580,14 +587,15 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
         loadMediaJob = lifecycleScope.launch {
             when (mediaFileType) {
                 MediaFileType.IMAGE -> {
+                    binding.ivPlaceholder.isVisible = false
                     binding.photoWindow.isVisible = true
                     try {
                         val bitmap = getBitmapFromUri(context, uri)
                         if (bitmap == null || bitmap.isRecycled) {
                             binding.photoWindow.isVisible = false
+                            binding.ivPlaceholder.isVisible = true
                             return@launch
                         }
-
                         val rotatedBitmap = rotateBitmapAccordingToExif(context, uri, bitmap)
                         binding.photoWindow.setImage(ImageSource.bitmap(rotatedBitmap))
                         binding.photoWindow.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
@@ -596,10 +604,12 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                         binding.photoWindow.setPanLimit(SubsamplingScaleImageView.PAN_LIMIT_INSIDE)
                     } catch (_: Exception) {
                         binding.photoWindow.isVisible = false
+                        binding.ivPlaceholder.isVisible = true
                     }
                 }
                 else -> {
                     binding.photoWindow.isVisible = false
+                    binding.ivPlaceholder.isVisible = true
                 }
             }
         }
