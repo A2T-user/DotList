@@ -42,7 +42,7 @@ android {
 dependencies {
     implementation("com.davemorrissey.labs:subsampling-scale-image-view:3.10.0")
     implementation("io.insert-koin:koin-android:4.1.1")
-    implementation("androidx.activity:activity-ktx:1.12.2")
+    implementation("androidx.activity:activity-ktx:1.12.3")
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.appcompat:appcompat-resources:1.7.1")
     implementation("com.google.android.material:material:1.13.0")
@@ -55,7 +55,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     implementation("androidx.room:room-runtime:2.8.4")
     implementation("com.google.firebase:protolite-well-known-types:18.0.1")
-    implementation("androidx.work:work-runtime-ktx:2.11.0")
+    implementation("androidx.work:work-runtime-ktx:2.11.1")
     implementation("androidx.viewpager2:viewpager2:1.1.0")
     implementation("com.github.bumptech.glide:glide:5.0.5")
     ksp("androidx.room:room-compiler:2.8.4")

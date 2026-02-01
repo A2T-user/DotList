@@ -12,6 +12,7 @@ import android.provider.OpenableColumns
 import androidx.core.net.toUri
 import com.a2t.myapplication.common.App
 import com.a2t.myapplication.common.utilities.AppHelper
+import com.a2t.myapplication.common.utilities.FileValidator
 import com.a2t.myapplication.mediafile.data.dto.DirType
 import com.a2t.myapplication.mediafile.data.dto.ErrCode
 import com.a2t.myapplication.mediafile.data.dto.MediaFileType
@@ -160,17 +161,31 @@ class StoragesRepositoryImpl(
             return Response.Error(ErrCode.OUT_OF_MEMORY)
         }
         // Копирование файла с обработкой исключений
+        var success = false
         return try {
             context.contentResolver.openInputStream(sourceUri)?.use { inputStream ->
                 FileOutputStream(outputFile).use { outputStream ->
                     inputStream.copyTo(outputStream)
                 }
             }
-            Response.Success(fileName, outputFile.toUri(), mediaFileType)
+            success = true
+            // Проверяем файл на валидность
+            if (FileValidator().validateExternalAppStorageFile(outputFile.path)) {
+                Response.Success(fileName, outputFile.toUri(), mediaFileType)
+            } else {
+                success = false
+                Response.Error(ErrCode.UNEXPECTED_ERROR)
+            }
         } catch (_: IOException) {
             Response.Error(ErrCode.COPY_ERROR)
         } catch (_: Exception) {
             Response.Error(ErrCode.UNEXPECTED_ERROR)
+        }finally {
+            if (!success && outputFile.exists()) {  // Если копирование не удалось
+                try {
+                    outputFile.delete()     // Удаляем битый файл
+                } catch (_: Exception) {}   // Игнорируем ошибки удаления
+            }
         }
     }
 
@@ -260,13 +275,19 @@ class StoragesRepositoryImpl(
                     }
                 }
                 success = true
-                Response.Success(fileName, newUri, mediaFileType)
+                // Проверяем файл на валидность
+                if (FileValidator().validatePublicStorageFile(newUri)) {
+                    Response.Success(fileName, newUri, mediaFileType)
+                } else {
+                    success = false
+                    Response.Error(ErrCode.UNEXPECTED_ERROR)
+                }
             } catch (_: IOException) {
                 Response.Error(ErrCode.COPY_ERROR)
             } catch (_: Exception) {
                 Response.Error(ErrCode.UNEXPECTED_ERROR)
             } finally {
-                // Если произошла ошибка, удаляем частично созданный файл
+                // Если произошла ошибка, удаляем битый файл
                 if (!success) {
                     try {
                         resolver.delete(newUri, null, null)
