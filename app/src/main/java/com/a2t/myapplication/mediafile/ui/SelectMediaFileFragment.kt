@@ -17,6 +17,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
 import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -53,9 +54,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import androidx.exifinterface.media.ExifInterface
 import com.a2t.myapplication.common.utilities.AppHelper
+import com.a2t.myapplication.common.utilities.FileValidator
 import com.a2t.myapplication.mediafile.presentation.model.MediaFileFilter
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.text.SimpleDateFormat
@@ -114,7 +118,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
         adapter = MediaFileAdapter(this)
         recycler = binding.recycler
         recycler.adapter = adapter
-        recycler.layoutManager = GridLayoutManager(requireContext(), 3)
+        recycler.layoutManager = GridLayoutManager(context, 3)
         recycler.itemAnimator = DefaultItemAnimator()
         recycler.scheduleLayoutAnimation()
         recycler.invalidate()
@@ -130,6 +134,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 else -> {}
             }
         }
+
         // Следим за состоянием Загрузка - выводим/убираем прогрессбар
         mediaFileViewModel.getIsLoadingLiveData().observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.isVisible = isLoading
@@ -171,7 +176,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 }
                 is Response.FileExists -> {
                     @SuppressLint("InflateParams")
-                    val rootView = requireActivity().window?.decorView?.findViewById<ViewGroup>(android.R.id.content)
+                    val rootView = ma.window?.decorView?.findViewById<ViewGroup>(android.R.id.content)
                     val dialogView = LayoutInflater.from(context).inflate(
                         R.layout.dialog_title_attention,
                         rootView,
@@ -201,7 +206,8 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                         ErrCode.COPY_ERROR -> R.string.file_not_saved
                         ErrCode.UNEXPECTED_ERROR -> R.string.file_not_saved
                     }
-                    AppHelper.errorDialog(requireActivity(),getString(res))
+                    Log.e("МОЁ", "Сохранение файла во ВНУТРЕННЕМ хранилище")
+                    AppHelper.errorDialog(ma,getString(res))
                 }
             }
         }
@@ -221,7 +227,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                     }
                 }
                 is Response.FileExists -> {
-                    AppHelper.messageDialog(requireActivity(),getString(R.string.file_exists_in_galery))
+                    AppHelper.messageDialog(ma,getString(R.string.file_exists_in_galery))
                 }
                 is Response.Error -> {
                     parentFragmentManager.beginTransaction().remove(this@SelectMediaFileFragment).commitAllowingStateLoss() // Закрытие фрагмента
@@ -230,22 +236,32 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                         ErrCode.COPY_ERROR -> R.string.file_not_saved
                         ErrCode.UNEXPECTED_ERROR -> R.string.file_not_saved
                     }
-                    AppHelper.errorDialog(requireActivity(),getString(res))
+                    Log.e("МОЁ", "Сохранение файла во ОБЩЕМ хранилище")
+                    AppHelper.errorDialog(ma,getString(res))
                 }
                 else -> {}
             }
         }
-        // Добавление файла с камеры во общее хранилище
+        // Добавление файла с камеры во ОБЩЕЕ хранилище
         mediaFileViewModel.getResultAddingFileLiveData().observe(viewLifecycleOwner) { item ->
             if (item != null) {
-                requireActivity().runOnUiThread {
-                    mediaFileViewModel.filterLiveData.postValue(MediaFileFilter(DirType.GALLERY, null))
-                    mediaFileViewModel.baseListItem.add(0, item)
-                    mediaFileViewModel.filterListItems(true)
-                    recycler.scrollToPosition(0)
+                val uri = item.uri
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                    mediaFileViewModel.isLoadingLiveData.postValue(true)
+                    val isValid = FileValidator().validatePublicStorageFile(uri)
+                    mediaFileViewModel.isLoadingLiveData.postValue(false)
+                    withContext(Dispatchers.Main) {
+                        if (isValid) {
+                            mediaFileViewModel.filterLiveData.postValue(MediaFileFilter(DirType.GALLERY, null))
+                            mediaFileViewModel.baseListItem.add(0, item)
+                            mediaFileViewModel.filterListItems(true)
+                            recycler.scrollToPosition(0)
+                        } else {
+                            context.contentResolver.delete(uri, null, null)
+                            AppHelper.errorDialog(ma, getString(R.string.file_not_saved))
+                        }
+                    }
                 }
-            } else {
-                AppHelper.errorDialog(requireActivity(),getString(R.string.file_not_saved))
             }
         }
 
@@ -265,7 +281,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
         }
         // Копирование файлф в галерею
         binding.ivBtnCopyToGallery.setOnClickListener {
-            val rootView = requireActivity().window?.decorView?.findViewById<ViewGroup>(android.R.id.content)
+            val rootView = ma.window?.decorView?.findViewById<ViewGroup>(android.R.id.content)
             val dialogView = LayoutInflater.from(context).inflate(
                 R.layout.dialog_title_attention,
                 rootView,
@@ -315,7 +331,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                     false
                 )
             } else {
-                AppHelper.messageDialog(requireActivity(), getString(R.string.no_file_selected))
+                AppHelper.messageDialog(ma, getString(R.string.no_file_selected))
             }
         }
     }
@@ -328,20 +344,20 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
     private fun requestMediaPermissions() {
         val permissionsToRequest = mutableListOf<String>()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {  // API 33+
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.READ_MEDIA_IMAGES)
             }
-            /*if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED) {
+            /*if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.READ_MEDIA_VIDEO)
             }*/
         } else {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
             }
         }
 
         if (permissionsToRequest.isNotEmpty()) {
-            ActivityCompat.requestPermissions(requireActivity(), permissionsToRequest.toTypedArray(), REQUEST_MEDIA_PERMISSIONS)
+            ActivityCompat.requestPermissions(ma, permissionsToRequest.toTypedArray(), REQUEST_MEDIA_PERMISSIONS)
             parentFragmentManager.beginTransaction().remove(this@SelectMediaFileFragment).commitAllowingStateLoss()
         } else {
             updateRecyclerView()
@@ -355,12 +371,12 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
         }
         // Проверяем, все ли разрешения уже получены
         val permissionsToRequest = permissions.filter { permission ->
-            ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED
         }.toTypedArray()
         if (permissionsToRequest.isEmpty()) {
             exportFileToMediaStore()
         } else {
-            ActivityCompat.requestPermissions(requireActivity(), permissionsToRequest, REQUEST_COPY_PERMISSIONS)
+            ActivityCompat.requestPermissions(ma, permissionsToRequest, REQUEST_COPY_PERMISSIONS)
         }
     }
 
@@ -372,12 +388,12 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
         }
         // Проверяем, все ли разрешения уже получены
         val permissionsToRequest = permissions.filter { permission ->
-            ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED
         }.toTypedArray()
         if (permissionsToRequest.isEmpty()) {
             openCameraForPhoto()
         } else {
-            ActivityCompat.requestPermissions(requireActivity(), permissionsToRequest, REQUEST_CAMERA_PERMISSIONS)
+            ActivityCompat.requestPermissions(ma, permissionsToRequest, REQUEST_CAMERA_PERMISSIONS)
         }
     }
 
@@ -467,7 +483,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 put(MediaStore.Images.Media.DATA, file.absolutePath)
             }
         }
-        photoUri = requireContext().contentResolver.insert(
+        photoUri = context.contentResolver.insert(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             values
         )
@@ -571,14 +587,15 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
         loadMediaJob = lifecycleScope.launch {
             when (mediaFileType) {
                 MediaFileType.IMAGE -> {
+                    binding.ivPlaceholder.isVisible = false
                     binding.photoWindow.isVisible = true
                     try {
                         val bitmap = getBitmapFromUri(context, uri)
                         if (bitmap == null || bitmap.isRecycled) {
                             binding.photoWindow.isVisible = false
+                            binding.ivPlaceholder.isVisible = true
                             return@launch
                         }
-
                         val rotatedBitmap = rotateBitmapAccordingToExif(context, uri, bitmap)
                         binding.photoWindow.setImage(ImageSource.bitmap(rotatedBitmap))
                         binding.photoWindow.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
@@ -587,10 +604,12 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                         binding.photoWindow.setPanLimit(SubsamplingScaleImageView.PAN_LIMIT_INSIDE)
                     } catch (_: Exception) {
                         binding.photoWindow.isVisible = false
+                        binding.ivPlaceholder.isVisible = true
                     }
                 }
                 else -> {
                     binding.photoWindow.isVisible = false
+                    binding.ivPlaceholder.isVisible = true
                 }
             }
         }
