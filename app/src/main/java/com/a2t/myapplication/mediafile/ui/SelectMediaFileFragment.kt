@@ -1,6 +1,5 @@
 package com.a2t.myapplication.mediafile.ui
 
-
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ContentValues
@@ -25,7 +24,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -54,6 +52,7 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import androidx.exifinterface.media.ExifInterface
+import com.a2t.myapplication.common.utilities.AppHelper
 import com.a2t.myapplication.mediafile.presentation.model.MediaFileFilter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -172,8 +171,12 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                 }
                 is Response.FileExists -> {
                     @SuppressLint("InflateParams")
-                    val dialogView =
-                        LayoutInflater.from(context).inflate(R.layout.dialog_title_attention, null)
+                    val rootView = requireActivity().window?.decorView?.findViewById<ViewGroup>(android.R.id.content)
+                    val dialogView = LayoutInflater.from(context).inflate(
+                        R.layout.dialog_title_attention,
+                        rootView,
+                        false
+                    )
                     MaterialAlertDialogBuilder(context)
                         .setCustomTitle(dialogView)
                         .setMessage(getString(R.string.dialog_hint))
@@ -198,7 +201,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                         ErrCode.COPY_ERROR -> R.string.file_not_saved
                         ErrCode.UNEXPECTED_ERROR -> R.string.file_not_saved
                     }
-                    Toast.makeText(requireContext(), res, Toast.LENGTH_SHORT).show()
+                    AppHelper.errorDialog(requireActivity(),getString(res))
                 }
             }
         }
@@ -218,7 +221,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                     }
                 }
                 is Response.FileExists -> {
-                    Toast.makeText(requireContext(), R.string.file_exists_in_galery, Toast.LENGTH_SHORT).show()
+                    AppHelper.messageDialog(requireActivity(),getString(R.string.file_exists_in_galery))
                 }
                 is Response.Error -> {
                     parentFragmentManager.beginTransaction().remove(this@SelectMediaFileFragment).commitAllowingStateLoss() // Закрытие фрагмента
@@ -227,7 +230,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                         ErrCode.COPY_ERROR -> R.string.file_not_saved
                         ErrCode.UNEXPECTED_ERROR -> R.string.file_not_saved
                     }
-                    Toast.makeText(requireContext(), res, Toast.LENGTH_SHORT).show()
+                    AppHelper.errorDialog(requireActivity(),getString(res))
                 }
                 else -> {}
             }
@@ -241,6 +244,8 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                     mediaFileViewModel.filterListItems(true)
                     recycler.scrollToPosition(0)
                 }
+            } else {
+                AppHelper.errorDialog(requireActivity(),getString(R.string.file_not_saved))
             }
         }
 
@@ -260,8 +265,12 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
         }
         // Копирование файлф в галерею
         binding.ivBtnCopyToGallery.setOnClickListener {
-            val dialogView =
-                LayoutInflater.from(context).inflate(R.layout.dialog_title_attention, null)
+            val rootView = requireActivity().window?.decorView?.findViewById<ViewGroup>(android.R.id.content)
+            val dialogView = LayoutInflater.from(context).inflate(
+                R.layout.dialog_title_attention,
+                rootView,
+                false
+            )
             MaterialAlertDialogBuilder(context)
                 .setCustomTitle(dialogView)
                 .setMessage(getString(R.string.copy_dialog_hint))
@@ -306,7 +315,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                     false
                 )
             } else {
-                Toast.makeText(requireContext(), R.string.no_file_selected, Toast.LENGTH_SHORT).show()
+                AppHelper.messageDialog(requireActivity(), getString(R.string.no_file_selected))
             }
         }
     }
@@ -566,11 +575,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                     try {
                         val bitmap = getBitmapFromUri(context, uri)
                         if (bitmap == null || bitmap.isRecycled) {
-                            Toast.makeText(
-                                requireContext(),
-                                "Ошибка загрузки изображения",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            binding.photoWindow.isVisible = false
                             return@launch
                         }
 
@@ -581,20 +586,11 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
                         binding.photoWindow.setDoubleTapZoomScale(2f)
                         binding.photoWindow.setPanLimit(SubsamplingScaleImageView.PAN_LIMIT_INSIDE)
                     } catch (_: Exception) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Ошибка загрузки изображения",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        binding.photoWindow.isVisible = false
                     }
                 }
-
                 else -> {
-                    Toast.makeText(
-                        requireContext(),
-                        "Неподдерживаемый формат",
-                        Toast.LENGTH_SHORT)
-                        .show()
+                    binding.photoWindow.isVisible = false
                 }
             }
         }

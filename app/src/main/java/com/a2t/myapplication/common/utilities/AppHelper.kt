@@ -1,9 +1,14 @@
 package com.a2t.myapplication.common.utilities
 
+import android.app.Activity
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import com.a2t.myapplication.R
 import com.a2t.myapplication.common.App
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 
 class AppHelper {
@@ -64,6 +69,30 @@ class AppHelper {
                 "dv" -> "video/x-dv"
                 else -> "*/*"   // По умолчанию
             }
+        }
+
+        // Диалог Ошибка
+        fun errorDialog(activity: Activity, str: String) {
+            myDialog(activity, true, str)
+        }
+
+        // Диалог Сообщение
+        fun messageDialog (activity: Activity, str: String) {
+            myDialog(activity, false, str)
+        }
+
+        private fun myDialog (activity: Activity, isError: Boolean, str: String) {
+            val rootView = activity.window?.decorView?.findViewById<ViewGroup>(android.R.id.content)
+            val dialogView = LayoutInflater.from(activity).inflate(
+                if (isError) R.layout.dialog_title_error else R.layout.dialog_title_attention,
+                rootView,
+                false
+            )
+            MaterialAlertDialogBuilder(activity)
+                .setCustomTitle(dialogView)
+                .setMessage(str)
+                .setPositiveButton("OK") { _, _ -> }
+                .show()
         }
     }
 }

@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.LayoutAnimationController
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -194,8 +195,12 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
         deleteOldAlarm(startDay)
 
         if (App.appSettings.launchCounter == 1) {
-            val dialogView =
-                LayoutInflater.from(this).inflate(R.layout.dialog_title_attention, null)
+            val rootView = window?.decorView?.findViewById<ViewGroup>(android.R.id.content)
+            val dialogView = LayoutInflater.from(this).inflate(
+                R.layout.dialog_title_attention,
+                rootView,
+                false
+            )
             MaterialAlertDialogBuilder(this)
                 .setCustomTitle(dialogView)
                 .setMessage(getString(R.string.first_launch_message))
@@ -799,7 +804,12 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
                 var mess = getString(R.string.del_attempt, selectedRecords.toString(), subordinateRecords.toString())
                 val str = if (countArchive != 0) getString(R.string.del_archive, countArchive.toString()) else ""
                 mess += "$str."
-                val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_title_attention, null)
+                val rootView = window?.decorView?.findViewById<ViewGroup>(android.R.id.content)
+                val dialogView = LayoutInflater.from(this).inflate(
+                    R.layout.dialog_title_attention,
+                    rootView,
+                    false
+                )
                 binding.progressBar.isVisible = false
                 MaterialAlertDialogBuilder(this)
                     .setCustomTitle(dialogView)
@@ -837,8 +847,12 @@ class MainActivity: AppCompatActivity(), MainAdapterCallback, OnScrollStateChang
     @SuppressLint("InflateParams")
     fun deleteAllMarks() {
         if (adapter.records.any { it.isChecked }) {
-            val dialogView =
-                LayoutInflater.from(this).inflate(R.layout.dialog_title_attention, null)
+            val rootView = window?.decorView?.findViewById<ViewGroup>(android.R.id.content)
+            val dialogView = LayoutInflater.from(this).inflate(
+                R.layout.dialog_title_attention,
+                rootView,
+                false
+            )
             MaterialAlertDialogBuilder(this)
                 .setCustomTitle(dialogView)
                 .setMessage(getString(R.string.del_mark_text))
