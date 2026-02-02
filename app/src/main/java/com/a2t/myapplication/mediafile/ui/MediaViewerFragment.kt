@@ -3,7 +3,6 @@ package com.a2t.myapplication.mediafile.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -200,7 +199,7 @@ class MediaViewerFragment : Fragment() {
             Toast.makeText(context, context.getString(R.string.file_not_found), Toast.LENGTH_SHORT).show()
             return
         }
-        val contentUri: Uri = FileProvider.getUriForFile(
+        val contentUri = FileProvider.getUriForFile(
             context,
             "${context.packageName}.fileprovider",
             targetFile
@@ -238,8 +237,23 @@ class MediaViewerFragment : Fragment() {
 
     private fun loadMedia(fileName: String) {
         val downloaderMediaFile = DownloaderMediaFile(context, listPreviewWindows, binding.ivPlaceholder)
-        val mediaFileType = getMediaFileTypeFromFileName(fileName)
-        val mediaType = getMediaDir(fileName)
+        val ext = fileName.substringAfterLast(".", "").lowercase(Locale.getDefault())
+        val mediaFileType: MediaFileType?
+        val mediaType: String?
+        when (ext) {
+            in MediaFormats.imageExtensions -> {
+                mediaFileType = MediaFileType.IMAGE
+                mediaType = "image"
+            }
+            in MediaFormats.videoExtensions -> {
+                mediaFileType = MediaFileType.VIDEO
+                mediaType = "video"
+            }
+            else -> {
+                mediaFileType = null
+                mediaType = null
+            }
+        }
         val directory = File(context.getExternalFilesDir(null), "mediafiles/$mediaType")
         val file = File(directory, fileName)
         if (file.exists() && mediaFileType != null) {
@@ -249,17 +263,8 @@ class MediaViewerFragment : Fragment() {
         }
     }
 
-    private fun getMediaFileTypeFromFileName(fileName: String): MediaFileType? {
-        val extension = fileName.substringAfterLast(".", "").lowercase()
-        return when (extension) {
-            // Изображения
-            "jpg", "jpeg", "png", "gif", "webp", "bmp", "heic", "heif" -> MediaFileType.IMAGE
-            else -> null
-        }
-    }
-
     private fun getMediaDir(fileName: String): String? {
-        val ext = fileName.substringAfterLast(".", "").lowercase(Locale.getDefault())
+        val ext = fileName.substringAfterLast(".", "").lowercase()
         return when (ext) {
             in MediaFormats.imageExtensions -> "image"
             in MediaFormats.videoExtensions -> "video"
