@@ -237,8 +237,8 @@ class MediaViewerFragment : Fragment() {
 
     private fun loadMedia(fileName: String) {
         val ext = fileName.substringAfterLast(".", "").lowercase(Locale.getDefault())
-        val mediaFileType: MediaFileType?
-        val mediaType: String?
+        val mediaFileType: MediaFileType
+        val mediaType: String
         when (ext) {
             in MediaFormats.imageExtensions -> {
                 mediaFileType = MediaFileType.IMAGE
