@@ -17,6 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Плейсхолдер -->
         <ImageView
         android:id="@+id/iv_placeholder"
         android:layout_width="100dp"
@@ -28,7 +29,7 @@
 
         <!-- Изображение -->
         <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-            android:id="@+id/photo_window"
+            android:id="@+id/image_window"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"

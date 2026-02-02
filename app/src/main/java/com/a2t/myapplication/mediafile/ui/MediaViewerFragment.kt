@@ -3,11 +3,7 @@ package com.a2t.myapplication.mediafile.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.net.Uri
-import androidx.exifinterface.media.ExifInterface
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -30,9 +26,9 @@ import com.a2t.myapplication.common.utilities.AppHelper
 import com.a2t.myapplication.common.utilities.DLAnimator
 import com.a2t.myapplication.main.ui.activity.MainActivity
 import com.a2t.myapplication.common.utilities.MediaFormats
+import com.a2t.myapplication.mediafile.data.dto.MediaFileType
 import com.a2t.myapplication.mediafile.presentation.MediaViewerViewModel
-import com.davemorrissey.labs.subscaleview.ImageSource
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+import com.a2t.myapplication.mediafile.ui.util.DownloaderMediaFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -50,6 +46,7 @@ class MediaViewerFragment : Fragment() {
     private lateinit var ma: MainActivity
     private lateinit var dlAnimator: DLAnimator
     private var menuJob = lifecycleScope.launch {}
+    private lateinit var listPreviewWindows: List<View>
 
     companion object {
         const val RECORD_ID = "record_id"
@@ -85,6 +82,7 @@ class MediaViewerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMediaViewerBinding.inflate(layoutInflater)
+        listPreviewWindows = listOf(binding.imageWindow)
         return binding.root
     }
 
@@ -106,15 +104,19 @@ class MediaViewerFragment : Fragment() {
         binding.aetNote.setText(viewModel.note)
         binding.aetNote.isVisible = viewModel.note.isNotEmpty()
 
-        binding.photoWindow.post {
+        binding.imageWindow.post {
             loadMedia(viewModel.mediaFileName)
         }
-        binding.photoWindow.setOnTouchListener { _, _ ->
+        binding.imageWindow.setOnTouchListener { _, _ ->
             AppHelper.requestFocusInTouch(binding.ivSend)
             false
         }
 
         binding.llTopbar.setOnClickListener {
+            startEditMode()
+        }
+
+        binding.ivEdit.setOnClickListener {
             startEditMode()
         }
 
@@ -220,6 +222,7 @@ class MediaViewerFragment : Fragment() {
     }
 
     private fun openMenu(open: Boolean) {
+        binding.ivEdit.isVisible = open
         binding.ivMediaMinus.isVisible = open
         val title = if (open) R.drawable.ic_send_white else R.drawable.ic_menu_white
         dlAnimator.flipPicture(binding.ivSend, title)
@@ -234,38 +237,24 @@ class MediaViewerFragment : Fragment() {
     }
 
     private fun loadMedia(fileName: String) {
+        val downloaderMediaFile = DownloaderMediaFile(context, listPreviewWindows, binding.ivPlaceholder)
+        val mediaFileType = getMediaFileTypeFromFileName(fileName)
         val mediaType = getMediaDir(fileName)
-
         val directory = File(context.getExternalFilesDir(null), "mediafiles/$mediaType")
         val file = File(directory, fileName)
-
-        if (!file.exists()) {
-            Toast.makeText(context, context.getString(R.string.file_not_found), Toast.LENGTH_SHORT).show()
-            return
+        if (file.exists() && mediaFileType != null) {
+            downloaderMediaFile.loadMedia( mediaFileType, null, file)
+        } else {
+            binding.ivPlaceholder.isVisible = true
         }
+    }
 
-        when (mediaType) {
-            "image" -> {
-                binding.photoWindow.isVisible = true
-                try {
-                    val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-                    if (bitmap == null || bitmap.isRecycled) {
-                        Toast.makeText(context, context.getString(R.string.error_loading_file), Toast.LENGTH_SHORT).show()
-                        return
-                    }
-                    val rotatedBitmap = rotateBitmapAccordingToExif(file, bitmap)
-                    binding.photoWindow.setImage(ImageSource.bitmap(rotatedBitmap))
-                    binding.photoWindow.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
-                    binding.photoWindow.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF)
-                    binding.photoWindow.setDoubleTapZoomScale(2f)
-                    binding.photoWindow.setPanLimit(SubsamplingScaleImageView.PAN_LIMIT_INSIDE)
-                } catch (_: Exception) {
-                    Toast.makeText(context, context.getString(R.string.error_loading_file), Toast.LENGTH_SHORT).show()
-                }
-            }
-            else -> {
-                Toast.makeText(context, context.getString(R.string.error_loading_file), Toast.LENGTH_SHORT).show()
-            }
+    private fun getMediaFileTypeFromFileName(fileName: String): MediaFileType? {
+        val extension = fileName.substringAfterLast(".", "").lowercase()
+        return when (extension) {
+            // Изображения
+            "jpg", "jpeg", "png", "gif", "webp", "bmp", "heic", "heif" -> MediaFileType.IMAGE
+            else -> null
         }
     }
 
@@ -275,34 +264,6 @@ class MediaViewerFragment : Fragment() {
             in MediaFormats.imageExtensions -> "image"
             in MediaFormats.videoExtensions -> "video"
             else -> null
-        }
-    }
-
-    // Определяет в какой ориентации сделано фото и поворачивает Bitmap в ту же ориентацию
-    private fun rotateBitmapAccordingToExif(file: File, bitmap: Bitmap): Bitmap {
-        return try {
-            val exif = ExifInterface(file.absolutePath)
-            val orientation = exif.getAttributeInt(
-                ExifInterface.TAG_ORIENTATION,
-                ExifInterface.ORIENTATION_NORMAL
-            )
-
-            val rotationDegrees = when (orientation) {
-                ExifInterface.ORIENTATION_ROTATE_90 -> 90
-                ExifInterface.ORIENTATION_ROTATE_180 -> 180
-                ExifInterface.ORIENTATION_ROTATE_270 -> 270
-                else -> 0
-            }
-
-            if (rotationDegrees != 0) {
-                val matrix = Matrix()
-                matrix.postRotate(rotationDegrees.toFloat())
-                Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-            } else {
-                bitmap
-            }
-        } catch (_: Exception) {
-            bitmap
         }
     }
 
