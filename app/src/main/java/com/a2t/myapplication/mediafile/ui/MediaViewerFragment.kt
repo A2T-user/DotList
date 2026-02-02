@@ -236,7 +236,6 @@ class MediaViewerFragment : Fragment() {
     }
 
     private fun loadMedia(fileName: String) {
-        val downloaderMediaFile = DownloaderMediaFile(context, listPreviewWindows, binding.ivPlaceholder)
         val ext = fileName.substringAfterLast(".", "").lowercase(Locale.getDefault())
         val mediaFileType: MediaFileType?
         val mediaType: String?
@@ -250,13 +249,14 @@ class MediaViewerFragment : Fragment() {
                 mediaType = "video"
             }
             else -> {
-                mediaFileType = null
-                mediaType = null
+                binding.ivPlaceholder.isVisible = true
+                return
             }
         }
         val directory = File(context.getExternalFilesDir(null), "mediafiles/$mediaType")
         val file = File(directory, fileName)
-        if (file.exists() && mediaFileType != null) {
+        if (file.exists()) {
+            val downloaderMediaFile = DownloaderMediaFile(context, listPreviewWindows, binding.ivPlaceholder)
             downloaderMediaFile.loadMedia( mediaFileType, null, file)
         } else {
             binding.ivPlaceholder.isVisible = true
