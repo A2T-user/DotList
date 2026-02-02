@@ -7,9 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
@@ -48,14 +45,12 @@ import com.a2t.myapplication.mediafile.domaim.model.MediaItem
 import com.a2t.myapplication.mediafile.presentation.MediaFileViewModel
 import com.a2t.myapplication.mediafile.ui.recycler.MediaFileAdapter
 import com.a2t.myapplication.mediafile.ui.recycler.MediaFileAdapterCallback
-import com.davemorrissey.labs.subscaleview.ImageSource
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import androidx.exifinterface.media.ExifInterface
 import com.a2t.myapplication.common.utilities.AppHelper
 import com.a2t.myapplication.common.utilities.FileValidator
 import com.a2t.myapplication.mediafile.presentation.model.MediaFileFilter
+import com.a2t.myapplication.mediafile.ui.util.DownloaderMediaFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -83,6 +78,8 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
     private var isPreviewContainerBig = false
     private var photoUri: Uri? = null
     private var sizePreviewMin: Int = 0
+    private lateinit var listPreviewWindows: List<View>
+    private lateinit var downloaderMediaFile: DownloaderMediaFile
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,6 +99,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
             }
         }
         _binding = FragmentSelectMediaFileBinding.inflate(layoutInflater)
+        listPreviewWindows = listOf(binding.imageWindow)
         return binding.root
     }
 
@@ -110,6 +108,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
 
         context = requireContext()
         ma = requireActivity() as MainActivity
+        downloaderMediaFile = DownloaderMediaFile(context, listPreviewWindows, binding.ivPlaceholder)
         sizePreviewMin = if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             resources.displayMetrics.widthPixels * 9 / 16
         } else {
@@ -585,67 +584,7 @@ class SelectMediaFileFragment : Fragment(), MediaFileAdapterCallback, OnScrollSt
     private fun loadMedia(uri: Uri, mediaFileType: MediaFileType) {
         loadMediaJob.cancel()
         loadMediaJob = lifecycleScope.launch {
-            when (mediaFileType) {
-                MediaFileType.IMAGE -> {
-                    binding.ivPlaceholder.isVisible = false
-                    binding.photoWindow.isVisible = true
-                    try {
-                        val bitmap = getBitmapFromUri(context, uri)
-                        if (bitmap == null || bitmap.isRecycled) {
-                            binding.photoWindow.isVisible = false
-                            binding.ivPlaceholder.isVisible = true
-                            return@launch
-                        }
-                        val rotatedBitmap = rotateBitmapAccordingToExif(context, uri, bitmap)
-                        binding.photoWindow.setImage(ImageSource.bitmap(rotatedBitmap))
-                        binding.photoWindow.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
-                        binding.photoWindow.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF)
-                        binding.photoWindow.setDoubleTapZoomScale(2f)
-                        binding.photoWindow.setPanLimit(SubsamplingScaleImageView.PAN_LIMIT_INSIDE)
-                    } catch (_: Exception) {
-                        binding.photoWindow.isVisible = false
-                        binding.ivPlaceholder.isVisible = true
-                    }
-                }
-                else -> {
-                    binding.photoWindow.isVisible = false
-                    binding.ivPlaceholder.isVisible = true
-                }
-            }
-        }
-    }
-    fun getBitmapFromUri(context: Context, uri: Uri): Bitmap? {
-        return context.contentResolver.openInputStream(uri)?.use { inputStream ->
-            BitmapFactory.decodeStream(inputStream)
-        }
-    }
-
-    private fun rotateBitmapAccordingToExif(context: Context, uri: Uri, bitmap: Bitmap): Bitmap {
-        return try {
-            context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                val exif = ExifInterface(inputStream)
-                val orientation = exif.getAttributeInt(
-                    ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_NORMAL
-                )
-
-                val rotationDegrees = when (orientation) {
-                    ExifInterface.ORIENTATION_ROTATE_90 -> 90
-                    ExifInterface.ORIENTATION_ROTATE_180 -> 180
-                    ExifInterface.ORIENTATION_ROTATE_270 -> 270
-                    else -> 0
-                }
-
-                if (rotationDegrees != 0) {
-                    val matrix = Matrix()
-                    matrix.postRotate(rotationDegrees.toFloat())
-                    Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-                } else {
-                    bitmap
-                }
-            } ?: bitmap // если inputStream == null — возвращаем оригинал
-        } catch (_: Exception) {
-            bitmap
+            downloaderMediaFile.loadMedia(mediaFileType, uri, null)
         }
     }
 
