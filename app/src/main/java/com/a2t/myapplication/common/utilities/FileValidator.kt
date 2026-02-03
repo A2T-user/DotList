@@ -46,9 +46,8 @@ class FileValidator {
             val mimeType = MIME_SIGNATURES.entries
                 .find { hexSignature.startsWith(it.key) }
                 ?.value ?: return false
-            // Проверяем, что тип поддерживается (image/video/audio)
-            return mimeType.startsWith("image/") || mimeType.startsWith("video/") || mimeType.startsWith("audio/")
-
+            // Проверяем, что тип поддерживается (image/video)
+            return mimeType.startsWith("image/") || mimeType.startsWith("video/")
         } catch (_: Exception) {
             return false
         }
