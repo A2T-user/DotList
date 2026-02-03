@@ -51,11 +51,7 @@ class StoragesRepositoryImpl(
         mediaFileType: MediaFileType
     ) {
         val externalFilesDir = context.getExternalFilesDir(null) ?: return
-        val subDirName = when (mediaFileType) {
-            MediaFileType.IMAGE -> "image"
-            MediaFileType.VIDEO -> "video"
-        }
-        val typeDir = File(externalFilesDir, "mediafiles/$subDirName")
+        val typeDir = File(externalFilesDir, "mediafiles/${mediaFileType.dir}")
         // Проверяем, существует ли папка
         if (!typeDir.exists() || !typeDir.isDirectory) return
         // Вспомогательная функция для обхода папок
@@ -127,22 +123,15 @@ class StoragesRepositoryImpl(
     ): Response {
         val context = App.appContext
         val originalName = AppHelper.getFileNameFromUri(sourceUri) ?: return Response.Error(ErrCode.UNEXPECTED_ERROR)
-        if (dir == DirType.APP) {
-            return Response.FileFromExternalAppStorage(originalName)
-        }
+        if (dir == DirType.APP) return Response.FileFromExternalAppStorage(originalName)
         val fileName = if (isNewCopy) {
             val timestamp = System.currentTimeMillis()
             "${timestamp}#$originalName"
         } else {
             originalName
         }
-        val subDirName = when (mediaFileType) {
-            MediaFileType.IMAGE -> "image"
-            MediaFileType.VIDEO -> "video"
-        }
-        val mediaFilesDir = File(context.getExternalFilesDir(null), "mediafiles")
-        val typeSpecificDir = File(mediaFilesDir, subDirName)
-
+        val externalFilesDir = context.getExternalFilesDir(null) ?: return Response.Error(ErrCode.UNEXPECTED_ERROR)
+        val typeSpecificDir = File(externalFilesDir, "mediafiles/${mediaFileType.dir}")
         if (!typeSpecificDir.exists()) {
             typeSpecificDir.mkdirs() // mkdirs создает все промежуточные директории
         }

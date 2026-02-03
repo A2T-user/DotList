@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -19,7 +18,6 @@ import androidx.lifecycle.lifecycleScope
 import com.a2t.myapplication.R
 import com.a2t.myapplication.databinding.FragmentMediaViewerBinding
 import java.io.File
-import java.util.Locale
 import com.a2t.myapplication.common.App
 import com.a2t.myapplication.common.utilities.AppHelper
 import com.a2t.myapplication.common.utilities.DLAnimator
@@ -193,10 +191,15 @@ class MediaViewerFragment : Fragment() {
     }
 
     fun sendTextWithAttachedFile(message: String, fileName: String) {
-        val mediaType = getMediaDir(fileName)
+        val mediaFileType = getMediaFileType(fileName)
+        if (mediaFileType == null) {
+            AppHelper.errorDialog(ma, getString(R.string.unknown_file_type))
+            return
+        }
+        val mediaType = mediaFileType.dir
         val targetFile = File(context.getExternalFilesDir(null), "mediafiles/$mediaType/$fileName")
         if (!targetFile.exists() || !targetFile.isFile) {
-            Toast.makeText(context, context.getString(R.string.file_not_found), Toast.LENGTH_SHORT).show()
+            AppHelper.errorDialog(ma, getString(R.string.file_not_found))
             return
         }
         val contentUri = FileProvider.getUriForFile(
@@ -216,7 +219,7 @@ class MediaViewerFragment : Fragment() {
         try {
             context.startActivity(chooserIntent)
         } catch (_: Exception) {
-            Toast.makeText(context, context.getString(R.string.send_message_error), Toast.LENGTH_SHORT).show()
+            AppHelper.errorDialog(ma, getString(R.string.send_message_error))
         }
     }
 
@@ -236,38 +239,30 @@ class MediaViewerFragment : Fragment() {
     }
 
     private fun loadMedia(fileName: String) {
-        val ext = fileName.substringAfterLast(".", "").lowercase(Locale.getDefault())
-        val mediaFileType: MediaFileType
-        val mediaType: String
-        when (ext) {
-            in MediaFormats.imageExtensions -> {
-                mediaFileType = MediaFileType.IMAGE
-                mediaType = "image"
-            }
-            in MediaFormats.videoExtensions -> {
-                mediaFileType = MediaFileType.VIDEO
-                mediaType = "video"
-            }
-            else -> {
+        val mediaFileType = getMediaFileType(fileName)
+        if (mediaFileType != null) {
+            val file = createFile(fileName, mediaFileType)
+            if (file.exists()) {
+                val downloaderMediaFile =
+                    DownloaderMediaFile(context, listPreviewWindows, binding.ivPlaceholder)
+                downloaderMediaFile.loadMedia(mediaFileType, null, file)
+            } else {
                 binding.ivPlaceholder.isVisible = true
-                return
             }
-        }
-        val directory = File(context.getExternalFilesDir(null), "mediafiles/$mediaType")
-        val file = File(directory, fileName)
-        if (file.exists()) {
-            val downloaderMediaFile = DownloaderMediaFile(context, listPreviewWindows, binding.ivPlaceholder)
-            downloaderMediaFile.loadMedia( mediaFileType, null, file)
-        } else {
-            binding.ivPlaceholder.isVisible = true
         }
     }
 
-    private fun getMediaDir(fileName: String): String? {
+    private fun createFile(fileName: String, mediaFileType: MediaFileType): File {
+        val directory =
+            File(context.getExternalFilesDir(null), "mediafiles/${mediaFileType.dir}")
+        return File(directory, fileName)
+    }
+
+    private fun getMediaFileType(fileName: String): MediaFileType? {
         val ext = fileName.substringAfterLast(".", "").lowercase()
         return when (ext) {
-            in MediaFormats.imageExtensions -> "image"
-            in MediaFormats.videoExtensions -> "video"
+            in MediaFormats.imageExtensions -> MediaFileType.IMAGE
+            in MediaFormats.videoExtensions -> MediaFileType.VIDEO
             else -> null
         }
     }
